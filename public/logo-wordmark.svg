@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 80" role="img" aria-label="jewebsiteonline.be">
+  <title>jewebsiteonline.be</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&amp;display=swap');
+    .logo { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-size: 42px; font-optical-sizing: auto; }
+    .main { fill: #1b3022; font-weight: 600; }
+    .online { fill: #2d4636; font-weight: 500; }
+    .be { fill: #c07f63; font-weight: 600; }
+  </style>
+  <text x="0" y="54" class="logo">
+    <tspan class="main">jewebsite</tspan><tspan class="online">online</tspan><tspan class="be">.be</tspan>
+  </text>
+</svg>
