@@ -28,6 +28,13 @@ const MAX_LONG = 4000;
 const ALLOWED_PACKAGES = new Set(["1-pagina", "3-pagina"]);
 const ALLOWED_YES_NO = new Set(["ja", "nee"]);
 
+function normalizeYesNo(value: string): string {
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "ja" || normalized.startsWith("ja")) return "ja";
+  if (normalized === "nee" || normalized.startsWith("nee")) return "nee";
+  return normalized;
+}
+
 function clip(value: string, max: number) {
   return value.slice(0, max);
 }
@@ -77,9 +84,9 @@ export async function submitBriefing(
   );
   const email = clip(String(formData.get("email") ?? "").trim(), MAX_SHORT);
   const phone = clip(String(formData.get("phone") ?? "").trim(), 40);
-  const showPhone = String(formData.get("showPhone") ?? "").trim();
+  const showPhone = normalizeYesNo(String(formData.get("showPhone") ?? ""));
   const address = clip(String(formData.get("address") ?? "").trim(), MAX_MEDIUM);
-  const showAddress = String(formData.get("showAddress") ?? "").trim();
+  const showAddress = normalizeYesNo(String(formData.get("showAddress") ?? ""));
   const instagram = clip(
     String(formData.get("instagram") ?? "").trim(),
     MAX_MEDIUM,
@@ -102,7 +109,7 @@ export async function submitBriefing(
     String(formData.get("selectedPages") ?? "").trim(),
     MAX_MEDIUM,
   );
-  const hasLogo = String(formData.get("hasLogo") ?? "").trim();
+  const hasLogo = normalizeYesNo(String(formData.get("hasLogo") ?? ""));
   const brandNotes = clip(
     String(formData.get("brandNotes") ?? "").trim(),
     MAX_LONG,
@@ -160,6 +167,9 @@ export async function submitBriefing(
   }
 
   const logoFile = logo instanceof File && logo.size > 0 ? logo : null;
+  if (hasLogo === "ja" && !logoFile) {
+    return { ok: false, error: "Upload uw logo om verder te gaan." };
+  }
   if (logoFile && logoFile.size > MAX_FILE_BYTES) {
     return { ok: false, error: "Het logo mag max. 3 MB zijn." };
   }
@@ -247,7 +257,7 @@ export async function submitBriefing(
     { question: "Over de zaak", answer: businessInfo },
     { question: "Pakket", answer: packageChoice },
     { question: "Pagina's", answer: selectedPages || "Niet opgegeven" },
-    { question: "Logo", answer: hasLogo || "Niet opgegeven" },
+    { question: "Logo", answer: hasLogo === "ja" ? "Ja" : "Nee" },
     { question: "Brandingnotities", answer: brandNotes || "Niet opgegeven" },
   ];
 
@@ -374,7 +384,7 @@ export async function submitBriefing(
       <h3>Website & branding</h3>
       <p><strong>Pakket:</strong> ${escapeHtml(packageChoice)}</p>
       <p><strong>Pagina's:</strong> ${escapeHtml(selectedPages || "Niet opgegeven")}</p>
-      <p><strong>Logo:</strong> ${escapeHtml(hasLogo || "Niet opgegeven")}</p>
+      <p><strong>Logo:</strong> ${escapeHtml(hasLogo === "ja" ? "Ja" : "Nee")}</p>
       <p><strong>Brandingnotities:</strong><br/>${escapeHtml(brandNotes || "Niet opgegeven").replace(/\n/g, "<br/>")}</p>
       <p><strong>Uploads in Storage:</strong> ${escapeHtml(String(uploadPaths.length))}</p>
     `;

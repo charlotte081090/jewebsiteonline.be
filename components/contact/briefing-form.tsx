@@ -131,6 +131,7 @@ export function BriefingForm() {
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
   const contentRef = useRef<HTMLDivElement>(null);
+  const summaryBlockRefs = useRef<Partial<Record<NonNullable<EditBlock>, HTMLDivElement | null>>>({});
 
   const isIntro = step === 0;
   const isSummary = step === 13;
@@ -173,6 +174,7 @@ export function BriefingForm() {
   }, [imagePreviews]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     contentRef.current?.focus({ preventScroll: true });
   }, [step]);
 
@@ -251,12 +253,17 @@ export function BriefingForm() {
         setError("Geef aan of u een logo heeft.");
         return;
       }
+      if (hasLogo === "ja" && !logoFile) {
+        setError("Upload uw logo om verder te gaan.");
+        return;
+      }
       if (hasLogo === "nee" && !brandNotes.trim()) {
         setError("Deel kort uw kleuren- of brandingvoorkeur.");
         return;
       }
     }
     if (step === 13) {
+      setEditingBlock(null);
       if (!validateSummary()) return;
       submit();
       return;
@@ -270,44 +277,87 @@ export function BriefingForm() {
     goTo(step + 1, "forward");
   }
 
-  function validateSummary() {
-    if (!contactPerson.trim() || !phone.trim() || !email.trim()) {
-      setError("Vul de contactgegevens volledig in.");
-      setEditingBlock("contact");
-      return false;
+  function openSummaryBlock(block: NonNullable<EditBlock>, message: string) {
+    setError(message);
+    setEditingBlock(block);
+    requestAnimationFrame(() => {
+      summaryBlockRefs.current[block]?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }
+
+  function finishSummaryBlock(block: NonNullable<EditBlock>) {
+    if (!validateSummaryBlock(block)) return;
+    setError("");
+    setEditingBlock(null);
+  }
+
+  function updateHasLogo(value: BrandChoice) {
+    setHasLogo(value);
+    // Switching answer always drops any previous upload so Check and step 11 stay aligned.
+    setLogoFile(null);
+  }
+
+  function validateSummaryBlock(block: NonNullable<EditBlock>) {
+    if (block === "contact") {
+      if (!contactPerson.trim() || !phone.trim() || !email.trim()) {
+        openSummaryBlock("contact", "Vul de contactgegevens volledig in.");
+        return false;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        openSummaryBlock("contact", "Ongeldig e-mailadres.");
+        return false;
+      }
+      return true;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError("Ongeldig e-mailadres.");
-      setEditingBlock("contact");
-      return false;
+
+    if (block === "company") {
+      if (
+        !companyName.trim() ||
+        !address.trim() ||
+        !sectorLabel ||
+        businessInfo.trim().length < 20
+      ) {
+        openSummaryBlock("company", "Vul de bedrijfsgegevens volledig in.");
+        return false;
+      }
+      return true;
     }
-    if (!companyName.trim() || !address.trim() || !sectorLabel || businessInfo.trim().length < 20) {
-      setError("Vul de bedrijfsgegevens volledig in.");
-      setEditingBlock("company");
-      return false;
-    }
+
     if (!packageChoice || !hasLogo) {
-      setError("Vul de websitegegevens volledig in.");
-      setEditingBlock("website");
+      openSummaryBlock("website", "Vul de websitegegevens volledig in.");
       return false;
     }
     if (packageChoice === "3-pagina") {
       if (selectedPages.length !== 3) {
-        setError("Selecteer precies 3 pagina’s.");
-        setEditingBlock("website");
+        openSummaryBlock("website", "Selecteer precies 3 pagina’s.");
         return false;
       }
       if (selectedPages.includes("Andere") && !customPage.trim()) {
-        setError("Vul de naam van de andere pagina in.");
-        setEditingBlock("website");
+        openSummaryBlock("website", "Vul de naam van de andere pagina in.");
         return false;
       }
     }
-    if (hasLogo === "nee" && !brandNotes.trim()) {
-      setError("Deel kort uw kleuren- of brandingvoorkeur.");
-      setEditingBlock("website");
+    if (hasLogo === "ja" && !logoFile) {
+      openSummaryBlock("website", "Upload uw logo om verder te gaan.");
       return false;
     }
+    if (hasLogo === "nee" && !brandNotes.trim()) {
+      openSummaryBlock(
+        "website",
+        "Deel kort uw kleuren- of brandingvoorkeur.",
+      );
+      return false;
+    }
+    return true;
+  }
+
+  function validateSummary() {
+    if (!validateSummaryBlock("contact")) return false;
+    if (!validateSummaryBlock("company")) return false;
+    if (!validateSummaryBlock("website")) return false;
     return true;
   }
 
@@ -336,14 +386,7 @@ export function BriefingForm() {
     formData.set("businessInfo", businessInfo.trim());
     formData.set("packageChoice", packageChoice);
     formData.set("selectedPages", pagesLabel);
-    formData.set(
-      "hasLogo",
-      hasLogo === "ja"
-        ? logoFile
-          ? "Ja, bestand geüpload"
-          : "Ja, geen bestand"
-        : "Nee",
-    );
+    formData.set("hasLogo", hasLogo);
     formData.set("brandNotes", brandNotes.trim());
     formData.set("imageCount", String(images.length));
     formData.set("website", honeypot);
@@ -651,12 +694,15 @@ export function BriefingForm() {
         {step === 11 && (
           <Question title="Heeft u al een logo?">
             <BrandingFields
+              key={`logo-step-${hasLogo}-${logoFile?.name ?? "none"}-${logoFile?.lastModified ?? 0}`}
+              inputId="logo-step"
               hasLogo={hasLogo}
-              setHasLogo={setHasLogo}
+              setHasLogo={updateHasLogo}
               logoFile={logoFile}
               setLogoFile={setLogoFile}
               brandNotes={brandNotes}
               setBrandNotes={setBrandNotes}
+              onError={setError}
             />
           </Question>
         )}
@@ -688,8 +734,15 @@ export function BriefingForm() {
               <SummaryBlock
                 title="Contactgegevens"
                 editing={editingBlock === "contact"}
-                onEdit={() => setEditingBlock("contact")}
-                onDone={() => setEditingBlock(null)}
+                error={editingBlock === "contact" ? error : ""}
+                onEdit={() => {
+                  setError("");
+                  setEditingBlock("contact");
+                }}
+                onDone={() => finishSummaryBlock("contact")}
+                blockRef={(node) => {
+                  summaryBlockRefs.current.contact = node;
+                }}
                 rows={[
                   { label: "Contactpersoon", value: contactPerson },
                   {
@@ -727,8 +780,15 @@ export function BriefingForm() {
               <SummaryBlock
                 title="Bedrijfsgegevens"
                 editing={editingBlock === "company"}
-                onEdit={() => setEditingBlock("company")}
-                onDone={() => setEditingBlock(null)}
+                error={editingBlock === "company" ? error : ""}
+                onEdit={() => {
+                  setError("");
+                  setEditingBlock("company");
+                }}
+                onDone={() => finishSummaryBlock("company")}
+                blockRef={(node) => {
+                  summaryBlockRefs.current.company = node;
+                }}
                 rows={[
                   { label: "Bedrijf", value: companyName },
                   {
@@ -803,8 +863,15 @@ export function BriefingForm() {
               <SummaryBlock
                 title="Website & branding"
                 editing={editingBlock === "website"}
-                onEdit={() => setEditingBlock("website")}
-                onDone={() => setEditingBlock(null)}
+                error={editingBlock === "website" ? error : ""}
+                onEdit={() => {
+                  setError("");
+                  setEditingBlock("website");
+                }}
+                onDone={() => finishSummaryBlock("website")}
+                blockRef={(node) => {
+                  summaryBlockRefs.current.website = node;
+                }}
                 rows={[
                   { label: "Pakket", value: packageChoice || "Niet gekozen" },
                   { label: "Pagina’s", value: pagesLabel },
@@ -846,12 +913,15 @@ export function BriefingForm() {
                     />
                   )}
                   <BrandingFields
+                    key={`logo-check-${hasLogo}-${logoFile?.name ?? "none"}-${logoFile?.lastModified ?? 0}`}
+                    inputId="logo-check"
                     hasLogo={hasLogo}
-                    setHasLogo={setHasLogo}
+                    setHasLogo={updateHasLogo}
                     logoFile={logoFile}
                     setLogoFile={setLogoFile}
                     brandNotes={brandNotes}
                     setBrandNotes={setBrandNotes}
+                    onError={setError}
                   />
                   <ImageUpload
                     images={images}
@@ -883,7 +953,7 @@ export function BriefingForm() {
 
       </div>
 
-      {error && (
+      {error && !editingBlock && (
         <p className="mt-6 text-sm font-medium text-red-700" role="alert">
           {error}
         </p>
@@ -905,7 +975,7 @@ export function BriefingForm() {
           <button
             type="button"
             onClick={next}
-            disabled={pending || Boolean(editingBlock)}
+            disabled={pending}
             className="rounded-md bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover disabled:opacity-60"
           >
             {pending
@@ -1306,6 +1376,8 @@ function BrandingFields({
   setLogoFile,
   brandNotes,
   setBrandNotes,
+  onError,
+  inputId = "logo",
 }: {
   hasLogo: BrandChoice;
   setHasLogo: (value: BrandChoice) => void;
@@ -1313,7 +1385,20 @@ function BrandingFields({
   setLogoFile: (file: File | null) => void;
   brandNotes: string;
   setBrandNotes: (value: string) => void;
+  onError?: (message: string) => void;
+  inputId?: string;
 }) {
+  function chooseLogo(value: BrandChoice) {
+    if (value === hasLogo) return;
+    setHasLogo(value);
+    onError?.("");
+  }
+
+  function clearLogo() {
+    setLogoFile(null);
+    onError?.("");
+  }
+
   return (
     <>
       <div className="flex flex-col gap-3 sm:flex-row">
@@ -1326,7 +1411,7 @@ function BrandingFields({
           <ChoiceButton
             key={option.value}
             selected={hasLogo === option.value}
-            onClick={() => setHasLogo(option.value)}
+            onClick={() => chooseLogo(option.value)}
             label={option.label}
             className="flex-1"
           />
@@ -1335,35 +1420,65 @@ function BrandingFields({
 
       {hasLogo === "ja" && (
         <div className="mt-6 rounded-xl border border-dashed border-terracotta/40 bg-terracotta/[0.06] p-5">
-          <label htmlFor="logo" className="block text-sm font-medium text-forest">
-            Upload uw logo (JPG, PNG, WebP of PDF · max. 3 MB)
+          <label
+            htmlFor={inputId}
+            className="block text-sm font-medium text-forest"
+          >
+            Upload uw logo (JPG, PNG, WebP of PDF · max. 3 MB){" "}
+            <span className="text-terracotta">*</span>
           </label>
-          <input
-            id="logo"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
-            className="mt-3 block w-full text-sm text-muted file:mr-4 file:rounded-md file:border-0 file:bg-terracotta file:px-4 file:py-2 file:text-sm file:font-semibold file:text-cream"
-            onChange={(e) => {
-              const file = e.target.files?.[0] ?? null;
-              if (!file) {
-                setLogoFile(null);
-                return;
-              }
-              const okType =
-                /^(image\/(jpeg|png|webp)|application\/pdf)$/i.test(file.type) ||
-                /\.(jpe?g|png|webp|pdf)$/i.test(file.name);
-              if (!okType) {
-                setLogoFile(null);
-                e.target.value = "";
-                return;
-              }
-              setLogoFile(file);
-            }}
-          />
-          {logoFile && <p className="mt-2 text-sm text-muted">{logoFile.name}</p>}
+          {logoFile ? (
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <p className="text-sm font-medium text-forest">
+                Geselecteerd: {logoFile.name}
+              </p>
+              <button
+                type="button"
+                onClick={clearLogo}
+                className="text-sm font-semibold text-terracotta transition-colors hover:text-terracotta-hover"
+              >
+                Verwijder
+              </button>
+            </div>
+          ) : (
+            <input
+              id={inputId}
+              key={`${inputId}-empty`}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
+              className="mt-3 block w-full text-sm text-muted file:mr-4 file:rounded-md file:border-0 file:bg-terracotta file:px-4 file:py-2 file:text-sm file:font-semibold file:text-cream"
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                if (!file) {
+                  setLogoFile(null);
+                  return;
+                }
+                const okType =
+                  /^(image\/(jpeg|png|webp)|application\/pdf)$/i.test(
+                    file.type,
+                  ) || /\.(jpe?g|png|webp|pdf)$/i.test(file.name);
+                if (!okType) {
+                  setLogoFile(null);
+                  e.target.value = "";
+                  onError?.(
+                    `“${file.name}”: enkel JPG, PNG, WebP of PDF toegestaan.`,
+                  );
+                  return;
+                }
+                if (file.size > MAX_IMAGE_BYTES) {
+                  setLogoFile(null);
+                  e.target.value = "";
+                  onError?.(`“${file.name}” is groter dan 3 MB.`);
+                  return;
+                }
+                onError?.("");
+                setLogoFile(file);
+              }}
+            />
+          )}
           <div className="mt-5">
             <TextInput
-              id="brandNotesYes"
+              id={`${inputId}-notes`}
               label="Extra brandinginfo (optioneel)"
               value={brandNotes}
               onChange={setBrandNotes}
@@ -1376,13 +1491,13 @@ function BrandingFields({
       {hasLogo === "nee" && (
         <div className="mt-6">
           <label
-            htmlFor="brandNotes"
+            htmlFor={`${inputId}-brand-notes`}
             className="block text-sm font-medium text-forest-muted"
           >
             Kleurenvoorkeur of andere brandingwensen
           </label>
           <textarea
-            id="brandNotes"
+            id={`${inputId}-brand-notes`}
             rows={4}
             value={brandNotes}
             onChange={(e) => setBrandNotes(e.target.value)}
@@ -1501,19 +1616,26 @@ function SummaryBlock({
   title,
   rows,
   editing,
+  error,
   onEdit,
   onDone,
+  blockRef,
   children,
 }: {
   title: string;
   rows: { label: string; value: string }[];
   editing: boolean;
+  error?: string;
   onEdit: () => void;
   onDone: () => void;
+  blockRef?: (node: HTMLDivElement | null) => void;
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-border/80 bg-cream-dark/30 p-5">
+    <div
+      ref={blockRef}
+      className="rounded-xl border border-border/80 bg-cream-dark/30 p-5"
+    >
       <div className="flex items-start justify-between gap-3">
         <h3 className="font-display text-lg font-semibold text-forest">
           {title}
@@ -1528,7 +1650,14 @@ function SummaryBlock({
       </div>
 
       {editing ? (
-        <div className="mt-5">{children}</div>
+        <div className="mt-5">
+          {children}
+          {error ? (
+            <p className="mt-4 text-sm font-medium text-red-700" role="alert">
+              {error}
+            </p>
+          ) : null}
+        </div>
       ) : (
         <dl className="mt-4 space-y-3">
           {rows.map((row) => (
