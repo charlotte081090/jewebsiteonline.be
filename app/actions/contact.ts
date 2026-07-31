@@ -87,6 +87,10 @@ export async function submitBriefing(
   const showPhone = normalizeYesNo(String(formData.get("showPhone") ?? ""));
   const address = clip(String(formData.get("address") ?? "").trim(), MAX_MEDIUM);
   const showAddress = normalizeYesNo(String(formData.get("showAddress") ?? ""));
+  const openingHours = clip(
+    String(formData.get("openingHours") ?? "").trim(),
+    MAX_MEDIUM,
+  );
   const instagram = clip(
     String(formData.get("instagram") ?? "").trim(),
     MAX_MEDIUM,
@@ -114,6 +118,9 @@ export async function submitBriefing(
     String(formData.get("brandNotes") ?? "").trim(),
     MAX_LONG,
   );
+  const privacyConsent = normalizeYesNo(
+    String(formData.get("privacyConsent") ?? ""),
+  );
   const logo = formData.get("logo");
   const images = formData.getAll("images");
 
@@ -122,12 +129,20 @@ export async function submitBriefing(
     !companyName ||
     !email ||
     !phone ||
+    !openingHours ||
     !sector ||
     !businessInfo ||
     !packageChoice ||
     !hasLogo
   ) {
     return { ok: false, error: "Gelieve alle verplichte velden in te vullen." };
+  }
+
+  if (privacyConsent !== "ja") {
+    return {
+      ok: false,
+      error: "Bevestig dat u akkoord gaat met het privacybeleid.",
+    };
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -250,6 +265,7 @@ export async function submitBriefing(
       question: "Adres tonen op website",
       answer: showAddress === "ja" ? "Ja" : "Nee",
     },
+    { question: "Openingsuren", answer: openingHours },
     { question: "Instagram", answer: instagram || "Niet opgegeven" },
     { question: "Facebook", answer: facebook || "Niet opgegeven" },
     { question: "Andere link", answer: otherSocial || "Niet opgegeven" },
@@ -259,6 +275,10 @@ export async function submitBriefing(
     { question: "Pagina's", answer: selectedPages || "Niet opgegeven" },
     { question: "Logo", answer: hasLogo === "ja" ? "Ja" : "Nee" },
     { question: "Brandingnotities", answer: brandNotes || "Niet opgegeven" },
+    {
+      question: "Privacytoestemming",
+      answer: privacyConsent === "ja" ? "Ja" : "Nee",
+    },
   ];
 
   const { data: order, error: orderError } = await supabase
@@ -376,6 +396,7 @@ export async function submitBriefing(
       <p><strong>Bedrijf:</strong> ${escapeHtml(companyName)}</p>
       <p><strong>Adres:</strong> ${escapeHtml(address || "Niet opgegeven")}</p>
       <p><strong>Adres tonen op website:</strong> ${escapeHtml(showAddress === "ja" ? "Ja" : "Nee")}</p>
+      <p><strong>Openingsuren:</strong><br/>${escapeHtml(openingHours).replace(/\n/g, "<br/>")}</p>
       <p><strong>Instagram:</strong> ${escapeHtml(instagram || "Niet opgegeven")}</p>
       <p><strong>Facebook:</strong> ${escapeHtml(facebook || "Niet opgegeven")}</p>
       <p><strong>Andere link:</strong> ${escapeHtml(otherSocial || "Niet opgegeven")}</p>
@@ -386,6 +407,7 @@ export async function submitBriefing(
       <p><strong>Pagina's:</strong> ${escapeHtml(selectedPages || "Niet opgegeven")}</p>
       <p><strong>Logo:</strong> ${escapeHtml(hasLogo === "ja" ? "Ja" : "Nee")}</p>
       <p><strong>Brandingnotities:</strong><br/>${escapeHtml(brandNotes || "Niet opgegeven").replace(/\n/g, "<br/>")}</p>
+      <p><strong>Privacytoestemming:</strong> ${escapeHtml(privacyConsent === "ja" ? "Ja" : "Nee")}</p>
       <p><strong>Uploads in Storage:</strong> ${escapeHtml(String(uploadPaths.length))}</p>
     `;
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { submitBriefing } from "@/app/actions/contact";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   useEffect,
@@ -93,9 +94,9 @@ const SECTION_SHORT: Record<SectionId, string> = {
 
 function sectionForStep(step: Step): SectionId | null {
   if (step >= 1 && step <= 3) return "contact";
-  if (step >= 4 && step <= 8) return "company";
-  if (step >= 9 && step <= 12) return "website";
-  if (step === 13) return "review";
+  if (step >= 4 && step <= 9) return "company";
+  if (step >= 10 && step <= 13) return "website";
+  if (step === 14) return "review";
   return null;
 }
 
@@ -113,6 +114,7 @@ export function BriefingForm() {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [showAddress, setShowAddress] = useState(true);
+  const [openingHours, setOpeningHours] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [instagram, setInstagram] = useState("");
   const [facebook, setFacebook] = useState("");
@@ -127,6 +129,7 @@ export function BriefingForm() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [brandNotes, setBrandNotes] = useState("");
   const [images, setImages] = useState<File[]>([]);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
@@ -134,14 +137,14 @@ export function BriefingForm() {
   const summaryBlockRefs = useRef<Partial<Record<NonNullable<EditBlock>, HTMLDivElement | null>>>({});
 
   const isIntro = step === 0;
-  const isSummary = step === 13;
+  const isSummary = step === 14;
   const section = sectionForStep(step);
 
   const activeSteps = useMemo(
     () =>
       packageChoice === "1-pagina"
-        ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13]
-        : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+        ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14]
+        : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
     [packageChoice],
   );
 
@@ -220,7 +223,11 @@ export function BriefingForm() {
       setError("Vul het adres van uw zaak in.");
       return;
     }
-    if (step === 7) {
+    if (step === 6 && openingHours.trim().length < 5) {
+      setError("Vul uw openingsuren in.");
+      return;
+    }
+    if (step === 8) {
       if (!sector) {
         setError("Kies een sector.");
         return;
@@ -230,15 +237,15 @@ export function BriefingForm() {
         return;
       }
     }
-    if (step === 8 && businessInfo.trim().length < 20) {
+    if (step === 9 && businessInfo.trim().length < 20) {
       setError("Vertel iets meer over uw zaak (min. 20 tekens).");
       return;
     }
-    if (step === 9 && !packageChoice) {
+    if (step === 10 && !packageChoice) {
       setError("Kies 1-pagina of 3-pagina.");
       return;
     }
-    if (step === 10) {
+    if (step === 11) {
       if (selectedPages.length !== 3) {
         setError("Selecteer precies 3 pagina’s.");
         return;
@@ -248,7 +255,7 @@ export function BriefingForm() {
         return;
       }
     }
-    if (step === 11) {
+    if (step === 12) {
       if (!hasLogo) {
         setError("Geef aan of u een logo heeft.");
         return;
@@ -262,15 +269,19 @@ export function BriefingForm() {
         return;
       }
     }
-    if (step === 13) {
+    if (step === 14) {
       setEditingBlock(null);
       if (!validateSummary()) return;
+      if (!privacyConsent) {
+        setError("Bevestig dat u akkoord gaat met het privacybeleid.");
+        return;
+      }
       submit();
       return;
     }
 
-    if (step === 9 && packageChoice === "1-pagina") {
-      goTo(11, "forward");
+    if (step === 10 && packageChoice === "1-pagina") {
+      goTo(12, "forward");
       return;
     }
 
@@ -296,7 +307,7 @@ export function BriefingForm() {
 
   function updateHasLogo(value: BrandChoice) {
     setHasLogo(value);
-    // Switching answer always drops any previous upload so Check and step 11 stay aligned.
+    // Switching answer always drops any previous upload so Check and logo step stay aligned.
     setLogoFile(null);
   }
 
@@ -317,6 +328,7 @@ export function BriefingForm() {
       if (
         !companyName.trim() ||
         !address.trim() ||
+        openingHours.trim().length < 5 ||
         !sectorLabel ||
         businessInfo.trim().length < 20
       ) {
@@ -363,8 +375,8 @@ export function BriefingForm() {
 
   function back() {
     if (step <= 0) return;
-    if (step === 11 && packageChoice === "1-pagina") {
-      goTo(9, "back");
+    if (step === 12 && packageChoice === "1-pagina") {
+      goTo(10, "back");
       return;
     }
     goTo(step - 1, "back");
@@ -379,6 +391,7 @@ export function BriefingForm() {
     formData.set("companyName", companyName.trim());
     formData.set("address", address.trim());
     formData.set("showAddress", showAddress ? "ja" : "nee");
+    formData.set("openingHours", openingHours.trim());
     formData.set("instagram", instagram.trim());
     formData.set("facebook", facebook.trim());
     formData.set("otherSocial", otherSocial.trim());
@@ -388,6 +401,7 @@ export function BriefingForm() {
     formData.set("selectedPages", pagesLabel);
     formData.set("hasLogo", hasLogo);
     formData.set("brandNotes", brandNotes.trim());
+    formData.set("privacyConsent", privacyConsent ? "ja" : "nee");
     formData.set("imageCount", String(images.length));
     formData.set("website", honeypot);
     if (logoFile) formData.set("logo", logoFile);
@@ -603,6 +617,26 @@ export function BriefingForm() {
 
         {step === 6 && (
           <Question
+            title="Wat zijn uw openingsuren?"
+            hint="Noteer de dagen en uren zoals u ze op de website wilt tonen. Bijvoorbeeld gesloten op zondag of enkel op afspraak."
+          >
+            <label className="sr-only" htmlFor="openingHours">
+              Openingsuren
+            </label>
+            <textarea
+              id="openingHours"
+              rows={4}
+              autoFocus
+              value={openingHours}
+              onChange={(e) => setOpeningHours(e.target.value)}
+              className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream-dark/30 px-4 py-3.5 text-base leading-relaxed text-forest outline-none transition-colors placeholder:text-muted/70 focus:border-terracotta"
+              placeholder="Ma–vr 9:00–18:00, za 10:00–16:00, zo gesloten"
+            />
+          </Question>
+        )}
+
+        {step === 7 && (
+          <Question
             title="Heeft u social media of een bestaande site?"
             hint="Optioneel: plak de links die we mogen gebruiken."
           >
@@ -623,7 +657,7 @@ export function BriefingForm() {
               />
               <TextInput
                 id="otherSocial"
-                label="Andere link (LinkedIn, TikTok, website…)"
+                label="Andere link (LinkedIn, TikTok, website)"
                 value={otherSocial}
                 onChange={setOtherSocial}
                 onEnter={next}
@@ -633,7 +667,7 @@ export function BriefingForm() {
           </Question>
         )}
 
-        {step === 7 && (
+        {step === 8 && (
           <Question title="In welke sector bent u actief?">
             <SectorPicker
               sector={sector}
@@ -645,10 +679,10 @@ export function BriefingForm() {
           </Question>
         )}
 
-        {step === 8 && (
+        {step === 9 && (
           <Question
             title="Vertel iets over uw zaak"
-            hint="Wat doet u, voor wie, welke diensten of producten? Wat wilt u zeker op de website zien, en wat is voor u belangrijk? Hoe meer context, hoe sterker de preview."
+            hint="Beantwoord kort: wat doet u, voor wie, en wat moet zeker op de website staan? Hoe meer context, hoe sterker de preview."
           >
             <label className="sr-only" htmlFor="businessInfo">
               Bedrijfsinfo
@@ -660,12 +694,12 @@ export function BriefingForm() {
               value={businessInfo}
               onChange={(e) => setBusinessInfo(e.target.value)}
               className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream-dark/30 px-4 py-3.5 text-base leading-relaxed text-forest outline-none transition-colors placeholder:text-muted/70 focus:border-terracotta"
-              placeholder="Wij helpen … met … Onze klanten zijn … Op de website willen we zeker …"
+              placeholder="Bijvoorbeeld: Ik heb een kapsalon in Antwerpen. We doen knippen, kleuren en baardverzorging. Onze klanten zijn vooral locals uit de buurt. Op de website wil ik diensten, prijzen en sfeerbeelden van de salon."
             />
           </Question>
         )}
 
-        {step === 9 && (
+        {step === 10 && (
           <Question
             title="Welk pakket past bij u?"
             hint="U kunt later nog bijsturen. Dit helpt ons de preview te richten."
@@ -677,7 +711,7 @@ export function BriefingForm() {
           </Question>
         )}
 
-        {step === 10 && (
+        {step === 11 && (
           <Question
             title="Welke 3 pagina’s wilt u?"
             hint={`Kies precies 3 pagina’s. Geselecteerd: ${selectedPages.length}/3`}
@@ -691,7 +725,7 @@ export function BriefingForm() {
           </Question>
         )}
 
-        {step === 11 && (
+        {step === 12 && (
           <Question title="Heeft u al een logo?">
             <BrandingFields
               key={`logo-step-${hasLogo}-${logoFile?.name ?? "none"}-${logoFile?.lastModified ?? 0}`}
@@ -707,7 +741,7 @@ export function BriefingForm() {
           </Question>
         )}
 
-        {step === 12 && (
+        {step === 13 && (
           <Question
             title="Heeft u beelden voor de website?"
             hint="Upload tot 5 foto’s of visuals. Meer beelden kunt u later toevoegen, nadat de eerste versie klaar is."
@@ -795,6 +829,10 @@ export function BriefingForm() {
                     label: "Adres",
                     value: `${address}${showAddress ? "" : " (niet tonen)"}`,
                   },
+                  {
+                    label: "Openingsuren",
+                    value: openingHours || "Niet ingevuld",
+                  },
                   { label: "Sociale media", value: socialSummary },
                   { label: "Sector", value: sectorLabel || "Niet ingevuld" },
                   { label: "Over de zaak", value: businessInfo },
@@ -818,6 +856,22 @@ export function BriefingForm() {
                     checked={!showAddress}
                     onChange={(hidden) => setShowAddress(!hidden)}
                   />
+                  <div>
+                    <label
+                      htmlFor="edit-openingHours"
+                      className="block text-sm font-medium text-forest-muted"
+                    >
+                      Openingsuren
+                    </label>
+                    <textarea
+                      id="edit-openingHours"
+                      rows={3}
+                      value={openingHours}
+                      onChange={(e) => setOpeningHours(e.target.value)}
+                      className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream px-4 py-3.5 text-base leading-relaxed text-forest outline-none focus:border-terracotta"
+                      placeholder="Ma–vr 9:00–18:00, za 10:00–16:00, zo gesloten"
+                    />
+                  </div>
                   <TextInput
                     id="edit-instagram"
                     label="Instagram"
@@ -855,6 +909,7 @@ export function BriefingForm() {
                       value={businessInfo}
                       onChange={(e) => setBusinessInfo(e.target.value)}
                       className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream px-4 py-3.5 text-base leading-relaxed text-forest outline-none focus:border-terracotta"
+                      placeholder="Bijvoorbeeld: Ik heb een kapsalon in Antwerpen. We doen knippen, kleuren en baardverzorging. Op de website wil ik diensten, prijzen en sfeerbeelden."
                     />
                   </div>
                 </div>
@@ -948,6 +1003,39 @@ export function BriefingForm() {
                 onChange={(e) => setHoneypot(e.target.value)}
               />
             </div>
+
+            <label className="mt-8 flex cursor-pointer items-start gap-3 rounded-xl border border-border/80 bg-cream-dark/30 px-4 py-4">
+              <input
+                type="checkbox"
+                checked={privacyConsent}
+                onChange={(e) => {
+                  setPrivacyConsent(e.target.checked);
+                  if (e.target.checked) setError("");
+                }}
+                className="mt-1 h-4 w-4 shrink-0 accent-terracotta"
+              />
+              <span className="text-sm leading-relaxed text-forest">
+                Ik ga akkoord met het{" "}
+                <Link
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-terracotta underline-offset-2 hover:underline"
+                >
+                  privacybeleid
+                </Link>{" "}
+                en de{" "}
+                <Link
+                  href="/voorwaarden"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-terracotta underline-offset-2 hover:underline"
+                >
+                  algemene voorwaarden
+                </Link>
+                .
+              </span>
+            </label>
           </div>
         )}
 
@@ -984,7 +1072,7 @@ export function BriefingForm() {
                 ? "Start de briefing"
                 : isSummary
                   ? "Bevestigen & versturen"
-                  : step === 12
+                  : step === 13
                     ? "Naar overzicht"
                     : "Volgende"}
           </button>
@@ -1013,9 +1101,9 @@ function StepTimeline({
   const groups = (
     [
       { id: "contact" as const, steps: [1, 2, 3] },
-      { id: "company" as const, steps: [4, 5, 6, 7, 8] },
-      { id: "website" as const, steps: [9, 10, 11, 12] },
-      { id: "review" as const, steps: [13] },
+      { id: "company" as const, steps: [4, 5, 6, 7, 8, 9] },
+      { id: "website" as const, steps: [10, 11, 12, 13] },
+      { id: "review" as const, steps: [14] },
     ] as const
   )
     .map((group) => ({

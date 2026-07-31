@@ -84,6 +84,14 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link
+                    href="/voorwaarden"
+                    className="text-forest-muted transition-colors hover:text-terracotta"
+                  >
+                    Algemene voorwaarden
+                  </Link>
+                </li>
+                <li>
                   <a
                     href="mailto:info@jewebsiteonline.be"
                     className="text-forest-muted transition-colors hover:text-terracotta"
