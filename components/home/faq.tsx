@@ -1,23 +1,28 @@
-import { faqs } from "@/lib/faqs";
+"use client";
+
+import { useLocaleContext } from "@/components/locale-provider";
 
 export function Faq() {
+  const { dict } = useLocaleContext();
+
   return (
-    <section id="faq" className="border-t border-border/70 bg-cream-dark/35">
+    <section
+      id={dict.routes.anchors.faq}
+      className="border-t border-border/70 bg-cream-dark/35"
+    >
       <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">
-            Vragen
+            {dict.faq.eyebrow}
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-forest md:text-4xl">
-            Veelgestelde vragen
+            {dict.faq.title}
           </h2>
-          <p className="mt-4 text-lg text-muted">
-            Antwoorden op wat ondernemers het vaakst vragen vóór hun preview.
-          </p>
+          <p className="mt-4 text-lg text-muted">{dict.faq.intro}</p>
         </div>
 
         <div className="mt-12 divide-y divide-border/80 border-y border-border/80">
-          {faqs.map((item) => (
+          {dict.faq.items.map((item) => (
             <details
               key={item.question}
               className="group py-5 open:pb-6 [&_summary::-webkit-details-marker]:hidden"

@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "jewebsiteonline.be — professionele websites voor KMO's";
+export const alt =
+  "Jewebsiteonline.com — professional websites for small businesses";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -29,8 +30,8 @@ export default function OpenGraphImage() {
             letterSpacing: "-0.02em",
           }}
         >
-          jewebsiteonline
-          <span style={{ color: "#C07F63" }}>.be</span>
+          Jewebsiteonline
+          <span style={{ color: "#C07F63" }}>.com</span>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -45,7 +46,7 @@ export default function OpenGraphImage() {
               maxWidth: 920,
             }}
           >
-            Professionele websites voor Belgische KMO&apos;s
+            Professional websites for small businesses
           </div>
           <div
             style={{
@@ -56,7 +57,7 @@ export default function OpenGraphImage() {
               lineHeight: 1.35,
             }}
           >
-            Gratis preview binnen 48 uur · vanaf €199
+            Free preview within 48 hours · from €199
           </div>
         </div>
 
@@ -70,7 +71,7 @@ export default function OpenGraphImage() {
             color: "#C07F63",
           }}
         >
-          Vraag uw preview aan
+          Request your free preview
         </div>
       </div>
     ),

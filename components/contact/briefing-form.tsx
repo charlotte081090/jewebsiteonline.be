@@ -11,62 +11,46 @@ import {
   useTransition,
   type ReactNode,
 } from "react";
+import { useLocaleContext } from "@/components/locale-provider";
+import type {
+  CountryCode,
+  FormDictionary,
+} from "@/lib/i18n/dictionaries/types";
+import { privacyHref, termsHref, thankYouHref } from "@/lib/i18n/path";
 
-const SECTORS = [
-  "Beauty & wellness",
-  "Horeca",
-  "Coaching & consulting",
-  "Bouw & ambacht",
-  "Retail",
-  "Gezondheid",
-  "Anders",
-] as const;
-
-const PAGE_OPTIONS = [
-  "Home",
-  "Over ons",
-  "Diensten",
-  "Menu",
-  "Galerij",
-  "Contact",
-  "Tarieven",
-  "Team",
-  "Portfolio",
-  "Andere",
-] as const;
-
-const COUNTRY_CODES = [
-  { code: "BE", dial: "+32", label: "België" },
-  { code: "NL", dial: "+31", label: "Nederland" },
-  { code: "DE", dial: "+49", label: "Duitsland" },
-  { code: "FR", dial: "+33", label: "Frankrijk" },
-  { code: "LU", dial: "+352", label: "Luxemburg" },
-  { code: "AT", dial: "+43", label: "Oostenrijk" },
-  { code: "CH", dial: "+41", label: "Zwitserland" },
-  { code: "IT", dial: "+39", label: "Italië" },
-  { code: "ES", dial: "+34", label: "Spanje" },
-  { code: "PT", dial: "+351", label: "Portugal" },
-  { code: "IE", dial: "+353", label: "Ierland" },
-  { code: "GB", dial: "+44", label: "Verenigd Koninkrijk" },
-  { code: "DK", dial: "+45", label: "Denemarken" },
-  { code: "SE", dial: "+46", label: "Zweden" },
-  { code: "NO", dial: "+47", label: "Noorwegen" },
-  { code: "FI", dial: "+358", label: "Finland" },
-  { code: "PL", dial: "+48", label: "Polen" },
-  { code: "CZ", dial: "+420", label: "Tsjechië" },
-  { code: "SK", dial: "+421", label: "Slowakije" },
-  { code: "HU", dial: "+36", label: "Hongarije" },
-  { code: "RO", dial: "+40", label: "Roemenië" },
-  { code: "BG", dial: "+359", label: "Bulgarije" },
-  { code: "GR", dial: "+30", label: "Griekenland" },
-  { code: "HR", dial: "+385", label: "Kroatië" },
-  { code: "SI", dial: "+386", label: "Slovenië" },
-  { code: "EE", dial: "+372", label: "Estland" },
-  { code: "LV", dial: "+371", label: "Letland" },
-  { code: "LT", dial: "+370", label: "Litouwen" },
-  { code: "MT", dial: "+356", label: "Malta" },
-  { code: "CY", dial: "+357", label: "Cyprus" },
-] as const;
+/** Dial codes stay in code; the country names come from the dictionary. */
+const COUNTRY_DIAL_CODES: readonly { code: CountryCode; dial: string }[] = [
+  { code: "BE", dial: "+32" },
+  { code: "NL", dial: "+31" },
+  { code: "DE", dial: "+49" },
+  { code: "FR", dial: "+33" },
+  { code: "LU", dial: "+352" },
+  { code: "AT", dial: "+43" },
+  { code: "CH", dial: "+41" },
+  { code: "IT", dial: "+39" },
+  { code: "ES", dial: "+34" },
+  { code: "PT", dial: "+351" },
+  { code: "IE", dial: "+353" },
+  { code: "GB", dial: "+44" },
+  { code: "DK", dial: "+45" },
+  { code: "SE", dial: "+46" },
+  { code: "NO", dial: "+47" },
+  { code: "FI", dial: "+358" },
+  { code: "PL", dial: "+48" },
+  { code: "CZ", dial: "+420" },
+  { code: "SK", dial: "+421" },
+  { code: "HU", dial: "+36" },
+  { code: "RO", dial: "+40" },
+  { code: "BG", dial: "+359" },
+  { code: "GR", dial: "+30" },
+  { code: "HR", dial: "+385" },
+  { code: "SI", dial: "+386" },
+  { code: "EE", dial: "+372" },
+  { code: "LV", dial: "+371" },
+  { code: "LT", dial: "+370" },
+  { code: "MT", dial: "+356" },
+  { code: "CY", dial: "+357" },
+];
 
 type PackageChoice = "1-pagina" | "3-pagina" | "";
 type BrandChoice = "ja" | "nee" | "";
@@ -78,19 +62,12 @@ const MAX_IMAGES = 5;
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 const MAX_CUSTOM_PAGE = 50;
 
-const SECTION_LABELS: Record<SectionId, string> = {
-  contact: "Contactgegevens",
-  company: "Bedrijfsgegevens",
-  website: "Website & branding",
-  review: "Overzicht",
-};
-
-const SECTION_SHORT: Record<SectionId, string> = {
-  contact: "Contact",
-  company: "Bedrijf",
-  website: "Website",
-  review: "Check",
-};
+function fill(template: string, values: Record<string, string | number>) {
+  return Object.entries(values).reduce(
+    (text, [key, value]) => text.replaceAll(`{${key}}`, String(value)),
+    template,
+  );
+}
 
 function sectionForStep(step: Step): SectionId | null {
   if (step >= 1 && step <= 3) return "contact";
@@ -101,6 +78,11 @@ function sectionForStep(step: Step): SectionId | null {
 }
 
 export function BriefingForm() {
+  const { locale, dict } = useLocaleContext();
+  const t = dict.form;
+  const otherSector = t.sectors[t.sectors.length - 1] ?? "";
+  const otherPage = t.pages[t.pages.length - 1] ?? "";
+
   const router = useRouter();
   const [step, setStep] = useState<Step>(0);
   const [direction, setDirection] = useState<"forward" | "back">("forward");
@@ -153,17 +135,31 @@ export function BriefingForm() {
   const questionNumber = stepIndex >= 0 ? stepIndex + 1 : 0;
 
   const dialCode =
-    COUNTRY_CODES.find((c) => c.code === countryCode)?.dial ?? "+32";
+    COUNTRY_DIAL_CODES.find((c) => c.code === countryCode)?.dial ?? "+32";
   const fullPhone = `${dialCode} ${phone.trim()}`.trim();
-  const sectorLabel = sector === "Anders" ? sectorOther.trim() : sector;
+  const sectorLabel = sector === otherSector ? sectorOther.trim() : sector;
 
   const resolvedPages = selectedPages.map((page) =>
-    page === "Andere" ? customPage.trim() || "Andere" : page,
+    page === otherPage ? customPage.trim() || otherPage : page,
   );
   const pagesLabel =
     packageChoice === "3-pagina"
       ? resolvedPages.join(", ")
-      : "Home (1-pagina)";
+      : t.summary.homeOnePage;
+
+  const packagePrices = {
+    onePage:
+      dict.pricing.packages.find((p) => p.id === "one-page")?.price ?? "€199",
+    threePage:
+      dict.pricing.packages.find((p) => p.id === "three-page")?.price ?? "€349",
+  };
+
+  const packageLabel =
+    packageChoice === "1-pagina"
+      ? t.packages.onePage.label
+      : packageChoice === "3-pagina"
+        ? t.packages.threePage.label
+        : t.summary.notChosen;
 
   const imagePreviews = useMemo(
     () => images.map((file) => ({ file, url: URL.createObjectURL(file) })),
@@ -198,74 +194,74 @@ export function BriefingForm() {
     setError("");
 
     if (step === 1 && !contactPerson.trim()) {
-      setError("Vul de naam van de contactpersoon in.");
+      setError(t.errors.contactPerson);
       return;
     }
     if (step === 2 && !phone.trim()) {
-      setError("Vul een telefoonnummer in.");
+      setError(t.errors.phone);
       return;
     }
     if (step === 3) {
       if (!email.trim()) {
-        setError("Vul een e-mailadres in.");
+        setError(t.errors.email);
         return;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-        setError("Ongeldig e-mailadres.");
+        setError(t.errors.emailInvalid);
         return;
       }
     }
     if (step === 4 && !companyName.trim()) {
-      setError("Vul de bedrijfsnaam in.");
+      setError(t.errors.companyName);
       return;
     }
     if (step === 5 && !address.trim()) {
-      setError("Vul het adres van uw zaak in.");
+      setError(t.errors.address);
       return;
     }
     if (step === 6 && openingHours.trim().length < 5) {
-      setError("Vul uw openingsuren in.");
+      setError(t.errors.openingHours);
       return;
     }
     if (step === 8) {
       if (!sector) {
-        setError("Kies een sector.");
+        setError(t.errors.sector);
         return;
       }
-      if (sector === "Anders" && !sectorOther.trim()) {
-        setError("Beschrijf kort uw sector.");
+      if (sector === otherSector && !sectorOther.trim()) {
+        setError(t.errors.sectorOther);
         return;
       }
     }
     if (step === 9 && businessInfo.trim().length < 20) {
-      setError("Vertel iets meer over uw zaak (min. 20 tekens).");
+      setError(t.errors.businessInfo);
       return;
     }
     if (step === 10 && !packageChoice) {
-      setError("Kies 1-pagina of 3-pagina.");
+      setError(t.errors.packageChoice);
       return;
     }
     if (step === 11) {
       if (selectedPages.length !== 3) {
-        setError("Selecteer precies 3 pagina’s.");
+        setError(t.errors.pagesExactly3);
         return;
       }
-      if (selectedPages.includes("Andere") && !customPage.trim()) {
-        setError("Vul de naam van de andere pagina in.");
+      if (selectedPages.includes(otherPage) && !customPage.trim()) {
+        setError(t.errors.customPage);
         return;
       }
     }
     if (step === 12) {
       if (!hasLogo) {
-        setError("Geef aan of u een logo heeft.");
+        setError(t.errors.logoChoice);
         return;
       }
       if (hasLogo === "ja" && !logoFile) {
-        setError("Upload uw logo om verder te gaan.");
+        setError(t.errors.logoUpload);
         return;
       }
       if (hasLogo === "nee" && !brandNotes.trim()) {
-        setError("Deel kort uw kleuren- of brandingvoorkeur.");
+        setError(t.errors.brandNotes);
         return;
       }
     }
@@ -273,7 +269,7 @@ export function BriefingForm() {
       setEditingBlock(null);
       if (!validateSummary()) return;
       if (!privacyConsent) {
-        setError("Bevestig dat u akkoord gaat met het privacybeleid.");
+        setError(t.errors.consent);
         return;
       }
       submit();
@@ -314,11 +310,11 @@ export function BriefingForm() {
   function validateSummaryBlock(block: NonNullable<EditBlock>) {
     if (block === "contact") {
       if (!contactPerson.trim() || !phone.trim() || !email.trim()) {
-        openSummaryBlock("contact", "Vul de contactgegevens volledig in.");
+        openSummaryBlock("contact", t.errors.contactIncomplete);
         return false;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-        openSummaryBlock("contact", "Ongeldig e-mailadres.");
+        openSummaryBlock("contact", t.errors.emailInvalid);
         return false;
       }
       return true;
@@ -332,35 +328,32 @@ export function BriefingForm() {
         !sectorLabel ||
         businessInfo.trim().length < 20
       ) {
-        openSummaryBlock("company", "Vul de bedrijfsgegevens volledig in.");
+        openSummaryBlock("company", t.errors.companyIncomplete);
         return false;
       }
       return true;
     }
 
     if (!packageChoice || !hasLogo) {
-      openSummaryBlock("website", "Vul de websitegegevens volledig in.");
+      openSummaryBlock("website", t.errors.websiteIncomplete);
       return false;
     }
     if (packageChoice === "3-pagina") {
       if (selectedPages.length !== 3) {
-        openSummaryBlock("website", "Selecteer precies 3 pagina’s.");
+        openSummaryBlock("website", t.errors.pagesExactly3);
         return false;
       }
-      if (selectedPages.includes("Andere") && !customPage.trim()) {
-        openSummaryBlock("website", "Vul de naam van de andere pagina in.");
+      if (selectedPages.includes(otherPage) && !customPage.trim()) {
+        openSummaryBlock("website", t.errors.customPage);
         return false;
       }
     }
     if (hasLogo === "ja" && !logoFile) {
-      openSummaryBlock("website", "Upload uw logo om verder te gaan.");
+      openSummaryBlock("website", t.errors.logoUpload);
       return false;
     }
     if (hasLogo === "nee" && !brandNotes.trim()) {
-      openSummaryBlock(
-        "website",
-        "Deel kort uw kleuren- of brandingvoorkeur.",
-      );
+      openSummaryBlock("website", t.errors.brandNotes);
       return false;
     }
     return true;
@@ -384,6 +377,7 @@ export function BriefingForm() {
 
   function submit() {
     const formData = new FormData();
+    formData.set("locale", locale);
     formData.set("contactPerson", contactPerson.trim());
     formData.set("phone", fullPhone);
     formData.set("showPhone", showPhone ? "ja" : "nee");
@@ -414,14 +408,14 @@ export function BriefingForm() {
         return;
       }
       const naam = encodeURIComponent(contactPerson.trim());
-      router.push(`/bedankt?naam=${naam}`);
+      router.push(`${thankYouHref(locale, dict)}?naam=${naam}`);
     });
   }
 
   function togglePage(page: string) {
     setSelectedPages((current) => {
       if (current.includes(page)) {
-        if (page === "Andere") setCustomPage("");
+        if (page === otherPage) setCustomPage("");
         return current.filter((p) => p !== page);
       }
       if (current.length >= 3) return current;
@@ -448,14 +442,12 @@ export function BriefingForm() {
         ),
     );
     if (invalid) {
-      setError(
-        `“${invalid.name}”: enkel JPG, PNG, WebP of GIF toegestaan.`,
-      );
+      setError(fill(t.errors.imageType, { name: invalid.name }));
       return;
     }
     const tooBig = incoming.find((f) => f.size > MAX_IMAGE_BYTES);
     if (tooBig) {
-      setError(`“${tooBig.name}” is groter dan 3 MB.`);
+      setError(fill(t.errors.fileTooBig, { name: tooBig.name }));
       return;
     }
     setError("");
@@ -475,12 +467,22 @@ export function BriefingForm() {
 
   const socialSummary =
     [instagram, facebook, otherSocial].filter(Boolean).join(", ") ||
-    "Niet ingevuld";
+    t.summary.notFilled;
+
+  const logoSummary =
+    hasLogo === "ja"
+      ? logoFile
+        ? fill(t.logo.selected, { name: logoFile.name })
+        : t.logo.yes
+      : hasLogo === "nee"
+        ? t.logo.no
+        : t.summary.notFilled;
 
   return (
     <div className="mx-auto w-full max-w-2xl">
       {!isIntro && (
         <StepTimeline
+          t={t}
           activeSteps={activeSteps}
           currentStep={step}
           maxReached={Math.max(maxReached, step)}
@@ -500,22 +502,16 @@ export function BriefingForm() {
         {isIntro && (
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">
-              Gratis preview
+              {t.intro.eyebrow}
             </p>
             <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-forest md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
-              Klaar voor uw nieuwe website?
+              {t.intro.title}
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-              Neem 10 tot 15 minuten om deze briefing in te vullen. Hoe
-              vollediger uw antwoorden, hoe beter wij een gratis preview kunnen
-              maken die past bij uw zaak. U ontvangt die binnen 48 uur.
+              {t.intro.body}
             </p>
             <ul className="mt-8 space-y-3">
-              {[
-                "Geen technische kennis nodig",
-                "Gratis preview binnen 48 uur",
-                "Live na goedkeuring",
-              ].map((item) => (
+              {t.intro.bullets.map((item) => (
                 <li
                   key={item}
                   className="flex items-center gap-2.5 text-sm font-medium text-forest-muted"
@@ -532,25 +528,23 @@ export function BriefingForm() {
         )}
 
         {step === 1 && (
-          <Question title="Wie is de contactpersoon?">
+          <Question title={t.questions.q1title}>
             <TextInput
               id="contactPerson"
-              label="Voor- en achternaam"
+              label={t.labels.contactPerson}
               value={contactPerson}
               onChange={setContactPerson}
               onEnter={next}
-              placeholder="Jan Janssen"
+              placeholder={t.placeholders.contactPerson}
               autoFocus
             />
           </Question>
         )}
 
         {step === 2 && (
-          <Question
-            title="Wat is uw telefoonnummer?"
-            hint="Kies eerst de landcode. Handig voor contact, tenzij u dit liever verborgen houdt."
-          >
+          <Question title={t.questions.q2title} hint={t.questions.q2hint}>
             <PhoneFields
+              t={t}
               countryCode={countryCode}
               setCountryCode={setCountryCode}
               phone={phone}
@@ -564,51 +558,48 @@ export function BriefingForm() {
         )}
 
         {step === 3 && (
-          <Question title="Wat is uw e-mailadres?">
+          <Question title={t.questions.q3title}>
             <TextInput
               id="email"
-              label="E-mail"
+              label={t.labels.email}
               type="email"
               autoComplete="email"
               value={email}
               onChange={setEmail}
               onEnter={next}
-              placeholder="naam@bedrijf.be"
+              placeholder={t.placeholders.email}
               autoFocus
             />
           </Question>
         )}
 
         {step === 4 && (
-          <Question title="Wat is de naam van uw bedrijf?">
+          <Question title={t.questions.q4title}>
             <TextInput
               id="companyName"
-              label="Bedrijfsnaam"
+              label={t.labels.companyName}
               value={companyName}
               onChange={setCompanyName}
               onEnter={next}
-              placeholder="Uw bedrijfsnaam"
+              placeholder={t.placeholders.companyName}
               autoFocus
             />
           </Question>
         )}
 
         {step === 5 && (
-          <Question
-            title="Wat is het adres van uw zaak?"
-            hint="Handig voor Google Maps en lokale SEO, tenzij u dit liever verborgen houdt."
-          >
+          <Question title={t.questions.q5title} hint={t.questions.q5hint}>
             <TextInput
               id="address"
-              label="Adres"
+              label={t.labels.address}
               value={address}
               onChange={setAddress}
               onEnter={next}
-              placeholder="Straat 1, 1000 Brussel"
+              placeholder={t.placeholders.address}
               autoFocus
             />
             <PrivacyToggle
-              label="Adres niet tonen op de website"
+              label={t.labels.hideAddress}
               checked={!showAddress}
               onChange={(hidden) => setShowAddress(!hidden)}
             />
@@ -616,12 +607,9 @@ export function BriefingForm() {
         )}
 
         {step === 6 && (
-          <Question
-            title="Wat zijn uw openingsuren?"
-            hint="Noteer de dagen en uren zoals u ze op de website wilt tonen. Bijvoorbeeld gesloten op zondag of enkel op afspraak."
-          >
+          <Question title={t.questions.q6title} hint={t.questions.q6hint}>
             <label className="sr-only" htmlFor="openingHours">
-              Openingsuren
+              {t.labels.openingHours}
             </label>
             <textarea
               id="openingHours"
@@ -630,46 +618,44 @@ export function BriefingForm() {
               value={openingHours}
               onChange={(e) => setOpeningHours(e.target.value)}
               className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream-dark/30 px-4 py-3.5 text-base leading-relaxed text-forest outline-none transition-colors placeholder:text-muted/70 focus:border-terracotta"
-              placeholder="Ma–vr 9:00–18:00, za 10:00–16:00, zo gesloten"
+              placeholder={t.placeholders.openingHours}
             />
           </Question>
         )}
 
         {step === 7 && (
-          <Question
-            title="Heeft u social media of een bestaande site?"
-            hint="Optioneel: plak de links die we mogen gebruiken."
-          >
+          <Question title={t.questions.q7title} hint={t.questions.q7hint}>
             <div className="space-y-5">
               <TextInput
                 id="instagram"
-                label="Instagram"
+                label={t.labels.instagram}
                 value={instagram}
                 onChange={setInstagram}
-                placeholder="instagram.com/uwzaak"
+                placeholder={t.placeholders.instagram}
               />
               <TextInput
                 id="facebook"
-                label="Facebook"
+                label={t.labels.facebook}
                 value={facebook}
                 onChange={setFacebook}
-                placeholder="facebook.com/uwzaak"
+                placeholder={t.placeholders.facebook}
               />
               <TextInput
                 id="otherSocial"
-                label="Andere link (LinkedIn, TikTok, website)"
+                label={t.labels.otherSocial}
                 value={otherSocial}
                 onChange={setOtherSocial}
                 onEnter={next}
-                placeholder="https://"
+                placeholder={t.placeholders.otherSocial}
               />
             </div>
           </Question>
         )}
 
         {step === 8 && (
-          <Question title="In welke sector bent u actief?">
+          <Question title={t.questions.q8title}>
             <SectorPicker
+              t={t}
               sector={sector}
               setSector={setSector}
               sectorOther={sectorOther}
@@ -680,12 +666,9 @@ export function BriefingForm() {
         )}
 
         {step === 9 && (
-          <Question
-            title="Vertel iets over uw zaak"
-            hint="Beantwoord kort: wat doet u, voor wie, en wat moet zeker op de website staan? Hoe meer context, hoe sterker de preview."
-          >
+          <Question title={t.questions.q9title} hint={t.questions.q9hint}>
             <label className="sr-only" htmlFor="businessInfo">
-              Bedrijfsinfo
+              {t.labels.businessInfo}
             </label>
             <textarea
               id="businessInfo"
@@ -694,17 +677,16 @@ export function BriefingForm() {
               value={businessInfo}
               onChange={(e) => setBusinessInfo(e.target.value)}
               className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream-dark/30 px-4 py-3.5 text-base leading-relaxed text-forest outline-none transition-colors placeholder:text-muted/70 focus:border-terracotta"
-              placeholder="Bijvoorbeeld: Ik heb een kapsalon in Antwerpen. We doen knippen, kleuren en baardverzorging. Onze klanten zijn vooral locals uit de buurt. Op de website wil ik diensten, prijzen en sfeerbeelden van de salon."
+              placeholder={t.placeholders.businessInfo}
             />
           </Question>
         )}
 
         {step === 10 && (
-          <Question
-            title="Welk pakket past bij u?"
-            hint="U kunt later nog bijsturen. Dit helpt ons de preview te richten."
-          >
+          <Question title={t.questions.q10title} hint={t.questions.q10hint}>
             <PackagePicker
+              t={t}
+              prices={packagePrices}
               packageChoice={packageChoice}
               onSelect={selectPackage}
             />
@@ -713,10 +695,11 @@ export function BriefingForm() {
 
         {step === 11 && (
           <Question
-            title="Welke 3 pagina’s wilt u?"
-            hint={`Kies precies 3 pagina’s. Geselecteerd: ${selectedPages.length}/3`}
+            title={t.questions.q11title}
+            hint={fill(t.questions.q11hint, { count: selectedPages.length })}
           >
             <PagePicker
+              t={t}
               selectedPages={selectedPages}
               customPage={customPage}
               setCustomPage={setCustomPage}
@@ -726,9 +709,10 @@ export function BriefingForm() {
         )}
 
         {step === 12 && (
-          <Question title="Heeft u al een logo?">
+          <Question title={t.questions.q12title}>
             <BrandingFields
               key={`logo-step-${hasLogo}-${logoFile?.name ?? "none"}-${logoFile?.lastModified ?? 0}`}
+              t={t}
               inputId="logo-step"
               hasLogo={hasLogo}
               setHasLogo={updateHasLogo}
@@ -742,11 +726,9 @@ export function BriefingForm() {
         )}
 
         {step === 13 && (
-          <Question
-            title="Heeft u beelden voor de website?"
-            hint="Upload tot 5 foto’s of visuals. Meer beelden kunt u later toevoegen, nadat de eerste versie klaar is."
-          >
+          <Question title={t.questions.q13title} hint={t.questions.q13hint}>
             <ImageUpload
+              t={t}
               images={images}
               imagePreviews={imagePreviews}
               onAdd={addImages}
@@ -758,15 +740,14 @@ export function BriefingForm() {
         {isSummary && (
           <div className="relative">
             <h2 className="font-display text-2xl font-semibold tracking-tight text-forest md:text-3xl">
-              Controleer uw briefing
+              {t.summary.title}
             </h2>
-            <p className="mt-3 text-base text-muted">
-              Klopt alles? Pas iets aan via Wijzig, of bevestig om te versturen.
-            </p>
+            <p className="mt-3 text-base text-muted">{t.summary.intro}</p>
 
             <div className="mt-8 space-y-5">
               <SummaryBlock
-                title="Contactgegevens"
+                t={t}
+                title={t.blocks.contact}
                 editing={editingBlock === "contact"}
                 error={editingBlock === "contact" ? error : ""}
                 onEdit={() => {
@@ -778,22 +759,23 @@ export function BriefingForm() {
                   summaryBlockRefs.current.contact = node;
                 }}
                 rows={[
-                  { label: "Contactpersoon", value: contactPerson },
+                  { label: t.labels.rowContactPerson, value: contactPerson },
                   {
-                    label: "Telefoon",
-                    value: `${fullPhone}${showPhone ? "" : " (niet tonen)"}`,
+                    label: t.labels.rowPhone,
+                    value: `${fullPhone}${showPhone ? "" : t.summary.notShow}`,
                   },
-                  { label: "E-mail", value: email },
+                  { label: t.labels.rowEmail, value: email },
                 ]}
               >
                 <div className="space-y-5">
                   <TextInput
                     id="edit-contactPerson"
-                    label="Contactpersoon"
+                    label={t.labels.rowContactPerson}
                     value={contactPerson}
                     onChange={setContactPerson}
                   />
                   <PhoneFields
+                    t={t}
                     countryCode={countryCode}
                     setCountryCode={setCountryCode}
                     phone={phone}
@@ -803,7 +785,7 @@ export function BriefingForm() {
                   />
                   <TextInput
                     id="edit-email"
-                    label="E-mail"
+                    label={t.labels.email}
                     type="email"
                     value={email}
                     onChange={setEmail}
@@ -812,7 +794,8 @@ export function BriefingForm() {
               </SummaryBlock>
 
               <SummaryBlock
-                title="Bedrijfsgegevens"
+                t={t}
+                title={t.blocks.company}
                 editing={editingBlock === "company"}
                 error={editingBlock === "company" ? error : ""}
                 onEdit={() => {
@@ -824,35 +807,38 @@ export function BriefingForm() {
                   summaryBlockRefs.current.company = node;
                 }}
                 rows={[
-                  { label: "Bedrijf", value: companyName },
+                  { label: t.labels.rowCompany, value: companyName },
                   {
-                    label: "Adres",
-                    value: `${address}${showAddress ? "" : " (niet tonen)"}`,
+                    label: t.labels.rowAddress,
+                    value: `${address}${showAddress ? "" : t.summary.notShow}`,
                   },
                   {
-                    label: "Openingsuren",
-                    value: openingHours || "Niet ingevuld",
+                    label: t.labels.rowOpeningHours,
+                    value: openingHours || t.summary.notFilled,
                   },
-                  { label: "Sociale media", value: socialSummary },
-                  { label: "Sector", value: sectorLabel || "Niet ingevuld" },
-                  { label: "Over de zaak", value: businessInfo },
+                  { label: t.labels.rowSocial, value: socialSummary },
+                  {
+                    label: t.labels.rowSector,
+                    value: sectorLabel || t.summary.notFilled,
+                  },
+                  { label: t.labels.rowAbout, value: businessInfo },
                 ]}
               >
                 <div className="space-y-5">
                   <TextInput
                     id="edit-companyName"
-                    label="Bedrijfsnaam"
+                    label={t.labels.companyName}
                     value={companyName}
                     onChange={setCompanyName}
                   />
                   <TextInput
                     id="edit-address"
-                    label="Adres"
+                    label={t.labels.address}
                     value={address}
                     onChange={setAddress}
                   />
                   <PrivacyToggle
-                    label="Adres niet tonen op de website"
+                    label={t.labels.hideAddress}
                     checked={!showAddress}
                     onChange={(hidden) => setShowAddress(!hidden)}
                   />
@@ -861,7 +847,7 @@ export function BriefingForm() {
                       htmlFor="edit-openingHours"
                       className="block text-sm font-medium text-forest-muted"
                     >
-                      Openingsuren
+                      {t.labels.openingHours}
                     </label>
                     <textarea
                       id="edit-openingHours"
@@ -869,28 +855,29 @@ export function BriefingForm() {
                       value={openingHours}
                       onChange={(e) => setOpeningHours(e.target.value)}
                       className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream px-4 py-3.5 text-base leading-relaxed text-forest outline-none focus:border-terracotta"
-                      placeholder="Ma–vr 9:00–18:00, za 10:00–16:00, zo gesloten"
+                      placeholder={t.placeholders.openingHours}
                     />
                   </div>
                   <TextInput
                     id="edit-instagram"
-                    label="Instagram"
+                    label={t.labels.instagram}
                     value={instagram}
                     onChange={setInstagram}
                   />
                   <TextInput
                     id="edit-facebook"
-                    label="Facebook"
+                    label={t.labels.facebook}
                     value={facebook}
                     onChange={setFacebook}
                   />
                   <TextInput
                     id="edit-otherSocial"
-                    label="Andere link"
+                    label={t.labels.otherSocialShort}
                     value={otherSocial}
                     onChange={setOtherSocial}
                   />
                   <SectorPicker
+                    t={t}
                     sector={sector}
                     setSector={setSector}
                     sectorOther={sectorOther}
@@ -901,7 +888,7 @@ export function BriefingForm() {
                       htmlFor="edit-businessInfo"
                       className="block text-sm font-medium text-forest-muted"
                     >
-                      Over de zaak
+                      {t.labels.rowAbout}
                     </label>
                     <textarea
                       id="edit-businessInfo"
@@ -909,14 +896,15 @@ export function BriefingForm() {
                       value={businessInfo}
                       onChange={(e) => setBusinessInfo(e.target.value)}
                       className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream px-4 py-3.5 text-base leading-relaxed text-forest outline-none focus:border-terracotta"
-                      placeholder="Bijvoorbeeld: Ik heb een kapsalon in Antwerpen. We doen knippen, kleuren en baardverzorging. Op de website wil ik diensten, prijzen en sfeerbeelden."
+                      placeholder={t.placeholders.businessInfoShort}
                     />
                   </div>
                 </div>
               </SummaryBlock>
 
               <SummaryBlock
-                title="Website & branding"
+                t={t}
+                title={t.blocks.website}
                 editing={editingBlock === "website"}
                 error={editingBlock === "website" ? error : ""}
                 onEdit={() => {
@@ -928,39 +916,32 @@ export function BriefingForm() {
                   summaryBlockRefs.current.website = node;
                 }}
                 rows={[
-                  { label: "Pakket", value: packageChoice || "Niet gekozen" },
-                  { label: "Pagina’s", value: pagesLabel },
+                  { label: t.labels.rowPackage, value: packageLabel },
+                  { label: t.labels.rowPages, value: pagesLabel },
+                  { label: t.labels.rowLogo, value: logoSummary },
                   {
-                    label: "Logo",
-                    value:
-                      hasLogo === "ja"
-                        ? logoFile
-                          ? `Ja, ${logoFile.name}`
-                          : "Ja"
-                        : hasLogo === "nee"
-                          ? "Nee"
-                          : "Niet ingevuld",
+                    label: t.labels.rowBranding,
+                    value: brandNotes || t.summary.notFilled,
                   },
                   {
-                    label: "Branding",
-                    value: brandNotes || "Niet ingevuld",
-                  },
-                  {
-                    label: "Beelden",
+                    label: t.labels.rowImages,
                     value:
                       images.length > 0
-                        ? `${images.length} bestand${images.length === 1 ? "" : "en"}`
-                        : "Geen upload",
+                        ? fill(t.summary.files, { count: images.length })
+                        : t.summary.noUpload,
                   },
                 ]}
               >
                 <div className="space-y-6">
                   <PackagePicker
+                    t={t}
+                    prices={packagePrices}
                     packageChoice={packageChoice}
                     onSelect={selectPackage}
                   />
                   {packageChoice === "3-pagina" && (
                     <PagePicker
+                      t={t}
                       selectedPages={selectedPages}
                       customPage={customPage}
                       setCustomPage={setCustomPage}
@@ -969,6 +950,7 @@ export function BriefingForm() {
                   )}
                   <BrandingFields
                     key={`logo-check-${hasLogo}-${logoFile?.name ?? "none"}-${logoFile?.lastModified ?? 0}`}
+                    t={t}
                     inputId="logo-check"
                     hasLogo={hasLogo}
                     setHasLogo={updateHasLogo}
@@ -979,6 +961,7 @@ export function BriefingForm() {
                     onError={setError}
                   />
                   <ImageUpload
+                    t={t}
                     images={images}
                     imagePreviews={imagePreviews}
                     onAdd={addImages}
@@ -1015,25 +998,25 @@ export function BriefingForm() {
                 className="mt-1 h-4 w-4 shrink-0 accent-terracotta"
               />
               <span className="text-sm leading-relaxed text-forest">
-                Ik ga akkoord met het{" "}
+                {t.consent.before}
                 <Link
-                  href="/privacy"
+                  href={privacyHref(locale, dict)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-semibold text-terracotta underline-offset-2 hover:underline"
                 >
-                  privacybeleid
-                </Link>{" "}
-                en de{" "}
-                <Link
-                  href="/voorwaarden"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-terracotta underline-offset-2 hover:underline"
-                >
-                  algemene voorwaarden
+                  {t.consent.privacy}
                 </Link>
-                .
+                {t.consent.middle}
+                <Link
+                  href={termsHref(locale, dict)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-terracotta underline-offset-2 hover:underline"
+                >
+                  {t.consent.terms}
+                </Link>
+                {t.consent.after}
               </span>
             </label>
           </div>
@@ -1055,7 +1038,7 @@ export function BriefingForm() {
               disabled={pending}
               className="text-sm font-medium text-muted transition-colors hover:text-forest disabled:opacity-50"
             >
-              Terug
+              {t.nav.back}
             </button>
           ) : (
             <span />
@@ -1067,14 +1050,14 @@ export function BriefingForm() {
             className="rounded-md bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover disabled:opacity-60"
           >
             {pending
-              ? "Verzenden…"
+              ? t.nav.submitting
               : isIntro
-                ? "Start de briefing"
+                ? t.intro.start
                 : isSummary
-                  ? "Bevestigen & versturen"
+                  ? t.nav.submit
                   : step === 13
-                    ? "Naar overzicht"
-                    : "Volgende"}
+                    ? t.nav.toSummary
+                    : t.nav.next}
           </button>
         </div>
     </div>
@@ -1082,6 +1065,7 @@ export function BriefingForm() {
 }
 
 function StepTimeline({
+  t,
   activeSteps,
   currentStep,
   maxReached,
@@ -1090,6 +1074,7 @@ function StepTimeline({
   section,
   onJump,
 }: {
+  t: FormDictionary;
   activeSteps: number[];
   currentStep: number;
   maxReached: number;
@@ -1118,14 +1103,17 @@ function StepTimeline({
     <div className="mb-10">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">
-          {section ? SECTION_LABELS[section] : "Briefing"}
+          {section ? t.sections[section] : t.progress.briefing}
         </p>
         <p className="text-xs font-medium tracking-wide text-muted">
-          Stap {questionNumber} van {totalQuestions}
+          {fill(t.progress.stepOf, {
+            current: questionNumber,
+            total: totalQuestions,
+          })}
         </p>
       </div>
 
-      <div className="relative pt-1" aria-label="Voortgang briefing">
+      <div className="relative pt-1" aria-label={t.progress.aria}>
         <div className="absolute top-[1.15rem] right-2 left-2 h-px bg-border" />
         <div
           className="absolute top-[1.15rem] left-2 h-px bg-terracotta/45 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
@@ -1152,7 +1140,7 @@ function StepTimeline({
                     activeGroup ? "text-terracotta" : "text-muted/70"
                   }`}
                 >
-                  {SECTION_SHORT[group.id]}
+                  {t.sectionsShort[group.id]}
                 </p>
                 <ol className="flex w-full items-center justify-center gap-2 sm:gap-2.5">
                   {group.steps.map((s) => {
@@ -1160,15 +1148,19 @@ function StepTimeline({
                     const done = index < currentIndex;
                     const active = index === currentIndex;
                     const clickable = s <= maxReached;
+                    const stepLabel = fill(t.progress.stepOf, {
+                      current: index + 1,
+                      total: activeSteps.length,
+                    });
                     return (
                       <li key={s}>
                         <button
                           type="button"
                           disabled={!clickable}
                           onClick={() => onJump(s)}
-                          aria-label={`${SECTION_LABELS[group.id]}, stap ${index + 1}`}
+                          aria-label={`${t.sections[group.id]}, ${stepLabel}`}
                           aria-current={active ? "step" : undefined}
-                          title={`${SECTION_SHORT[group.id]} · stap ${index + 1}`}
+                          title={`${t.sectionsShort[group.id]} · ${stepLabel}`}
                           className={`relative flex items-center justify-center rounded-full border-2 bg-cream transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                             active
                               ? "h-5 w-5 scale-125 border-terracotta"
@@ -1229,6 +1221,7 @@ function Question({
 }
 
 function PhoneFields({
+  t,
   countryCode,
   setCountryCode,
   phone,
@@ -1238,6 +1231,7 @@ function PhoneFields({
   onEnter,
   autoFocus = false,
 }: {
+  t: FormDictionary;
   countryCode: string;
   setCountryCode: (value: string) => void;
   phone: string;
@@ -1255,7 +1249,7 @@ function PhoneFields({
             htmlFor="countryCode"
             className="block text-sm font-medium text-forest-muted"
           >
-            Landcode
+            {t.labels.countryCode}
           </label>
           <select
             id="countryCode"
@@ -1263,17 +1257,17 @@ function PhoneFields({
             onChange={(e) => setCountryCode(e.target.value)}
             className="mt-2 w-full appearance-none border-b-2 border-border bg-transparent py-3 text-lg text-forest outline-none transition-colors focus:border-terracotta"
           >
-            <optgroup label="Vaak gekozen">
-              {COUNTRY_CODES.slice(0, 3).map((c) => (
+            <optgroup label={t.countries.oftenChosen}>
+              {COUNTRY_DIAL_CODES.slice(0, 3).map((c) => (
                 <option key={c.code} value={c.code}>
-                  {c.dial} {c.label}
+                  {c.dial} {t.countries.labels[c.code]}
                 </option>
               ))}
             </optgroup>
-            <optgroup label="Europa">
-              {COUNTRY_CODES.slice(3).map((c) => (
+            <optgroup label={t.countries.europe}>
+              {COUNTRY_DIAL_CODES.slice(3).map((c) => (
                 <option key={c.code} value={c.code}>
-                  {c.dial} {c.label}
+                  {c.dial} {t.countries.labels[c.code]}
                 </option>
               ))}
             </optgroup>
@@ -1282,19 +1276,19 @@ function PhoneFields({
         <div className="flex-1">
           <TextInput
             id="phone"
-            label="Nummer"
+            label={t.labels.phoneNumber}
             type="tel"
             autoComplete="tel-national"
             value={phone}
             onChange={setPhone}
             onEnter={onEnter}
-            placeholder="470 12 34 56"
+            placeholder={t.placeholders.phone}
             autoFocus={autoFocus}
           />
         </div>
       </div>
       <PrivacyToggle
-        label="Telefoonnummer niet tonen op de website"
+        label={t.labels.hidePhone}
         checked={!showPhone}
         onChange={(hidden) => setShowPhone(!hidden)}
       />
@@ -1303,22 +1297,26 @@ function PhoneFields({
 }
 
 function SectorPicker({
+  t,
   sector,
   setSector,
   sectorOther,
   setSectorOther,
   onEnter,
 }: {
+  t: FormDictionary;
   sector: string;
   setSector: (value: string) => void;
   sectorOther: string;
   setSectorOther: (value: string) => void;
   onEnter?: () => void;
 }) {
+  const otherSector = t.sectors[t.sectors.length - 1] ?? "";
+
   return (
     <>
       <div className="grid gap-3 sm:grid-cols-2">
-        {SECTORS.map((option) => (
+        {t.sectors.map((option) => (
           <ChoiceButton
             key={option}
             selected={sector === option}
@@ -1327,15 +1325,15 @@ function SectorPicker({
           />
         ))}
       </div>
-      {sector === "Anders" && (
+      {sector === otherSector && (
         <div className="mt-6">
           <TextInput
             id="sectorOther"
-            label="Uw sector"
+            label={t.labels.sectorOther}
             value={sectorOther}
             onChange={setSectorOther}
             onEnter={onEnter}
-            placeholder="Bijv. interieuradvies"
+            placeholder={t.placeholders.sectorOther}
             autoFocus
           />
         </div>
@@ -1345,30 +1343,34 @@ function SectorPicker({
 }
 
 function PackagePicker({
+  t,
+  prices,
   packageChoice,
   onSelect,
 }: {
+  t: FormDictionary;
+  prices: { onePage: string; threePage: string };
   packageChoice: PackageChoice;
   onSelect: (value: PackageChoice) => void;
 }) {
+  const options = [
+    {
+      value: "1-pagina" as const,
+      title: t.packages.onePage.label,
+      price: prices.onePage,
+      desc: t.packages.onePage.description,
+    },
+    {
+      value: "3-pagina" as const,
+      title: t.packages.threePage.label,
+      price: prices.threePage,
+      desc: t.packages.threePage.description,
+    },
+  ];
+
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      {(
-        [
-          {
-            value: "1-pagina" as const,
-            title: "1-pagina",
-            price: "€199",
-            desc: "Eén sterke landingspagina met alles wat telt.",
-          },
-          {
-            value: "3-pagina" as const,
-            title: "3-pagina",
-            price: "€349",
-            desc: "Meer ruimte voor verhaal, diensten en SEO.",
-          },
-        ] as const
-      ).map((pkg) => (
+      {options.map((pkg) => (
         <button
           key={pkg.value}
           type="button"
@@ -1395,20 +1397,24 @@ function PackagePicker({
 }
 
 function PagePicker({
+  t,
   selectedPages,
   customPage,
   setCustomPage,
   onToggle,
 }: {
+  t: FormDictionary;
   selectedPages: string[];
   customPage: string;
   setCustomPage: (value: string) => void;
   onToggle: (page: string) => void;
 }) {
+  const otherPage = t.pages[t.pages.length - 1] ?? "";
+
   return (
     <div>
       <div className="flex flex-wrap gap-2.5">
-        {PAGE_OPTIONS.map((page) => {
+        {t.pages.map((page) => {
           const selected = selectedPages.includes(page);
           const locked = !selected && selectedPages.length >= 3;
           return (
@@ -1430,13 +1436,13 @@ function PagePicker({
           );
         })}
       </div>
-      {selectedPages.includes("Andere") && (
+      {selectedPages.includes(otherPage) && (
         <div className="mt-5">
           <label
             htmlFor="customPage"
             className="block text-sm font-medium text-forest-muted"
           >
-            Naam van de andere pagina
+            {t.labels.customPage}
           </label>
           <input
             id="customPage"
@@ -1445,11 +1451,14 @@ function PagePicker({
             value={customPage}
             onChange={(e) => setCustomPage(e.target.value.slice(0, MAX_CUSTOM_PAGE))}
             className="mt-2 w-full border-b-2 border-border bg-transparent py-3 text-lg text-forest outline-none focus:border-terracotta"
-            placeholder="Bijv. Workshops"
+            placeholder={t.placeholders.customPage}
             autoFocus
           />
           <p className="mt-2 text-xs text-muted">
-            {customPage.length}/{MAX_CUSTOM_PAGE} tekens
+            {fill(t.labels.charCount, {
+              count: customPage.length,
+              max: MAX_CUSTOM_PAGE,
+            })}
           </p>
         </div>
       )}
@@ -1458,6 +1467,7 @@ function PagePicker({
 }
 
 function BrandingFields({
+  t,
   hasLogo,
   setHasLogo,
   logoFile,
@@ -1467,6 +1477,7 @@ function BrandingFields({
   onError,
   inputId = "logo",
 }: {
+  t: FormDictionary;
   hasLogo: BrandChoice;
   setHasLogo: (value: BrandChoice) => void;
   logoFile: File | null;
@@ -1492,8 +1503,8 @@ function BrandingFields({
       <div className="flex flex-col gap-3 sm:flex-row">
         {(
           [
-            { value: "ja" as const, label: "Ja, ik heb een logo" },
-            { value: "nee" as const, label: "Nee, nog geen logo" },
+            { value: "ja" as const, label: t.logo.yes },
+            { value: "nee" as const, label: t.logo.no },
           ] as const
         ).map((option) => (
           <ChoiceButton
@@ -1512,20 +1523,19 @@ function BrandingFields({
             htmlFor={inputId}
             className="block text-sm font-medium text-forest"
           >
-            Upload uw logo (JPG, PNG, WebP of PDF · max. 3 MB){" "}
-            <span className="text-terracotta">*</span>
+            {t.logo.uploadLabel} <span className="text-terracotta">*</span>
           </label>
           {logoFile ? (
             <div className="mt-3 flex flex-wrap items-center gap-3">
               <p className="text-sm font-medium text-forest">
-                Geselecteerd: {logoFile.name}
+                {fill(t.logo.selected, { name: logoFile.name })}
               </p>
               <button
                 type="button"
                 onClick={clearLogo}
                 className="text-sm font-semibold text-terracotta transition-colors hover:text-terracotta-hover"
               >
-                Verwijder
+                {t.logo.remove}
               </button>
             </div>
           ) : (
@@ -1548,15 +1558,13 @@ function BrandingFields({
                 if (!okType) {
                   setLogoFile(null);
                   e.target.value = "";
-                  onError?.(
-                    `“${file.name}”: enkel JPG, PNG, WebP of PDF toegestaan.`,
-                  );
+                  onError?.(fill(t.errors.logoType, { name: file.name }));
                   return;
                 }
                 if (file.size > MAX_IMAGE_BYTES) {
                   setLogoFile(null);
                   e.target.value = "";
-                  onError?.(`“${file.name}” is groter dan 3 MB.`);
+                  onError?.(fill(t.errors.fileTooBig, { name: file.name }));
                   return;
                 }
                 onError?.("");
@@ -1567,10 +1575,10 @@ function BrandingFields({
           <div className="mt-5">
             <TextInput
               id={`${inputId}-notes`}
-              label="Extra brandinginfo (optioneel)"
+              label={t.logo.brandingOptional}
               value={brandNotes}
               onChange={setBrandNotes}
-              placeholder="Lettertypes, kleuren, sfeer…"
+              placeholder={t.placeholders.brandNotesOptional}
             />
           </div>
         </div>
@@ -1582,7 +1590,7 @@ function BrandingFields({
             htmlFor={`${inputId}-brand-notes`}
             className="block text-sm font-medium text-forest-muted"
           >
-            Kleurenvoorkeur of andere brandingwensen
+            {t.logo.brandingRequired}
           </label>
           <textarea
             id={`${inputId}-brand-notes`}
@@ -1590,7 +1598,7 @@ function BrandingFields({
             value={brandNotes}
             onChange={(e) => setBrandNotes(e.target.value)}
             className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream-dark/30 px-4 py-3.5 text-base leading-relaxed text-forest outline-none transition-colors placeholder:text-muted/70 focus:border-terracotta"
-            placeholder="Bijv. warme beige en terracotta, rustig, geen felle kleuren…"
+            placeholder={t.placeholders.brandNotesNone}
           />
         </div>
       )}
@@ -1599,11 +1607,13 @@ function BrandingFields({
 }
 
 function ImageUpload({
+  t,
   images,
   imagePreviews,
   onAdd,
   onRemove,
 }: {
+  t: FormDictionary;
   images: File[];
   imagePreviews: { file: File; url: string }[];
   onAdd: (files: FileList | null) => void;
@@ -1616,13 +1626,13 @@ function ImageUpload({
         className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-terracotta/40 bg-terracotta/[0.06] px-4 py-10 text-center transition-colors hover:border-terracotta/60 hover:bg-terracotta/[0.1]"
       >
         <span className="font-display text-lg font-semibold text-forest">
-          Sleep of kies bestanden
+          {t.images.dropTitle}
         </span>
         <span className="mt-1 text-sm text-muted">
-          Max. {MAX_IMAGES} beelden (JPG, PNG, WebP, GIF), max. 3 MB per bestand
+          {fill(t.images.dropHint, { max: MAX_IMAGES })}
         </span>
         <span className="mt-3 text-sm font-semibold text-terracotta">
-          {images.length}/{MAX_IMAGES} toegevoegd
+          {fill(t.images.added, { count: images.length, max: MAX_IMAGES })}
         </span>
         <input
           id="gallery"
@@ -1654,7 +1664,7 @@ function ImageUpload({
                 onClick={() => onRemove(index)}
                 className="absolute top-2 right-2 rounded-md bg-forest/80 px-2 py-1 text-xs font-semibold text-cream opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100"
               >
-                Verwijder
+                {t.logo.remove}
               </button>
               <p className="truncate px-2 py-1.5 text-[0.7rem] text-muted">
                 {item.file.name}
@@ -1701,6 +1711,7 @@ function PrivacyToggle({
 }
 
 function SummaryBlock({
+  t,
   title,
   rows,
   editing,
@@ -1710,6 +1721,7 @@ function SummaryBlock({
   blockRef,
   children,
 }: {
+  t: FormDictionary;
   title: string;
   rows: { label: string; value: string }[];
   editing: boolean;
@@ -1733,7 +1745,7 @@ function SummaryBlock({
           onClick={editing ? onDone : onEdit}
           className="text-sm font-semibold text-terracotta transition-colors hover:text-terracotta-hover"
         >
-          {editing ? "Klaar" : "Wijzig"}
+          {editing ? t.summary.done : t.summary.edit}
         </button>
       </div>
 

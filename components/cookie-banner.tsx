@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useCallback, useSyncExternalStore } from "react";
+import { useLocaleContext } from "@/components/locale-provider";
+import { privacyHref } from "@/lib/i18n/path";
 
 const CONSENT_KEY = "jwo-cookie-consent";
 
@@ -27,6 +29,7 @@ function getServerSnapshot(): Consent | "" {
 }
 
 export function CookieBanner() {
+  const { locale, dict } = useLocaleContext();
   const consent = useSyncExternalStore(
     subscribe,
     getSnapshot,
@@ -62,19 +65,17 @@ export function CookieBanner() {
             id="cookie-title"
             className="font-display text-xl font-semibold text-forest"
           >
-            Cookies
+            {dict.cookie.title}
           </h2>
           <p id="cookie-desc" className="mt-2 text-sm leading-relaxed text-muted">
-            Wij gebruiken enkel noodzakelijke cookies om de site te laten werken
-            en uw voorkeur te onthouden. Wij gebruiken geen Google Analytics of
-            andere volgtools. Meer info in ons{" "}
+            {dict.cookie.bodyBeforeLink}
             <Link
-              href="/privacy#cookies"
+              href={privacyHref(locale, dict, "cookies")}
               className="font-medium text-terracotta underline-offset-2 hover:underline"
             >
-              privacybeleid
+              {dict.cookie.privacyLink}
             </Link>
-            .
+            {dict.cookie.bodyAfterLink}
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -83,14 +84,14 @@ export function CookieBanner() {
             onClick={() => save("essential")}
             className="rounded-md border border-border px-4 py-2.5 text-sm font-medium text-forest transition-colors hover:bg-cream-dark"
           >
-            Alleen noodzakelijk
+            {dict.cookie.essential}
           </button>
           <button
             type="button"
             onClick={() => save("accepted")}
             className="rounded-md bg-terracotta px-4 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
           >
-            Accepteren
+            {dict.cookie.accept}
           </button>
         </div>
       </div>

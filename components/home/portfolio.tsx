@@ -2,52 +2,23 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useLocaleContext } from "@/components/locale-provider";
 
-type Example = {
-  sector: string;
-  title: string;
-  focus: string;
-  bg: string;
-  image: string;
-  alt: string;
-};
-
-const examples: Example[] = [
-  {
-    sector: "Kapper",
-    title: "Salon",
-    focus: "Afspraak boeken & openingstijden",
-    bg: "#f3e4dc",
-    image: "/examples/salon-placeholder.webp",
-    alt: "Mobiele website preview van Salon",
-  },
-  {
-    sector: "Pilates studio",
-    title: "Mellow",
-    focus: "Wellnessboutique, lessen en sfeer",
-    bg: "#e8e4dc",
-    image: "/examples/mellow.webp",
-    alt: "Mobiele website preview van Mellow wellbeing boutique",
-  },
-  {
-    sector: "Voedingscoaching",
-    title: "VitaminEsthi",
-    focus: "Holistische voedingstherapie, Esther",
-    bg: "#f3ebe3",
-    image: "/examples/vitaminesthi.png",
-    alt: "Mobiele website preview van VitaminEsthi",
-  },
-  {
-    sector: "Community",
-    title: "FreeBeyondBorders",
-    focus: "Vrijheid, impact en inkomen, webinar",
-    bg: "#e8eee4",
-    image: "/examples/freebeyondborders.png",
-    alt: "Mobiele website preview van FreeBeyondBorders",
-  },
+const VISUALS = [
+  { bg: "#f3e4dc", image: "/examples/salon-placeholder.webp" },
+  { bg: "#e8e4dc", image: "/examples/mellow.webp" },
+  { bg: "#f3ebe3", image: "/examples/vitaminesthi.png" },
+  { bg: "#e8eee4", image: "/examples/freebeyondborders.png" },
 ];
 
 export function Portfolio() {
+  const { dict } = useLocaleContext();
+  const examples = dict.portfolio.items.map((item, i) => ({
+    ...item,
+    bg: VISUALS[i]?.bg ?? "#f3e4dc",
+    image: VISUALS[i]?.image ?? "/examples/salon-placeholder.webp",
+  }));
+  const total = examples.length;
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(3);
 
@@ -56,14 +27,14 @@ export function Portfolio() {
     const update = () => {
       const nextVisible = mq.matches ? 3 : 1;
       setVisible(nextVisible);
-      setIndex((i) => Math.min(i, Math.max(0, examples.length - nextVisible)));
+      setIndex((i) => Math.min(i, Math.max(0, total - nextVisible)));
     };
     update();
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
-  }, []);
+  }, [total]);
 
-  const maxIndex = Math.max(0, examples.length - visible);
+  const maxIndex = Math.max(0, total - visible);
   const canPrev = index > 0;
   const canNext = index < maxIndex;
 
@@ -77,22 +48,19 @@ export function Portfolio() {
 
   return (
     <section
-      id="voorbeelden"
+      id={dict.routes.anchors.examples}
       className="border-y border-border/70 bg-cream-dark/35"
     >
       <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div className="max-w-2xl">
             <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">
-              Zij gingen u voor
+              {dict.portfolio.eyebrow}
             </p>
             <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-forest md:text-4xl">
-              Voorbeelden die werken
+              {dict.portfolio.title}
             </h2>
-            <p className="mt-4 text-lg text-muted">
-              Elke site is mobielvriendelijk, snel en klaar om klanten binnen te
-              halen, of u nu kapper, studio of coach bent.
-            </p>
+            <p className="mt-4 text-lg text-muted">{dict.portfolio.intro}</p>
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
@@ -100,7 +68,7 @@ export function Portfolio() {
               type="button"
               onClick={prev}
               disabled={!canPrev}
-              aria-label="Vorige voorbeelden"
+              aria-label={dict.portfolio.prev}
               className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-forest/20 text-forest transition-colors hover:border-forest/40 hover:bg-cream disabled:cursor-not-allowed disabled:opacity-35"
             >
               <ArrowIcon direction="left" />
@@ -109,7 +77,7 @@ export function Portfolio() {
               type="button"
               onClick={next}
               disabled={!canNext}
-              aria-label="Volgende voorbeelden"
+              aria-label={dict.portfolio.next}
               className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-forest/20 text-forest transition-colors hover:border-forest/40 hover:bg-cream disabled:cursor-not-allowed disabled:opacity-35"
             >
               <ArrowIcon direction="right" />
@@ -121,15 +89,15 @@ export function Portfolio() {
           <div
             className="flex transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{
-              width: `${(examples.length / visible) * 100}%`,
-              transform: `translateX(-${(index / examples.length) * 100}%)`,
+              width: `${(total / visible) * 100}%`,
+              transform: `translateX(-${(index / total) * 100}%)`,
             }}
           >
             {examples.map((item) => (
               <article
-                key={item.title}
+                key={item.name}
                 className="group box-border px-2 sm:px-3 md:px-4"
-                style={{ width: `${100 / examples.length}%` }}
+                style={{ width: `${100 / total}%` }}
               >
                 <div
                   className="relative aspect-[4/5] overflow-hidden rounded-2xl"
@@ -148,10 +116,10 @@ export function Portfolio() {
                   </div>
                 </div>
                 <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-terracotta">
-                  {item.sector}
+                  {item.category}
                 </p>
                 <h3 className="mt-1 font-display text-2xl font-semibold text-forest">
-                  {item.title}
+                  {item.name}
                 </h3>
                 <p className="mt-1 text-sm text-muted">{item.focus}</p>
               </article>

@@ -1,8 +1,34 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/brand-logo";
+import { useLocaleContext } from "@/components/locale-provider";
+import {
+  anchorHref,
+  localePath,
+  privacyHref,
+  startHref,
+  termsHref,
+} from "@/lib/i18n/path";
+
+const NAV_KEYS = ["howItWorks", "examples", "pricing", "reviews"] as const;
 
 export function Footer() {
+  const { locale, dict } = useLocaleContext();
+  const pathname = usePathname();
   const year = new Date().getFullYear();
+
+  const home = localePath(locale);
+  const isHome = pathname === home || pathname === `${home}/`;
+  const navLinks = [
+    ...NAV_KEYS.map((key) => ({
+      key,
+      href: anchorHref(locale, dict, key, isHome),
+      label: dict.nav[key],
+    })),
+    { key: "startNow", href: startHref(locale, dict), label: dict.nav.startNow },
+  ];
 
   return (
     <footer className="relative overflow-hidden border-t border-border bg-cream-dark/60">
@@ -18,17 +44,15 @@ export function Footer() {
       <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between md:gap-12">
           <div className="max-w-md">
-            <BrandLogo size="lg" label="jewebsiteonline.be" />
+            <BrandLogo size="lg" label={dict.brand.homeAria} />
             <p className="mt-4 text-sm leading-relaxed text-muted">
-              Professionele websites van 1 of 3 pagina&apos;s voor KMO&apos;s in
-              België en Nederland. Gratis preview binnen 48 uur, live binnen een
-              dag na goedkeuring. SEO-vriendelijk en transparant geprijsd.
+              {dict.footer.blurb}
             </p>
 
             <div className="mt-6 flex items-center gap-3">
               <a
                 href="mailto:info@jewebsiteonline.be"
-                aria-label="Stuur een e-mail"
+                aria-label={dict.footer.emailAria}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-cream text-forest transition-colors hover:border-terracotta/50 hover:text-terracotta"
               >
                 <MailIcon />
@@ -37,7 +61,7 @@ export function Footer() {
                 href="https://www.instagram.com/jewebsiteonline/"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Volg ons op Instagram"
+                aria-label={dict.footer.instagramAria}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-cream text-forest transition-colors hover:border-terracotta/50 hover:text-terracotta"
               >
                 <InstagramIcon />
@@ -48,17 +72,11 @@ export function Footer() {
           <div className="grid grid-cols-2 gap-10 sm:gap-16">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-terracotta">
-                Navigatie
+                {dict.footer.navigation}
               </p>
               <ul className="mt-4 flex flex-col gap-2.5 text-sm">
-                {[
-                  { href: "/#hoe-het-werkt", label: "Hoe het werkt" },
-                  { href: "/#voorbeelden", label: "Voorbeelden" },
-                  { href: "/#prijzen", label: "Prijzen" },
-                  { href: "/#reviews", label: "Reviews" },
-                  { href: "/start-nu", label: "Start nu" },
-                ].map((link) => (
-                  <li key={link.href}>
+                {navLinks.map((link) => (
+                  <li key={link.key}>
                     <Link
                       href={link.href}
                       className="text-forest-muted transition-colors hover:text-terracotta"
@@ -72,23 +90,23 @@ export function Footer() {
 
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-terracotta">
-                Juridisch
+                {dict.footer.legal}
               </p>
               <ul className="mt-4 flex flex-col gap-2.5 text-sm">
                 <li>
                   <Link
-                    href="/privacy"
+                    href={privacyHref(locale, dict)}
                     className="text-forest-muted transition-colors hover:text-terracotta"
                   >
-                    Privacybeleid
+                    {dict.footer.privacy}
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/voorwaarden"
+                    href={termsHref(locale, dict)}
                     className="text-forest-muted transition-colors hover:text-terracotta"
                   >
-                    Algemene voorwaarden
+                    {dict.footer.terms}
                   </Link>
                 </li>
                 <li>
@@ -107,7 +125,7 @@ export function Footer() {
 
       <div className="relative border-t border-border/70">
         <p className="mx-auto max-w-6xl px-5 py-4 text-xs text-muted md:px-8">
-          © {year} jewebsiteonline.be. Alle rechten voorbehouden.
+          {dict.footer.rights.replace("{year}", String(year))}
         </p>
       </div>
     </footer>

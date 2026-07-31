@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocaleContext } from "@/components/locale-provider";
+import { localePath } from "@/lib/i18n/path";
 
 type BrandLogoProps = {
   href?: string;
@@ -17,41 +19,48 @@ const sizeClasses = {
 };
 
 export function BrandLogo({
-  href = "/",
+  href,
   className = "",
   size = "md",
-  label = "jewebsiteonline.be, naar homepagina",
+  label,
 }: BrandLogoProps) {
+  const { locale, dict } = useLocaleContext();
   const pathname = usePathname();
+
+  const topId = dict.routes.anchors.top;
+  const home = localePath(locale);
+  const homeWithAnchor = `${home}#${topId}`;
+  const target = href ?? homeWithAnchor;
+
   const mark = (
     <span
       className={`font-display font-semibold tracking-tight text-forest ${sizeClasses[size]} ${className}`}
     >
       Jewebsiteonline
-      <span className="text-terracotta">.be</span>
+      <span className="text-terracotta">.com</span>
     </span>
   );
 
-  if (!href) {
+  if (!target) {
     return mark;
   }
 
   return (
     <Link
-      href={href === "/" ? "/#top" : href}
+      href={target}
       className="inline-flex shrink-0 items-center"
-      aria-label={label}
+      aria-label={label ?? dict.brand.homeAria}
       onClick={(event) => {
-        if (href !== "/" && href !== "/#top") return;
-        if (pathname !== "/") return;
+        if (target !== homeWithAnchor && target !== home) return;
+        if (pathname !== home && pathname !== `${home}/`) return;
         event.preventDefault();
-        const hero = document.getElementById("top");
+        const hero = document.getElementById(topId);
         if (hero) {
           hero.scrollIntoView({ behavior: "smooth", block: "start" });
         } else {
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
-        window.history.replaceState(null, "", "/#top");
+        window.history.replaceState(null, "", homeWithAnchor);
       }}
     >
       {mark}

@@ -1,42 +1,53 @@
-import { faqs } from "@/lib/faqs";
+import type { Locale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/dictionaries/types";
 
-const organization = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "jewebsiteonline.be",
-  url: "https://jewebsiteonline.be",
-  logo: "https://jewebsiteonline.be/logo.png",
-  email: "info@jewebsiteonline.be",
-  areaServed: {
-    "@type": "Country",
-    name: "Belgium",
-  },
-  description:
-    "Professionele websites van 1 tot 3 pagina's voor Belgische KMO's. Gratis preview binnen 48 uur.",
+const BASE_URL = "https://jewebsiteonline.com";
+
+type JsonLdProps = {
+  locale: Locale;
+  dict: Dictionary;
 };
 
-const website = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: "jewebsiteonline.be",
-  url: "https://jewebsiteonline.be",
-  inLanguage: "nl-BE",
-};
+export function JsonLd({ locale, dict }: JsonLdProps) {
+  const url = `${BASE_URL}/${locale}`;
+  const inLanguage = locale === "en" ? "en" : "nl-BE";
 
-const faqPage = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqs.map((item) => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer,
+  const organization = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: dict.meta.siteName,
+    url,
+    logo: `${BASE_URL}/logo.png`,
+    email: "info@jewebsiteonline.be",
+    areaServed: {
+      "@type": "Country",
+      name: "Belgium",
     },
-  })),
-};
+    description: dict.meta.description,
+  };
 
-export function JsonLd() {
+  const website = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: dict.meta.siteName,
+    url,
+    inLanguage,
+  };
+
+  const faqPage = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    inLanguage,
+    mainEntity: dict.faq.items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
   const payloads = [organization, website, faqPage];
 
   return (

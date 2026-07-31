@@ -1,46 +1,22 @@
-const steps = [
-  {
-    title: "Briefing",
-    time: "10 tot 15 min",
-    copy: "Laat uw gegevens achter via het briefingformulier. Vertel wie u bent en wat u nodig heeft.",
-  },
-  {
-    title: "Gratis preview",
-    time: "binnen 48 uur",
-    copy: "Wij maken een gratis ontwerp. U ontvangt een preview, zonder verplichtingen.",
-  },
-  {
-    title: "Feedback",
-    time: "1 revisieronde",
-    copy: "Geef uw feedback wanneer het u uitkomt. We stemmen alles af op uw merk.",
-  },
-  {
-    title: "Bijgewerkte versie",
-    time: "binnen 24 uur",
-    copy: "Na ontvangst van uw feedback krijgt u de aangepaste versie, klaar voor een laatste check.",
-  },
-  {
-    title: "Live zetten",
-    time: "dezelfde dag",
-    copy: "Na uw goedkeuring zetten we de website live, vaak nog dezelfde dag.",
-  },
-];
+"use client";
+
+import { useLocaleContext } from "@/components/locale-provider";
 
 export function HowItWorks() {
+  const { dict } = useLocaleContext();
+  const steps = dict.howItWorks.steps;
+
   return (
-    <section id="hoe-het-werkt">
+    <section id={dict.routes.anchors.howItWorks}>
       <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">
-            De oplossing
+            {dict.howItWorks.eyebrow}
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-forest md:text-4xl">
-            Hoe het werkt
+            {dict.howItWorks.title}
           </h2>
-          <p className="mt-4 text-lg text-muted">
-            Van briefing tot live website in vijf duidelijke stappen. Preview
-            binnen 48 uur, live binnen een dag na goedkeuring.
-          </p>
+          <p className="mt-4 text-lg text-muted">{dict.howItWorks.intro}</p>
         </div>
 
         <div className="relative mt-14 md:mt-16">
@@ -75,7 +51,7 @@ export function HowItWorks() {
                     {step.title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted lg:text-base">
-                    {step.copy}
+                    {step.body}
                   </p>
                 </div>
               </li>

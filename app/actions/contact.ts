@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { Resend } from "resend";
+import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 import { rateLimit } from "@/lib/rate-limit";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import {
@@ -27,6 +28,63 @@ const MAX_LONG = 4000;
 
 const ALLOWED_PACKAGES = new Set(["1-pagina", "3-pagina"]);
 const ALLOWED_YES_NO = new Set(["ja", "nee"]);
+
+const SUPPORT_EMAIL = "info@jewebsiteonline.be";
+
+/**
+ * User-facing failures returned by this action. Kept separate from the UI
+ * dictionaries because these strings never render on the server-rendered page.
+ */
+const MESSAGES = {
+  nl: {
+    rateLimitIp: `Te veel aanvragen vanaf dit netwerk. Probeer later opnieuw of mail ${SUPPORT_EMAIL}.`,
+    rateLimitEmail: `Er is al een recente aanvraag met dit e-mailadres. Mail ons op ${SUPPORT_EMAIL} als u hulp nodig heeft.`,
+    requiredFields: "Gelieve alle verplichte velden in te vullen.",
+    consent: "Bevestig dat u akkoord gaat met het privacybeleid.",
+    emailInvalid: "Ongeldig e-mailadres.",
+    packageInvalid: "Ongeldig pakket.",
+    logoChoice: "Gelieve aan te geven of u een logo heeft.",
+    showPhoneInvalid: "Ongeldige keuze voor telefoon tonen.",
+    showAddressInvalid: "Ongeldige keuze voor adres tonen.",
+    tooManyImages: `Upload max. ${MAX_IMAGES} beelden.`,
+    logoRequired: "Upload uw logo om verder te gaan.",
+    logoTooBig: "Het logo mag max. 3 MB zijn.",
+    logoType: "Logo: enkel JPG, PNG, WebP of PDF toegestaan.",
+    imageTooBig: (name: string) => `“${name}” mag max. 3 MB zijn.`,
+    imageType: (name: string) =>
+      `“${name}”: enkel JPG, PNG, WebP of GIF.`,
+    storageUnavailable: `Opslaan is tijdelijk niet beschikbaar. Mail ons op ${SUPPORT_EMAIL}.`,
+    saveFailed: `Opslaan mislukt. Probeer opnieuw of mail ${SUPPORT_EMAIL}.`,
+    fallbackFileName: "beeld",
+  },
+  en: {
+    rateLimitIp: `Too many requests from this network. Please try again later or email ${SUPPORT_EMAIL}.`,
+    rateLimitEmail: `There is already a recent request with this email address. Email us at ${SUPPORT_EMAIL} if you need help.`,
+    requiredFields: "Please complete all required fields.",
+    consent: "Please confirm that you agree to the privacy policy.",
+    emailInvalid: "Invalid email address.",
+    packageInvalid: "Invalid package.",
+    logoChoice: "Please indicate whether you have a logo.",
+    showPhoneInvalid: "Invalid choice for showing your phone number.",
+    showAddressInvalid: "Invalid choice for showing your address.",
+    tooManyImages: `Please upload no more than ${MAX_IMAGES} images.`,
+    logoRequired: "Please upload your logo to continue.",
+    logoTooBig: "The logo may be no larger than 3 MB.",
+    logoType: "Logo: only JPG, PNG, WebP or PDF are allowed.",
+    imageTooBig: (name: string) =>
+      `“${name}” may be no larger than 3 MB.`,
+    imageType: (name: string) =>
+      `“${name}”: only JPG, PNG, WebP or GIF are allowed.`,
+    storageUnavailable: `Saving is temporarily unavailable. Email us at ${SUPPORT_EMAIL}.`,
+    saveFailed: `Saving failed. Please try again or email ${SUPPORT_EMAIL}.`,
+    fallbackFileName: "image",
+  },
+} satisfies Record<Locale, Record<string, unknown>>;
+
+function readLocale(formData: FormData): Locale {
+  const value = String(formData.get("locale") ?? "").trim();
+  return isLocale(value) ? value : defaultLocale;
+}
 
 function normalizeYesNo(value: string): string {
   const normalized = value.trim().toLowerCase();
@@ -59,6 +117,9 @@ export async function submitBriefing(
     return { ok: true };
   }
 
+  const locale = readLocale(formData);
+  const messages = MESSAGES[locale];
+
   const headerList = await headers();
   const ip = clientIp(headerList);
 
@@ -67,11 +128,7 @@ export async function submitBriefing(
     windowMs: 60 * 60 * 1000,
   });
   if (!ipLimit.ok) {
-    return {
-      ok: false,
-      error:
-        "Te veel aanvragen vanaf dit netwerk. Probeer later opnieuw of mail info@jewebsiteonline.be.",
-    };
+    return { ok: false, error: messages.rateLimitIp };
   }
 
   const contactPerson = clip(
@@ -135,34 +192,31 @@ export async function submitBriefing(
     !packageChoice ||
     !hasLogo
   ) {
-    return { ok: false, error: "Gelieve alle verplichte velden in te vullen." };
+    return { ok: false, error: messages.requiredFields };
   }
 
   if (privacyConsent !== "ja") {
-    return {
-      ok: false,
-      error: "Bevestig dat u akkoord gaat met het privacybeleid.",
-    };
+    return { ok: false, error: messages.consent };
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { ok: false, error: "Ongeldig e-mailadres." };
+    return { ok: false, error: messages.emailInvalid };
   }
 
   if (!ALLOWED_PACKAGES.has(packageChoice)) {
-    return { ok: false, error: "Ongeldig pakket." };
+    return { ok: false, error: messages.packageInvalid };
   }
 
   if (!ALLOWED_YES_NO.has(hasLogo)) {
-    return { ok: false, error: "Gelieve aan te geven of u een logo heeft." };
+    return { ok: false, error: messages.logoChoice };
   }
 
   if (showPhone && !ALLOWED_YES_NO.has(showPhone)) {
-    return { ok: false, error: "Ongeldige keuze voor telefoon tonen." };
+    return { ok: false, error: messages.showPhoneInvalid };
   }
 
   if (showAddress && !ALLOWED_YES_NO.has(showAddress)) {
-    return { ok: false, error: "Ongeldige keuze voor adres tonen." };
+    return { ok: false, error: messages.showAddressInvalid };
   }
 
   const emailLimit = rateLimit(`briefing:email:${email.toLowerCase()}`, {
@@ -170,23 +224,19 @@ export async function submitBriefing(
     windowMs: 24 * 60 * 60 * 1000,
   });
   if (!emailLimit.ok) {
-    return {
-      ok: false,
-      error:
-        "Er is al een recente aanvraag met dit e-mailadres. Mail ons op info@jewebsiteonline.be als u hulp nodig heeft.",
-    };
+    return { ok: false, error: messages.rateLimitEmail };
   }
 
   if (images.length > MAX_IMAGES) {
-    return { ok: false, error: `Upload max. ${MAX_IMAGES} beelden.` };
+    return { ok: false, error: messages.tooManyImages };
   }
 
   const logoFile = logo instanceof File && logo.size > 0 ? logo : null;
   if (hasLogo === "ja" && !logoFile) {
-    return { ok: false, error: "Upload uw logo om verder te gaan." };
+    return { ok: false, error: messages.logoRequired };
   }
   if (logoFile && logoFile.size > MAX_FILE_BYTES) {
-    return { ok: false, error: "Het logo mag max. 3 MB zijn." };
+    return { ok: false, error: messages.logoTooBig };
   }
 
   type PreparedUpload = {
@@ -202,10 +252,7 @@ export async function submitBriefing(
     const buffer = Buffer.from(await logoFile.arrayBuffer());
     const kind = detectFileKind(buffer);
     if (!kind || !isAllowedLogoKind(kind)) {
-      return {
-        ok: false,
-        error: "Logo: enkel JPG, PNG, WebP of PDF toegestaan.",
-      };
+      return { ok: false, error: messages.logoType };
     }
     prepared.push({
       file: logoFile,
@@ -217,19 +264,14 @@ export async function submitBriefing(
 
   for (const entry of images) {
     if (!(entry instanceof File) || entry.size <= 0) continue;
+    const name = entry.name || messages.fallbackFileName;
     if (entry.size > MAX_FILE_BYTES) {
-      return {
-        ok: false,
-        error: `“${entry.name || "beeld"}” mag max. 3 MB zijn.`,
-      };
+      return { ok: false, error: messages.imageTooBig(name) };
     }
     const buffer = Buffer.from(await entry.arrayBuffer());
     const kind = detectFileKind(buffer);
     if (!kind || !isAllowedGalleryKind(kind)) {
-      return {
-        ok: false,
-        error: `“${entry.name || "beeld"}”: enkel JPG, PNG, WebP of GIF.`,
-      };
+      return { ok: false, error: messages.imageType(name) };
     }
     prepared.push({
       file: entry,
@@ -244,14 +286,11 @@ export async function submitBriefing(
     supabase = getSupabaseAdmin();
   } catch (err) {
     console.error(err);
-    return {
-      ok: false,
-      error:
-        "Opslaan is tijdelijk niet beschikbaar. Mail ons op info@jewebsiteonline.be.",
-    };
+    return { ok: false, error: messages.storageUnavailable };
   }
 
   const answers: QaAnswer[] = [
+    { question: "Taal briefing", answer: locale === "en" ? "Engels" : "Nederlands" },
     { question: "Contactpersoon", answer: contactPerson },
     { question: "Bedrijfsnaam", answer: companyName },
     { question: "E-mail", answer: email },
@@ -296,11 +335,7 @@ export async function submitBriefing(
 
   if (orderError || !order) {
     console.error("Supabase order insert error:", orderError);
-    return {
-      ok: false,
-      error:
-        "Opslaan mislukt. Probeer opnieuw of mail info@jewebsiteonline.be.",
-    };
+    return { ok: false, error: messages.saveFailed };
   }
 
   const uploadPaths: string[] = [];

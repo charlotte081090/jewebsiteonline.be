@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocaleContext } from "@/components/locale-provider";
 
 const PULSE_KEY = "jwo-pulse-clicks";
 const MIN = 8;
@@ -12,7 +13,9 @@ function countFromSeed(seed: number) {
 }
 
 export function HeroPulse() {
+  const { dict } = useLocaleContext();
   const [count, setCount] = useState(15);
+  const [labelBefore, labelAfter] = dict.hero.pulseLabel.split("{count}");
 
   useEffect(() => {
     const daySeed = Math.floor(Date.now() / (1000 * 60 * 60 * 48));
@@ -52,11 +55,11 @@ export function HeroPulse() {
         <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-terracotta shadow-[0_0_0_3px_rgba(192,127,99,0.2)]" />
       </span>
       <p className="text-sm font-medium text-forest">
+        {labelBefore ? (
+          <span className="text-forest-muted">{labelBefore}</span>
+        ) : null}
         <span className="font-semibold">{count}</span>
-        <span className="text-forest-muted">
-          {" "}
-          websites momenteel in productie
-        </span>
+        <span className="text-forest-muted">{labelAfter ?? ""}</span>
       </p>
     </button>
   );

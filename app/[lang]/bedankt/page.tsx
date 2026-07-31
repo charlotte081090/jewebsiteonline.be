@@ -1,24 +1,43 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Bedankt",
-  robots: {
-    index: false,
-    follow: false,
-  },
-  alternates: {
-    canonical: "https://jewebsiteonline.be/bedankt",
-  },
-};
+import { notFound } from "next/navigation";
+import { isLocale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/get-dictionary";
+import { homeHref } from "@/lib/i18n/path";
 
 type BedanktPageProps = {
+  params: Promise<{ lang: string }>;
   searchParams: Promise<{ naam?: string | string[] }>;
 };
 
-export default async function BedanktPage({ searchParams }: BedanktPageProps) {
-  const params = await searchParams;
-  const raw = params.naam;
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
+  const dict = getDictionary(lang);
+
+  return {
+    title: dict.bedankt.metaTitle,
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
+
+export default async function BedanktPage({
+  params,
+  searchParams,
+}: BedanktPageProps) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const dict = getDictionary(lang);
+
+  const query = await searchParams;
+  const raw = query.naam;
   const name = (Array.isArray(raw) ? raw[0] : raw)?.trim() || "";
 
   return (
@@ -37,16 +56,18 @@ export default async function BedanktPage({ searchParams }: BedanktPageProps) {
             ✓
           </div>
           <h1 className="mt-5 font-display text-3xl font-semibold text-forest md:text-4xl">
-            {name ? `Bedankt ${name}` : "Bedankt"}
+            {name
+              ? dict.bedankt.titleNamed.replace("{name}", name)
+              : dict.bedankt.title}
           </h1>
           <p className="mx-auto mt-4 max-w-md text-lg leading-relaxed text-muted">
-            We gaan aan de slag. U ontvangt uw gratis preview binnen 48 uur.
+            {dict.bedankt.body}
           </p>
           <Link
-            href="/"
+            href={homeHref(lang, dict)}
             className="mt-8 inline-flex rounded-md bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
           >
-            Terug naar website
+            {dict.bedankt.backHome}
           </Link>
         </div>
       </div>

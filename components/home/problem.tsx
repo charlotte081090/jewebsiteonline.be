@@ -1,6 +1,12 @@
+"use client";
+
 import Link from "next/link";
+import { useLocaleContext } from "@/components/locale-provider";
+import { anchorHref } from "@/lib/i18n/path";
 
 export function Problem() {
+  const { locale, dict } = useLocaleContext();
+
   return (
     <section className="relative overflow-hidden bg-forest text-cream">
       {/* Soft atmospheric glow */}
@@ -47,25 +53,22 @@ export function Problem() {
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8 px-5 py-16 md:flex-row md:items-center md:justify-between md:gap-16 md:px-8 md:py-20">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-wider text-terracotta-soft">
-            Het probleem
+            {dict.problem.eyebrow}
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-cream md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
-            Nog geen website, of één die niet overtuigt?
+            {dict.problem.title}
           </h2>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-cream/75 sm:text-lg">
-            Klanten zoeken online naar lokale diensten. Zonder website, of met
-            een verouderde site die info mist, verdwijnt u in de zoekresultaten
-            en kiest men de concurrent. Wij maken een snelle, SEO-vriendelijke
-            website waarmee Belgische KMO&apos;s gevonden én gekozen worden.
+            {dict.problem.body}
           </p>
         </div>
 
         <div className="shrink-0">
           <Link
-            href="/#hoe-het-werkt"
+            href={anchorHref(locale, dict, "howItWorks", false)}
             className="inline-flex items-center gap-2 rounded-md bg-terracotta px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
           >
-            Zo lossen wij het op
+            {dict.problem.cta}
             <span aria-hidden>→</span>
           </Link>
         </div>
