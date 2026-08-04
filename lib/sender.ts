@@ -3,6 +3,7 @@ const SENDER_API = "https://api.sender.net/v2";
 /** Custom fields we sync from a briefing (no image uploads). */
 const CUSTOM_FIELDS = [
   { key: "company", title: "Company" },
+  { key: "phone_raw", title: "Phone (form)" },
   { key: "address", title: "Address" },
   { key: "show_phone", title: "Show phone on website" },
   { key: "show_address", title: "Show address on website" },
@@ -66,15 +67,40 @@ function yesNoLabel(value: string) {
   return value === "ja" ? "Yes" : value === "nee" ? "No" : value;
 }
 
-/** Prefer E.164; Belgian mobile/landline without country code gets +32. */
+/**
+ * Prefer E.164 for Sender. Common BE/NL mistake: "+32 0470…" — drop the
+ * trunk `0` after the country code. Returns undefined when still invalid.
+ */
 export function normalizePhoneForSender(phone: string): string | undefined {
-  const cleaned = phone.replace(/[\s().-]/g, "");
+  let cleaned = phone.replace(/[\s()./-]/g, "");
   if (!cleaned) return undefined;
-  if (cleaned.startsWith("+")) return cleaned;
-  if (cleaned.startsWith("00")) return `+${cleaned.slice(2)}`;
-  if (/^0\d{8,9}$/.test(cleaned)) return `+32${cleaned.slice(1)}`;
-  if (/^\d{9,15}$/.test(cleaned)) return `+${cleaned}`;
-  return undefined;
+
+  if (cleaned.startsWith("00")) cleaned = `+${cleaned.slice(2)}`;
+
+  if (!cleaned.startsWith("+")) {
+    if (/^0\d{8,9}$/.test(cleaned)) {
+      cleaned = `+32${cleaned.slice(1)}`;
+    } else if (/^\d{9,15}$/.test(cleaned)) {
+      cleaned = `+${cleaned}`;
+    } else {
+      return undefined;
+    }
+  }
+
+  // +32 0470… / +31 06… → drop national trunk prefix
+  cleaned = cleaned.replace(/^\+(32|31)0/, "+$1");
+
+  if (!/^\+[1-9]\d{7,14}$/.test(cleaned)) return undefined;
+
+  // Belgium: +32 + 8–9 national digits. Netherlands: +31 + 9 digits.
+  if (cleaned.startsWith("+32") && !/^\+32\d{8,9}$/.test(cleaned)) {
+    return undefined;
+  }
+  if (cleaned.startsWith("+31") && !/^\+31\d{9}$/.test(cleaned)) {
+    return undefined;
+  }
+
+  return cleaned;
 }
 
 function splitName(fullName: string): { firstname: string; lastname?: string } {
@@ -160,6 +186,7 @@ function buildCustomFieldValues(
 ): Record<string, string> {
   const values: Record<string, string> = {
     company: payload.companyName,
+    phone_raw: payload.phone || "—",
     address: payload.address || "—",
     show_phone: yesNoLabel(payload.showPhone),
     show_address: yesNoLabel(payload.showAddress),
@@ -186,6 +213,71 @@ function buildCustomFieldValues(
   return out;
 }
 
+function isPhoneValidationError(status: number, body: string) {
+  return status === 400 && /phone/i.test(body);
+}
+
+async function upsertSubscriber(
+  token: string,
+  groupId: string,
+  payload: BriefingSubscriberPayload,
+  fieldMap: Record<string, string>,
+  includePhone: boolean,
+): Promise<{ ok: boolean; status: number; body: string }> {
+  const { firstname, lastname } = splitName(payload.contactPerson);
+  const phone = includePhone
+    ? normalizePhoneForSender(payload.phone)
+    : undefined;
+
+  const body: Record<string, unknown> = {
+    email: payload.email,
+    firstname,
+    groups: [groupId],
+    fields: buildCustomFieldValues(fieldMap, payload),
+    trigger_automation: false,
+  };
+  if (lastname) body.lastname = lastname;
+  if (phone) body.phone = phone;
+
+  const createRes = await fetch(`${SENDER_API}/subscribers`, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify(body),
+  });
+
+  if (createRes.ok) {
+    return { ok: true, status: createRes.status, body: "" };
+  }
+
+  const createText = await createRes.text();
+
+  // Already exists → update + ensure group membership
+  if (createRes.status === 422 || createRes.status === 409) {
+    const encoded = encodeURIComponent(payload.email);
+    const updateRes = await fetch(`${SENDER_API}/subscribers/${encoded}`, {
+      method: "PATCH",
+      headers: authHeaders(token),
+      body: JSON.stringify({
+        firstname,
+        ...(lastname ? { lastname } : {}),
+        ...(phone ? { phone } : {}),
+        groups: [groupId],
+        fields: buildCustomFieldValues(fieldMap, payload),
+        trigger_automation: false,
+      }),
+    });
+
+    if (updateRes.ok) {
+      return { ok: true, status: updateRes.status, body: "" };
+    }
+
+    const updateText = await updateRes.text();
+    return { ok: false, status: updateRes.status, body: updateText };
+  }
+
+  return { ok: false, status: createRes.status, body: createText };
+}
+
 /**
  * Upserts a briefing contact into Sender (group + custom fields).
  * Failures are logged; callers should not block the form on this.
@@ -202,56 +294,32 @@ export async function syncBriefingToSender(
 
   try {
     const fieldMap = await ensureFieldMap(token);
-    const { firstname, lastname } = splitName(payload.contactPerson);
-    const phone = normalizePhoneForSender(payload.phone);
 
-    const body: Record<string, unknown> = {
-      email: payload.email,
-      firstname,
-      groups: [groupId],
-      fields: buildCustomFieldValues(fieldMap, payload),
-      trigger_automation: false,
-    };
-    if (lastname) body.lastname = lastname;
-    if (phone) body.phone = phone;
+    let result = await upsertSubscriber(
+      token,
+      groupId,
+      payload,
+      fieldMap,
+      true,
+    );
 
-    const createRes = await fetch(`${SENDER_API}/subscribers`, {
-      method: "POST",
-      headers: authHeaders(token),
-      body: JSON.stringify(body),
-    });
-
-    if (createRes.ok) {
-      return { ok: true };
+    // Don't lose the contact if Sender rejects the phone format
+    if (
+      !result.ok &&
+      isPhoneValidationError(result.status, result.body) &&
+      payload.phone
+    ) {
+      console.error(
+        "Sender phone rejected; retrying without phone field:",
+        result.body,
+      );
+      result = await upsertSubscriber(token, groupId, payload, fieldMap, false);
     }
 
-    const createText = await createRes.text();
+    if (result.ok) return { ok: true };
 
-    // Already exists → update + ensure group membership
-    if (createRes.status === 422 || createRes.status === 409) {
-      const encoded = encodeURIComponent(payload.email);
-      const updateRes = await fetch(`${SENDER_API}/subscribers/${encoded}`, {
-        method: "PATCH",
-        headers: authHeaders(token),
-        body: JSON.stringify({
-          firstname,
-          ...(lastname ? { lastname } : {}),
-          ...(phone ? { phone } : {}),
-          groups: [groupId],
-          fields: buildCustomFieldValues(fieldMap, payload),
-          trigger_automation: false,
-        }),
-      });
-
-      if (updateRes.ok) return { ok: true };
-
-      const updateText = await updateRes.text();
-      console.error("Sender update failed:", updateRes.status, updateText);
-      return { ok: false, detail: `update_${updateRes.status}` };
-    }
-
-    console.error("Sender create failed:", createRes.status, createText);
-    return { ok: false, detail: `create_${createRes.status}` };
+    console.error("Sender sync failed:", result.status, result.body);
+    return { ok: false, detail: `http_${result.status}` };
   } catch (err) {
     console.error("Sender sync exception:", err);
     return { ok: false, detail: "exception" };
