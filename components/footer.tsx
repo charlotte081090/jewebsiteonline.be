@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/brand-logo";
 import { useLocaleContext } from "@/components/locale-provider";
 import {
   anchorHref,
-  localePath,
   privacyHref,
   startHref,
   termsHref,
@@ -16,15 +14,12 @@ const NAV_KEYS = ["howItWorks", "examples", "pricing", "reviews"] as const;
 
 export function Footer() {
   const { locale, dict } = useLocaleContext();
-  const pathname = usePathname();
   const year = new Date().getFullYear();
 
-  const home = localePath(locale);
-  const isHome = pathname === home || pathname === `${home}/`;
   const navLinks = [
     ...NAV_KEYS.map((key) => ({
       key,
-      href: anchorHref(locale, dict, key, isHome),
+      href: anchorHref(locale, dict, key),
       label: dict.nav[key],
     })),
     { key: "startNow", href: startHref(locale, dict), label: dict.nav.startNow },
@@ -51,7 +46,7 @@ export function Footer() {
 
             <div className="mt-6 flex items-center gap-3">
               <a
-                href="mailto:info@jewebsiteonline.be"
+                href="mailto:info@jewebsiteonline.com"
                 aria-label={dict.footer.emailAria}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-cream text-forest transition-colors hover:border-terracotta/50 hover:text-terracotta"
               >
@@ -111,10 +106,10 @@ export function Footer() {
                 </li>
                 <li>
                   <a
-                    href="mailto:info@jewebsiteonline.be"
+                    href="mailto:info@jewebsiteonline.com"
                     className="text-forest-muted transition-colors hover:text-terracotta"
                   >
-                    info@jewebsiteonline.be
+                    info@jewebsiteonline.com
                   </a>
                 </li>
               </ul>

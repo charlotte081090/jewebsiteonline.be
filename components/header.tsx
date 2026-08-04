@@ -7,7 +7,13 @@ import { createPortal } from "react-dom";
 import { BrandLogo } from "@/components/brand-logo";
 import { LanguageToggle } from "@/components/language-toggle";
 import { useLocaleContext } from "@/components/locale-provider";
-import { anchorHref, localePath, startHref } from "@/lib/i18n/path";
+import {
+  anchorHref,
+  localePath,
+  startHref,
+  stripLocale,
+} from "@/lib/i18n/path";
+import { isHomeSectionSlug } from "@/lib/i18n/routes";
 
 const NAV_KEYS = ["howItWorks", "examples", "pricing", "reviews"] as const;
 
@@ -16,9 +22,15 @@ export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const home = localePath(locale);
-  const isHome = pathname === home || pathname === `${home}/`;
+  const pathSlug = stripLocale(pathname).replace(/^\//, "");
+  const isHome =
+    pathname === home ||
+    pathname === `${home}/` ||
+    (!!pathSlug && isHomeSectionSlug(locale, pathSlug));
+  const solid = !isHome || scrolled;
   const navLinks = NAV_KEYS.map((key) => ({
     key,
     href: anchorHref(locale, dict, key, isHome),
@@ -31,9 +43,23 @@ export function Header() {
   }, []);
 
   useEffect(() => {
+    if (!isHome) {
+      setScrolled(true);
+      return;
+    }
+
+    function onScroll() {
+      setScrolled(window.scrollY > 36);
+    }
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
+
+  useEffect(() => {
     if (!open) return;
     const prevOverflow = document.body.style.overflow;
-    const prevPadding = document.body.style.paddingRight;
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
 
@@ -43,7 +69,6 @@ export function Header() {
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prevOverflow;
-      document.body.style.paddingRight = prevPadding;
       document.documentElement.style.overflow = "";
       window.removeEventListener("keydown", onKey);
     };
@@ -57,10 +82,8 @@ export function Header() {
     ? createPortal(
         <div className="lg:hidden" aria-hidden={!open}>
           <div
-            className={`fixed inset-0 z-[80] bg-forest/45 transition-opacity duration-300 ${
-              open
-                ? "opacity-100"
-                : "pointer-events-none opacity-0"
+            className={`fixed inset-0 z-[80] bg-forest/40 backdrop-blur-[3px] transition-opacity duration-300 ${
+              open ? "opacity-100" : "pointer-events-none opacity-0"
             }`}
             onClick={() => setOpen(false)}
           />
@@ -70,21 +93,24 @@ export function Header() {
             role="dialog"
             aria-modal="true"
             aria-label={dict.nav.mobileMenu}
-            className={`fixed inset-y-0 right-0 z-[90] flex h-[100dvh] w-[75vw] max-w-sm flex-col bg-cream transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            className={`fixed inset-y-0 right-0 z-[90] flex h-[100dvh] w-[min(88vw,22rem)] flex-col border-l border-cream/25 bg-cream/18 shadow-[-20px_0_60px_rgba(27,48,34,0.28)] backdrop-blur-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
               open ? "translate-x-0" : "translate-x-full"
             }`}
+            style={{
+              background:
+                "linear-gradient(165deg, rgba(250,245,240,0.22) 0%, rgba(27,48,34,0.55) 55%, rgba(27,48,34,0.72) 100%)",
+            }}
           >
-            <div className="flex h-[var(--site-header-height)] shrink-0 items-center justify-between border-b border-border/60 px-5">
-              <BrandLogo size="sm" label={dict.brand.homeAria} />
+            <div className="flex items-center justify-end px-4 py-4 pt-[max(1rem,env(safe-area-inset-top))]">
               <button
                 type="button"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border text-forest"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-cream/35 text-cream transition-colors hover:border-cream/60 hover:bg-cream/10"
                 aria-label={dict.nav.closeMenu}
                 onClick={() => setOpen(false)}
               >
                 <svg
-                  width="20"
-                  height="20"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -97,33 +123,32 @@ export function Header() {
             </div>
 
             <nav
-              className="flex flex-1 flex-col gap-1 overflow-y-auto px-5 py-8"
+              className="flex flex-1 flex-col gap-1 overflow-y-auto px-5 py-4"
               aria-label={dict.nav.mobileNav}
             >
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.key}
                   href={link.href}
-                  className="rounded-md px-2 py-3 font-display text-2xl font-semibold text-forest transition-colors hover:text-terracotta"
+                  className="rounded-2xl px-3 py-3.5 font-display text-2xl font-semibold text-cream transition-colors hover:bg-cream/10 hover:text-terracotta-soft"
                   onClick={() => setOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
             </nav>
 
-            <div className="shrink-0 border-t border-border/60 px-5 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-              <div className="mb-4 flex">
-                <LanguageToggle
-                  locale={locale}
-                  label={dict.languageToggle.label}
-                  nlLabel={dict.languageToggle.nl}
-                  enLabel={dict.languageToggle.en}
-                />
-              </div>
+            <div className="flex flex-col gap-3 border-t border-cream/20 px-5 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+              <LanguageToggle
+                locale={locale}
+                label={dict.languageToggle.label}
+                nlLabel={dict.languageToggle.nl}
+                enLabel={dict.languageToggle.en}
+                tone="light"
+              />
               <Link
                 href={ctaHref}
-                className="inline-flex w-full items-center justify-center rounded-md bg-terracotta px-4 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
+                className="inline-flex w-full items-center justify-center rounded-full bg-terracotta px-4 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
                 onClick={() => setOpen(false)}
               >
                 {dict.nav.cta}
@@ -137,68 +162,100 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 h-[var(--site-header-height)] border-b border-border/60 bg-cream/90 backdrop-blur-md">
-        <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-4 px-5 md:px-8">
-          <BrandLogo size="md" label={dict.brand.homeAria} />
-
-          <nav
-            className="hidden items-center gap-7 lg:flex"
-            aria-label={dict.nav.mainNav}
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
+        <div className="pointer-events-auto mx-auto max-w-6xl px-3 pt-3 sm:px-5 md:px-8 md:pt-4">
+          <div
+            className={`flex items-center justify-between gap-2 rounded-full px-3 py-2.5 transition-[background-color,box-shadow,border-color,backdrop-filter] duration-300 sm:gap-4 sm:px-4 sm:py-3 ${
+              solid
+                ? "border border-border/50 bg-cream shadow-[0_10px_40px_rgba(27,48,34,0.12)]"
+                : "border border-cream/25 bg-cream/12 shadow-none backdrop-blur-md"
+            }`}
           >
-            {navLinks.map((link) => (
-              <a
-                key={link.key}
-                href={link.href}
-                className="text-sm font-medium text-forest-muted transition-colors hover:text-terracotta"
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <LanguageToggle
-              locale={locale}
-              label={dict.languageToggle.label}
-              nlLabel={dict.languageToggle.nl}
-              enLabel={dict.languageToggle.en}
+            <BrandLogo
+              size="md"
+              label={dict.brand.homeAria}
+              tone={solid ? "dark" : "light"}
+              className="whitespace-nowrap !text-[1.05rem] leading-none sm:!text-[1.65rem]"
             />
 
-            <Link
-              href={ctaHref}
-              className="hidden rounded-md bg-terracotta px-4 py-2.5 text-sm font-semibold text-cream shadow-sm transition-colors hover:bg-terracotta-hover sm:inline-flex"
+            <nav
+              className="hidden flex-1 items-center justify-center gap-7 lg:flex"
+              aria-label={dict.nav.mainNav}
             >
-              {dict.nav.cta}
-            </Link>
+              {navLinks.map((link) => (
+                <Link
+                  key={link.key}
+                  href={link.href}
+                  className={`text-sm font-medium transition-colors ${
+                    solid
+                      ? "text-forest-muted hover:text-terracotta"
+                      : "text-cream/85 hover:text-cream"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
 
-            <button
-              type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border text-forest lg:hidden"
-              aria-expanded={open}
-              aria-controls="mobile-menu"
-              aria-label={open ? dict.nav.closeMenu : dict.nav.openMenu}
-              onClick={() => setOpen((v) => !v)}
-            >
-              <span className="sr-only">Menu</span>
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                aria-hidden
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+              <div className="hidden sm:block">
+                <LanguageToggle
+                  locale={locale}
+                  label={dict.languageToggle.label}
+                  nlLabel={dict.languageToggle.nl}
+                  enLabel={dict.languageToggle.en}
+                  tone={solid ? "dark" : "light"}
+                />
+              </div>
+
+              <Link
+                href={ctaHref}
+                className="hidden rounded-full bg-terracotta px-4 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover sm:inline-flex"
               >
-                {open ? (
-                  <path d="M6 6l12 12M18 6L6 18" />
-                ) : (
-                  <path d="M4 7h16M4 12h16M4 17h16" />
-                )}
-              </svg>
-            </button>
+                {dict.nav.cta}
+              </Link>
+
+              <button
+                type="button"
+                className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors lg:hidden ${
+                  solid
+                    ? "border-border text-forest"
+                    : "border-cream/35 text-cream"
+                }`}
+                aria-expanded={open}
+                aria-controls="mobile-menu"
+                aria-label={open ? dict.nav.closeMenu : dict.nav.openMenu}
+                onClick={() => setOpen((v) => !v)}
+              >
+                <span className="sr-only">Menu</span>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden
+                >
+                  {open ? (
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  ) : (
+                    <path d="M4 7h16M4 12h16M4 17h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </header>
+
+      {!isHome ? (
+        <div
+          className="h-[calc(var(--site-header-height)+1.25rem)]"
+          aria-hidden
+        />
+      ) : null}
+
       {menu}
     </>
   );

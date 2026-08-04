@@ -12,10 +12,17 @@ function countFromSeed(seed: number) {
   return MIN + (((seed % RANGE) + RANGE) % RANGE);
 }
 
-export function HeroPulse() {
+export function HeroPulse({
+  className = "",
+  tone = "light",
+}: {
+  className?: string;
+  tone?: "light" | "dark";
+}) {
   const { dict } = useLocaleContext();
   const [count, setCount] = useState(15);
   const [labelBefore, labelAfter] = dict.hero.pulseLabel.split("{count}");
+  const isDark = tone === "dark";
 
   useEffect(() => {
     const daySeed = Math.floor(Date.now() / (1000 * 60 * 60 * 48));
@@ -44,7 +51,11 @@ export function HeroPulse() {
     <button
       type="button"
       onClick={bumpCount}
-      className="inline-flex items-center gap-3 self-center rounded-md border border-terracotta/25 bg-terracotta/[0.08] px-3.5 py-2.5 text-left transition-colors hover:border-terracotta/40 lg:self-end"
+      className={`inline-flex items-center gap-3 self-center rounded-full px-3.5 py-2.5 text-left transition-colors lg:self-end ${
+        isDark
+          ? "border border-cream/25 bg-cream/10 hover:border-cream/40"
+          : "border border-terracotta/25 bg-terracotta/[0.08] hover:border-terracotta/40"
+      } ${className}`}
     >
       <span
         className="relative flex h-3.5 w-3.5 shrink-0 items-center justify-center"
@@ -54,12 +65,18 @@ export function HeroPulse() {
         <span className="absolute inline-flex h-full w-full animate-pulse-ring-delayed rounded-full bg-terracotta/30" />
         <span className="relative inline-flex h-3.5 w-3.5 rounded-full bg-terracotta shadow-[0_0_0_3px_rgba(192,127,99,0.2)]" />
       </span>
-      <p className="text-sm font-medium text-forest">
+      <p
+        className={`text-sm font-medium ${isDark ? "text-cream" : "text-forest"}`}
+      >
         {labelBefore ? (
-          <span className="text-forest-muted">{labelBefore}</span>
+          <span className={isDark ? "text-cream/75" : "text-forest-muted"}>
+            {labelBefore}
+          </span>
         ) : null}
         <span className="font-semibold">{count}</span>
-        <span className="text-forest-muted">{labelAfter ?? ""}</span>
+        <span className={isDark ? "text-cream/75" : "text-forest-muted"}>
+          {labelAfter ?? ""}
+        </span>
       </p>
     </button>
   );

@@ -9,6 +9,7 @@ type LanguageToggleProps = {
   label: string;
   nlLabel: string;
   enLabel: string;
+  tone?: "dark" | "light";
 };
 
 export function LanguageToggle({
@@ -16,9 +17,11 @@ export function LanguageToggle({
   label,
   nlLabel,
   enLabel,
+  tone = "dark",
 }: LanguageToggleProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const isLight = tone === "light";
 
   function switchTo(next: Locale) {
     if (next === locale) return;
@@ -28,7 +31,11 @@ export function LanguageToggle({
 
   return (
     <div
-      className="inline-flex items-center rounded-md border border-border/80 bg-cream p-0.5 text-xs font-semibold"
+      className={`inline-flex items-center rounded-full p-0.5 text-xs font-semibold ${
+        isLight
+          ? "border border-cream/30 bg-cream/10"
+          : "border border-border/80 bg-cream"
+      }`}
       role="group"
       aria-label={label}
     >
@@ -37,10 +44,14 @@ export function LanguageToggle({
         onClick={() => switchTo("nl")}
         aria-pressed={locale === "nl"}
         aria-label={nlLabel}
-        className={`rounded px-2 py-1 transition-colors ${
+        className={`rounded-full px-2 py-1 transition-colors ${
           locale === "nl"
-            ? "bg-forest text-cream"
-            : "text-forest-muted hover:text-forest"
+            ? isLight
+              ? "bg-cream text-forest"
+              : "bg-forest text-cream"
+            : isLight
+              ? "text-cream/75 hover:text-cream"
+              : "text-forest-muted hover:text-forest"
         }`}
       >
         NL
@@ -50,10 +61,14 @@ export function LanguageToggle({
         onClick={() => switchTo("en")}
         aria-pressed={locale === "en"}
         aria-label={enLabel}
-        className={`rounded px-2 py-1 transition-colors ${
+        className={`rounded-full px-2 py-1 transition-colors ${
           locale === "en"
-            ? "bg-forest text-cream"
-            : "text-forest-muted hover:text-forest"
+            ? isLight
+              ? "bg-cream text-forest"
+              : "bg-forest text-cream"
+            : isLight
+              ? "text-cream/75 hover:text-cream"
+              : "text-forest-muted hover:text-forest"
         }`}
       >
         EN

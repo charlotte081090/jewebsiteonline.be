@@ -65,8 +65,9 @@ export const nl = {
   },
 
   hero: {
-    title: "Razendsnel online met een website die écht klanten oplevert.",
-    body: "Wij bouwen professionele websites van 1 tot 3 pagina’s voor Belgische KMO’s. SEO-vriendelijk en beschikbaar vanaf €199.",
+    eyebrow: "Welkom bij Je Website Online",
+    title: "Een professionele website voor uw bedrijf",
+    body: "Professionele sites van 1 tot 3 pagina’s. SEO-vriendelijk, snel live en beschikbaar vanaf €199.",
     ctaPrimary: "Vraag uw preview aan",
     ctaSecondary: "Bekijk voorbeelden",
     bullets: [
@@ -76,8 +77,20 @@ export const nl = {
       "Betaalbaar en transparant",
     ],
     imageAlt:
-      "Voorbeelden van professionele websites op smartphone, tablet, desktop en laptop",
+      "Laptop op een houten bureau in een sfeervolle open workspace",
     pulseLabel: "{count} websites momenteel in productie",
+  },
+
+  usps: {
+    label: "Onze beloften",
+  },
+
+  showcase: {
+    eyebrow: "Zij gingen u voor",
+    title: "Bekijk onze voorbeelden",
+    body: "Elke site is mobielvriendelijk, snel en klaar om klanten binnen te halen, of u nu kapper, studio of coach bent.",
+    prev: "Vorige voorbeelden",
+    next: "Volgende voorbeelden",
   },
 
   problem: {
@@ -130,10 +143,10 @@ export const nl = {
     next: "Volgende voorbeelden",
     items: [
       {
-        category: "Kapper",
-        name: "Salon",
-        focus: "Afspraak boeken & openingstijden",
-        alt: "Mobiele website preview van Salon",
+        category: "Voedingscoaching",
+        name: "VitaminEsthi",
+        focus: "Holistische voedingstherapie, Esther",
+        alt: "Mobiele website preview van VitaminEsthi",
       },
       {
         category: "Pilates studio",
@@ -142,16 +155,16 @@ export const nl = {
         alt: "Mobiele website preview van Mellow wellbeing boutique",
       },
       {
-        category: "Voedingscoaching",
-        name: "VitaminEsthi",
-        focus: "Holistische voedingstherapie, Esther",
-        alt: "Mobiele website preview van VitaminEsthi",
-      },
-      {
         category: "Community",
         name: "FreeBeyondBorders",
         focus: "Vrijheid, impact en inkomen, webinar",
         alt: "Mobiele website preview van FreeBeyondBorders",
+      },
+      {
+        category: "Kapper",
+        name: "Salon",
+        focus: "Afspraak boeken & openingstijden",
+        alt: "Mobiele website preview van Salon",
       },
     ],
   },
@@ -295,7 +308,7 @@ export const nl = {
         heading: "1. Wie zijn wij?",
         paragraphs: [
           "jewebsiteonline.be (“wij”, “ons”) biedt professionele 1- en 3-pagina websites aan voor kleine en middelgrote ondernemingen in België en Nederland.",
-          "Verwerkingsverantwoordelijke: jewebsiteonline.be. E-mail: info@jewebsiteonline.be.",
+          "Verwerkingsverantwoordelijke: jewebsiteonline.be. E-mail: info@jewebsiteonline.com.",
           "(Volledige vennootschapsgegevens — adres en BTW-nummer — worden hier aangevuld zodra beschikbaar.)",
         ],
       },
@@ -337,7 +350,7 @@ export const nl = {
         ],
         list: [
           "Vercel Inc. — hosting, content delivery (CDN) en serverfuncties. Meer info: vercel.com/legal/privacy-policy.",
-          "Resend — verzending van e-mails met uw briefinggegevens naar info@jewebsiteonline.be. Meer info: resend.com/legal/privacy-policy.",
+          "Resend — verzending van e-mails met uw briefinggegevens naar info@jewebsiteonline.com. Meer info: resend.com/legal/privacy-policy.",
         ],
       },
       {
@@ -350,7 +363,7 @@ export const nl = {
         heading: "7. Uw rechten",
         paragraphs: [
           "Onder de AVG (GDPR) heeft u onder meer recht op inzage, rectificatie, wissing, beperking van de verwerking, overdraagbaarheid en bezwaar. U mag ook een klacht indienen bij de Gegevensbeschermingsautoriteit (België) of de Autoriteit Persoonsgegevens (Nederland).",
-          "Contacteer ons via info@jewebsiteonline.be.",
+          "Contacteer ons via info@jewebsiteonline.com.",
         ],
       },
       {
@@ -386,7 +399,7 @@ export const nl = {
         heading: "1. Wie zijn wij?",
         paragraphs: [
           "Deze algemene voorwaarden gelden voor alle diensten van jewebsiteonline.be (“wij”, “ons”): de gratis websitepreview en de levering van 1- of 3-pagina websites voor kleine en middelgrote ondernemingen in België en Nederland.",
-          "Contact: info@jewebsiteonline.be.",
+          "Contact: info@jewebsiteonline.com.",
         ],
       },
       {
@@ -711,7 +724,7 @@ export const nl = {
     privacy: "privacy",
     terms: "voorwaarden",
     anchors: {
-      top: "top",
+      top: "home",
       howItWorks: "hoe-het-werkt",
       examples: "voorbeelden",
       pricing: "prijzen",

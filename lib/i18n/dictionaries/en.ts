@@ -65,8 +65,9 @@ export const en: Dictionary = {
   },
 
   hero: {
-    title: "Get online fast with a website that actually brings in customers.",
-    body: "We build professional 1- to 3-page websites for small businesses. SEO-friendly and available from €199.",
+    eyebrow: "Welcome to Je Website Online",
+    title: "Get a professional website for your business",
+    body: "Professional 1- to 3-page sites. SEO-friendly, live fast, and available from €199.",
     ctaPrimary: "Request your preview",
     ctaSecondary: "See examples",
     bullets: [
@@ -76,8 +77,20 @@ export const en: Dictionary = {
       "Affordable and transparent",
     ],
     imageAlt:
-      "Examples of professional websites shown on smartphone, tablet, desktop and laptop",
+      "Laptop on a wooden desk in a warm open workspace",
     pulseLabel: "{count} websites currently in production",
+  },
+
+  usps: {
+    label: "Our promise",
+  },
+
+  showcase: {
+    eyebrow: "They went before you",
+    title: "See our examples",
+    body: "Every site is mobile-friendly, fast and ready to win customers, whether you run a salon, a studio or a coaching practice.",
+    prev: "Previous examples",
+    next: "Next examples",
   },
 
   problem: {
@@ -130,10 +143,10 @@ export const en: Dictionary = {
     next: "Next examples",
     items: [
       {
-        category: "Hair salon",
-        name: "Salon",
-        focus: "Online booking & opening hours",
-        alt: "Mobile website preview of Salon",
+        category: "Nutrition coaching",
+        name: "VitaminEsthi",
+        focus: "Holistic nutritional therapy, Esther",
+        alt: "Mobile website preview of VitaminEsthi",
       },
       {
         category: "Pilates studio",
@@ -142,16 +155,16 @@ export const en: Dictionary = {
         alt: "Mobile website preview of Mellow wellbeing boutique",
       },
       {
-        category: "Nutrition coaching",
-        name: "VitaminEsthi",
-        focus: "Holistic nutritional therapy, Esther",
-        alt: "Mobile website preview of VitaminEsthi",
-      },
-      {
         category: "Community",
         name: "FreeBeyondBorders",
         focus: "Freedom, impact and income, webinar",
         alt: "Mobile website preview of FreeBeyondBorders",
+      },
+      {
+        category: "Hair salon",
+        name: "Salon",
+        focus: "Online booking & opening hours",
+        alt: "Mobile website preview of Salon",
       },
     ],
   },
@@ -297,7 +310,7 @@ export const en: Dictionary = {
         heading: "1. Who are we?",
         paragraphs: [
           "jewebsiteonline.be (“we”, “us”) provides professional 1- and 3-page websites for small and medium-sized businesses in Belgium and the Netherlands.",
-          "Data controller: jewebsiteonline.be. Email: info@jewebsiteonline.be.",
+          "Data controller: jewebsiteonline.be. Email: info@jewebsiteonline.com.",
           "(Full company details — registered address and VAT number — will be added here as soon as they are available.)",
         ],
       },
@@ -339,7 +352,7 @@ export const en: Dictionary = {
         ],
         list: [
           "Vercel Inc. — hosting, content delivery (CDN) and server functions. More information: vercel.com/legal/privacy-policy.",
-          "Resend — sending emails containing your briefing details to info@jewebsiteonline.be. More information: resend.com/legal/privacy-policy.",
+          "Resend — sending emails containing your briefing details to info@jewebsiteonline.com. More information: resend.com/legal/privacy-policy.",
         ],
       },
       {
@@ -352,7 +365,7 @@ export const en: Dictionary = {
         heading: "7. Your rights",
         paragraphs: [
           "Under the GDPR you have, among others, the right of access, rectification, erasure, restriction of processing, data portability and objection. You may also lodge a complaint with the Data Protection Authority (Belgium) or the Autoriteit Persoonsgegevens (the Netherlands).",
-          "You can contact us at info@jewebsiteonline.be.",
+          "You can contact us at info@jewebsiteonline.com.",
         ],
       },
       {
@@ -388,7 +401,7 @@ export const en: Dictionary = {
         heading: "1. Who are we?",
         paragraphs: [
           "These terms and conditions apply to all services of jewebsiteonline.be (“we”, “us”): the free website preview and the delivery of 1- and 3-page websites for small and medium-sized businesses in Belgium and the Netherlands.",
-          "Contact: info@jewebsiteonline.be.",
+          "Contact: info@jewebsiteonline.com.",
         ],
       },
       {
@@ -710,15 +723,15 @@ export const en: Dictionary = {
 
   routes: {
     home: "",
-    start: "start-nu",
-    thankYou: "bedankt",
+    start: "start-now",
+    thankYou: "thank-you",
     privacy: "privacy",
-    terms: "voorwaarden",
+    terms: "terms",
     anchors: {
-      top: "top",
-      howItWorks: "hoe-het-werkt",
-      examples: "voorbeelden",
-      pricing: "prijzen",
+      top: "home",
+      howItWorks: "how-it-works",
+      examples: "examples",
+      pricing: "pricing",
       reviews: "reviews",
       faq: "faq",
     },

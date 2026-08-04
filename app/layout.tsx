@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Montserrat } from "next/font/google";
+import { Fraunces, Great_Vibes, Montserrat } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 
@@ -14,6 +14,13 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const greatVibes = Great_Vibes({
+  variable: "--font-great-vibes",
+  subsets: ["latin"],
+  weight: "400",
   display: "swap",
 });
 
@@ -39,7 +46,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale === "en" ? "en" : "nl-BE"}
-      className={`${fraunces.variable} ${montserrat.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${montserrat.variable} ${greatVibes.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col bg-cream font-sans text-forest">

@@ -8,7 +8,7 @@ export function Faq() {
   return (
     <section
       id={dict.routes.anchors.faq}
-      className="border-t border-border/70 bg-cream-dark/35"
+      className="border-t border-border/70 bg-cream"
     >
       <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
         <div className="max-w-2xl">

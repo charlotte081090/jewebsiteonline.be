@@ -2,30 +2,31 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { HeroPulse } from "@/components/home/hero-pulse";
 import { useLocaleContext } from "@/components/locale-provider";
 
 const VISUALS = [
-  { bg: "#f3e4dc", image: "/examples/salon-placeholder.webp" },
-  { bg: "#e8e4dc", image: "/examples/mellow.webp" },
   { bg: "#f3ebe3", image: "/examples/vitaminesthi.png" },
+  { bg: "#e8e4dc", image: "/examples/mellow.webp" },
   { bg: "#e8eee4", image: "/examples/freebeyondborders.png" },
+  { bg: "#f3e4dc", image: "/examples/salon-placeholder.webp" },
 ];
 
-export function Portfolio() {
+export function Showcase() {
   const { dict } = useLocaleContext();
-  const examples = dict.portfolio.items.map((item, i) => ({
+  const items = dict.portfolio.items.map((item, i) => ({
     ...item,
     bg: VISUALS[i]?.bg ?? "#f3e4dc",
     image: VISUALS[i]?.image ?? "/examples/salon-placeholder.webp",
   }));
-  const total = examples.length;
+  const total = items.length;
   const [index, setIndex] = useState(0);
-  const [visible, setVisible] = useState(3);
+  const [visible, setVisible] = useState(2);
 
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
     const update = () => {
-      const nextVisible = mq.matches ? 3 : 1;
+      const nextVisible = mq.matches ? 2 : 1;
       setVisible(nextVisible);
       setIndex((i) => Math.min(i, Math.max(0, total - nextVisible)));
     };
@@ -38,54 +39,49 @@ export function Portfolio() {
   const canPrev = index > 0;
   const canNext = index < maxIndex;
 
-  function prev() {
-    setIndex((i) => Math.max(0, i - 1));
-  }
-
-  function next() {
-    setIndex((i) => Math.min(maxIndex, i + 1));
-  }
-
   return (
-    <section
-      id={dict.routes.anchors.examples}
-      className="border-y border-border/70 bg-cream-dark/35"
-    >
-      <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">
-              {dict.portfolio.eyebrow}
-            </p>
-            <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-forest md:text-4xl">
-              {dict.portfolio.title}
-            </h2>
-            <p className="mt-4 text-lg text-muted">{dict.portfolio.intro}</p>
-          </div>
+    <section id={dict.routes.anchors.examples} className="bg-cream">
+      <div className="mx-auto max-w-6xl px-5 pt-10 md:px-8 md:pt-14">
+        <div className="flex justify-center">
+          <HeroPulse tone="light" className="self-center lg:self-center" />
+        </div>
+      </div>
 
-          <div className="flex shrink-0 items-center gap-2">
+      <div className="mx-auto grid max-w-6xl gap-12 px-5 py-14 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:items-center md:gap-10 md:px-8 md:py-20 lg:gap-14">
+        <div className="max-w-md">
+          <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">
+            {dict.showcase.eyebrow}
+          </p>
+          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-forest sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
+            {dict.showcase.title}
+          </h2>
+          <p className="mt-5 text-base leading-relaxed text-muted sm:text-lg">
+            {dict.showcase.body}
+          </p>
+
+          <div className="mt-8 flex items-center gap-3">
             <button
               type="button"
-              onClick={prev}
+              onClick={() => setIndex((i) => Math.max(0, i - 1))}
               disabled={!canPrev}
-              aria-label={dict.portfolio.prev}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-forest/20 text-forest transition-colors hover:border-forest/40 hover:bg-cream disabled:cursor-not-allowed disabled:opacity-35"
+              aria-label={dict.showcase.prev}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-forest/20 text-forest transition-colors hover:border-forest/40 hover:bg-cream-dark/50 disabled:cursor-not-allowed disabled:opacity-35"
             >
               <ArrowIcon direction="left" />
             </button>
             <button
               type="button"
-              onClick={next}
+              onClick={() => setIndex((i) => Math.min(maxIndex, i + 1))}
               disabled={!canNext}
-              aria-label={dict.portfolio.next}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-forest/20 text-forest transition-colors hover:border-forest/40 hover:bg-cream disabled:cursor-not-allowed disabled:opacity-35"
+              aria-label={dict.showcase.next}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-forest/20 text-forest transition-colors hover:border-forest/40 hover:bg-cream-dark/50 disabled:cursor-not-allowed disabled:opacity-35"
             >
               <ArrowIcon direction="right" />
             </button>
           </div>
         </div>
 
-        <div className="mt-14 overflow-hidden" aria-live="polite">
+        <div className="overflow-hidden" aria-live="polite">
           <div
             className="flex transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
             style={{
@@ -93,24 +89,24 @@ export function Portfolio() {
               transform: `translateX(-${(index / total) * 100}%)`,
             }}
           >
-            {examples.map((item) => (
+            {items.map((item) => (
               <article
                 key={item.name}
-                className="group box-border px-2 sm:px-3 md:px-4"
+                className="group box-border px-2 sm:px-3"
                 style={{ width: `${100 / total}%` }}
               >
                 <div
                   className="relative aspect-[4/5] overflow-hidden rounded-2xl"
                   style={{ backgroundColor: item.bg }}
                 >
-                  <div className="absolute inset-x-[16%] top-[8%] bottom-[6%] overflow-hidden rounded-[1.35rem] border-[3px] border-forest/15 bg-cream shadow-md transition-transform duration-500 group-hover:-translate-y-1">
+                  <div className="absolute inset-x-[10%] top-[6%] bottom-[5%] overflow-hidden rounded-[1.2rem] border-[3px] border-forest/15 bg-cream shadow-md transition-transform duration-500 group-hover:-translate-y-1">
                     <div className="relative h-full w-full">
                       <Image
                         src={item.image}
                         alt={item.alt}
                         fill
                         className="object-cover object-top"
-                        sizes="(max-width: 768px) 80vw, 280px"
+                        sizes="(max-width: 768px) 85vw, 300px"
                       />
                     </div>
                   </div>

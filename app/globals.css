@@ -13,6 +13,7 @@
   --muted: #5c6b60;
   --border: #d9cfc4;
   --site-header-height: 3.75rem;
+  --site-header-offset: 5.25rem;
 }
 
 @theme inline {
@@ -29,11 +30,17 @@
   --color-border: var(--border);
   --font-sans: var(--font-montserrat);
   --font-display: var(--font-fraunces);
+  --font-script: var(--font-great-vibes);
+}
+
+.font-script {
+  font-family: var(--font-great-vibes), cursive;
+  font-weight: 400;
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: var(--site-header-height);
+  scroll-padding-top: var(--site-header-offset);
   overflow-x: clip;
 }
 

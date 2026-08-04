@@ -9,7 +9,6 @@ export function Problem() {
 
   return (
     <section className="relative overflow-hidden bg-forest text-cream">
-      {/* Soft atmospheric glow */}
       <div
         className="pointer-events-none absolute inset-0"
         aria-hidden
@@ -19,7 +18,6 @@ export function Problem() {
         }}
       />
 
-      {/* Subtle grid graphic */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.14]"
         aria-hidden
@@ -32,7 +30,6 @@ export function Problem() {
         }}
       />
 
-      {/* Abstract search / visibility motif */}
       <svg
         className="pointer-events-none absolute -right-8 top-1/2 h-[22rem] w-[22rem] -translate-y-1/2 text-cream/[0.07] md:right-[4%] md:h-[26rem] md:w-[26rem]"
         viewBox="0 0 320 320"

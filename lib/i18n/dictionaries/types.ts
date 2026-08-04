@@ -99,6 +99,7 @@ export type BrandDictionary = {
 };
 
 export type HeroDictionary = {
+  eyebrow: string;
   title: string;
   body: string;
   ctaPrimary: string;
@@ -107,6 +108,18 @@ export type HeroDictionary = {
   imageAlt: string;
   /** Uses `{count}`. */
   pulseLabel: string;
+};
+
+export type UspsDictionary = {
+  label: string;
+};
+
+export type ShowcaseDictionary = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  prev: string;
+  next: string;
 };
 
 export type ProblemDictionary = {
@@ -456,6 +469,8 @@ export type Dictionary = {
   cookie: CookieDictionary;
   brand: BrandDictionary;
   hero: HeroDictionary;
+  usps: UspsDictionary;
+  showcase: ShowcaseDictionary;
   problem: ProblemDictionary;
   howItWorks: HowItWorksDictionary;
   portfolio: PortfolioDictionary;

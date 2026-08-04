@@ -11,7 +11,10 @@ export function Pricing() {
   const ctaHref = startHref(locale, dict);
 
   return (
-    <section id={dict.routes.anchors.pricing}>
+    <section
+      id={dict.routes.anchors.pricing}
+      className="border-t border-border/70 bg-cream-dark/35"
+    >
       <div className="mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-28">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">

@@ -18,7 +18,7 @@ export function JsonLd({ locale, dict }: JsonLdProps) {
     name: dict.meta.siteName,
     url,
     logo: `${BASE_URL}/logo.png`,
-    email: "info@jewebsiteonline.be",
+    email: "info@jewebsiteonline.com",
     areaServed: {
       "@type": "Country",
       name: "Belgium",

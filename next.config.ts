@@ -35,6 +35,14 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "20mb",
     },
   },
+  async rewrites() {
+    return [
+      // English public page URLs → existing App Router folders
+      { source: "/en/start-now", destination: "/en/start-nu" },
+      { source: "/en/thank-you", destination: "/en/bedankt" },
+      { source: "/en/terms", destination: "/en/voorwaarden" },
+    ];
+  },
   async headers() {
     return [
       {

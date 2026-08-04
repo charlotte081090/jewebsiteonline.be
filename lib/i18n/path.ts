@@ -1,5 +1,6 @@
 import type { Locale } from "./config";
 import type { Dictionary } from "./dictionaries/types";
+import { swapLocalizedPath, type AnchorKey } from "./routes";
 
 export function localePath(locale: Locale, path = ""): string {
   const clean = path.replace(/^\/+/, "");
@@ -17,16 +18,11 @@ export function stripLocale(pathname: string): string {
 }
 
 export function swapLocale(pathname: string, nextLocale: Locale): string {
-  const parts = pathname.split("/").filter(Boolean);
-  if (parts[0] === "nl" || parts[0] === "en") {
-    parts[0] = nextLocale;
-    return `/${parts.join("/")}`;
-  }
-  return localePath(nextLocale, pathname);
+  return swapLocalizedPath(pathname, nextLocale);
 }
 
 export function homeHref(locale: Locale, dict: Dictionary): string {
-  return localePath(locale, `#${dict.routes.anchors.top}`);
+  return localePath(locale, dict.routes.anchors.top);
 }
 
 export function startHref(locale: Locale, dict: Dictionary): string {
@@ -49,9 +45,8 @@ export function thankYouHref(locale: Locale, dict: Dictionary): string {
 export function anchorHref(
   locale: Locale,
   dict: Dictionary,
-  key: keyof Dictionary["routes"]["anchors"],
-  isHome: boolean,
+  key: AnchorKey,
+  _isHome?: boolean,
 ): string {
-  const id = dict.routes.anchors[key];
-  return isHome ? `#${id}` : `${localePath(locale)}#${id}`;
+  return localePath(locale, dict.routes.anchors[key]);
 }
