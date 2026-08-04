@@ -353,6 +353,7 @@ export const en: Dictionary = {
         list: [
           "Vercel Inc. — hosting, content delivery (CDN) and server functions. More information: vercel.com/legal/privacy-policy.",
           "Resend — sending emails containing your briefing details to info@jewebsiteonline.com. More information: resend.com/legal/privacy-policy.",
+          "Sender.net — storing briefing contacts and automated email follow-up. More information: sender.net/privacy-policy/.",
         ],
       },
       {

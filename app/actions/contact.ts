@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { Resend } from "resend";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 import { rateLimit } from "@/lib/rate-limit";
+import { syncBriefingToSender } from "@/lib/sender";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import {
   detectFileKind,
@@ -492,6 +493,33 @@ export async function submitBriefing(
 
   if (logError) {
     console.error("Supabase email_log insert error:", logError);
+  }
+
+  const senderResult = await syncBriefingToSender({
+    email,
+    contactPerson,
+    phone,
+    companyName,
+    address,
+    showPhone,
+    showAddress,
+    openingHours,
+    instagram,
+    facebook,
+    otherSocial,
+    sector,
+    businessInfo,
+    packageChoice,
+    selectedPages,
+    hasLogo,
+    brandNotes,
+    locale,
+    orderNumber: order.order_number ?? undefined,
+    privacyConsent,
+  });
+
+  if (!senderResult.ok) {
+    console.error("Sender sync skipped/failed:", senderResult.detail);
   }
 
   return { ok: true, orderNumber: order.order_number ?? undefined };

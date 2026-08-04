@@ -351,6 +351,7 @@ export const nl = {
         list: [
           "Vercel Inc. — hosting, content delivery (CDN) en serverfuncties. Meer info: vercel.com/legal/privacy-policy.",
           "Resend — verzending van e-mails met uw briefinggegevens naar info@jewebsiteonline.com. Meer info: resend.com/legal/privacy-policy.",
+          "Sender.net — opslag van briefingcontacten en automatische e-mailopvolging. Meer info: sender.net/privacy-policy/.",
         ],
       },
       {
