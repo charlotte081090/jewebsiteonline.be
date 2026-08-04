@@ -234,7 +234,8 @@ async function upsertSubscriber(
     firstname,
     groups: [groupId],
     fields: buildCustomFieldValues(fieldMap, payload),
-    trigger_automation: false,
+    // Required for Sender to run group-entry automations (welcome mail, etc.)
+    trigger_automation: true,
   };
   if (lastname) body.lastname = lastname;
   if (phone) body.phone = phone;
@@ -263,7 +264,8 @@ async function upsertSubscriber(
         ...(phone ? { phone } : {}),
         groups: [groupId],
         fields: buildCustomFieldValues(fieldMap, payload),
-        trigger_automation: false,
+        subscriber_status: "ACTIVE",
+        trigger_automation: true,
       }),
     });
 
