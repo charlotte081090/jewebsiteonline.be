@@ -1,5 +1,6 @@
 "use server";
 
+import type Stripe from "stripe";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 import {
   briefingSuccessPath,
@@ -48,6 +49,11 @@ export async function createCheckoutSession(input: {
       locale: locale === "nl" ? "nl" : "en",
       billing_address_collection: "auto",
       customer_creation: "if_required",
+      // Account has Managed Payments on by default; our packages aren't set up
+      // with eligible product tax codes yet, so use standard Checkout.
+      managed_payments: {
+        enabled: false,
+      },
       metadata: {
         package: orderPackage,
         pricing_package: packageId,
@@ -60,7 +66,7 @@ export async function createCheckoutSession(input: {
           form_reference_id: formReferenceId,
         },
       },
-    });
+    } as Parameters<Stripe["checkout"]["sessions"]["create"]>[0]);
 
     if (!session.url) {
       return {
