@@ -324,7 +324,8 @@ export async function submitBriefing(
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert({
-      status: "new",
+      status: "new_order",
+      site_language: locale,
       contact_name: contactPerson,
       contact_email: email,
       contact_phone: phone,
