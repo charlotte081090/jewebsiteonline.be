@@ -7,7 +7,10 @@ import { homeHref } from "@/lib/i18n/path";
 
 type BedanktPageProps = {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<{ naam?: string | string[] }>;
+  searchParams: Promise<{
+    naam?: string | string[];
+    order?: string | string[];
+  }>;
 };
 
 export async function generateMetadata({
@@ -39,6 +42,8 @@ export default async function BedanktPage({
   const query = await searchParams;
   const raw = query.naam;
   const name = (Array.isArray(raw) ? raw[0] : raw)?.trim() || "";
+  const rawOrder = query.order;
+  const order = (Array.isArray(rawOrder) ? rawOrder[0] : rawOrder)?.trim() || "";
 
   return (
     <div className="relative overflow-hidden">
@@ -63,6 +68,11 @@ export default async function BedanktPage({
           <p className="mx-auto mt-4 max-w-md text-lg leading-relaxed text-muted">
             {dict.bedankt.body}
           </p>
+          {order ? (
+            <p className="mx-auto mt-3 font-mono text-sm font-semibold tracking-wide text-forest">
+              {dict.bedankt.orderLabel.replace("{order}", order)}
+            </p>
+          ) : null}
           <Link
             href={homeHref(lang, dict)}
             className="mt-8 inline-flex rounded-md bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"

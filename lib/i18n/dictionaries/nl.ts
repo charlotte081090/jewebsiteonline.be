@@ -292,7 +292,8 @@ export const nl = {
     metaTitle: "Bedankt",
     title: "Bedankt",
     titleNamed: "Bedankt {name}",
-    body: "We gaan aan de slag. U ontvangt uw gratis preview binnen 48 uur.",
+    body: "We hebben uw briefing ontvangen en gaan ermee aan de slag. U ontvangt ook een bevestigingsmail met uw referentienummer.",
+    orderLabel: "Uw referentie: {order}",
     backHome: "Terug naar website",
   },
 
@@ -350,8 +351,7 @@ export const nl = {
         ],
         list: [
           "Vercel Inc. — hosting, content delivery (CDN) en serverfuncties. Meer info: vercel.com/legal/privacy-policy.",
-          "Resend — verzending van e-mails met uw briefinggegevens naar info@jewebsiteonline.com. Meer info: resend.com/legal/privacy-policy.",
-          "Sender.net — opslag van briefingcontacten en automatische e-mailopvolging. Meer info: sender.net/privacy-policy/.",
+          "Resend — verzending van transactionele e-mails (bevestiging van uw briefing en meldingen naar ons team). Meer info: resend.com/legal/privacy-policy.",
         ],
       },
       {

@@ -1,10 +1,14 @@
 "use server";
 
 import { headers } from "next/headers";
-import { Resend } from "resend";
+import {
+  getEmailFrom,
+  getResendClient,
+  getStaffInbox,
+  sendClientBriefingConfirmation,
+} from "@/lib/email";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
 import { rateLimit } from "@/lib/rate-limit";
-import { syncBriefingToSender } from "@/lib/sender";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import {
   detectFileKind,
@@ -412,18 +416,18 @@ export async function submitBriefing(
     console.error("Supabase task insert error:", taskError);
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.CONTACT_TO ?? "info@jewebsiteonline.com";
-  const from =
-    process.env.CONTACT_FROM ?? "jewebsiteonline.be <onboarding@resend.dev>";
+  const resend = getResendClient();
+  const to = getStaffInbox();
+  const from = getEmailFrom();
+  const orderNumber = order.order_number ?? order.id;
 
-  let emailStatus = "skipped";
+  let staffEmailStatus = "skipped";
+  let clientEmailStatus = "skipped";
 
-  if (apiKey) {
-    const resend = new Resend(apiKey);
+  if (resend) {
     const html = `
-      <h2>Nieuwe preview-aanvraag ${escapeHtml(order.order_number ?? "")}</h2>
-      <p><strong>Order:</strong> ${escapeHtml(order.order_number ?? order.id)}</p>
+      <h2>Nieuwe briefing ${escapeHtml(orderNumber)}</h2>
+      <p><strong>Order:</strong> ${escapeHtml(orderNumber)}</p>
       <h3>Contactgegevens</h3>
       <p><strong>Contactpersoon:</strong> ${escapeHtml(contactPerson)}</p>
       <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
@@ -449,8 +453,8 @@ export async function submitBriefing(
     `;
 
     const text = [
-      `Nieuwe preview-aanvraag ${order.order_number ?? ""}`,
-      `Order: ${order.order_number ?? order.id}`,
+      `Nieuwe briefing ${orderNumber}`,
+      `Order: ${orderNumber}`,
       "",
       `Contactpersoon: ${contactPerson}`,
       `E-mail: ${email}`,
@@ -466,61 +470,64 @@ export async function submitBriefing(
         from,
         to: [to],
         replyTo: email,
-        subject: `Preview-aanvraag ${order.order_number ?? ""}: ${companyName}`,
+        subject: `Briefing ${orderNumber}: ${companyName}`,
         html,
         text,
         attachments: emailAttachments.length ? emailAttachments : undefined,
       });
 
-      emailStatus = error ? "failed" : "sent";
-      if (error) console.error("Resend error:", error);
+      staffEmailStatus = error ? "failed" : "sent";
+      if (error) console.error("Resend staff email error:", error);
     } catch (err) {
-      emailStatus = "failed";
-      console.error("Resend exception:", err);
+      staffEmailStatus = "failed";
+      console.error("Resend staff email exception:", err);
     }
+
+    const clientResult = await sendClientBriefingConfirmation(resend, {
+      to: email,
+      contactPerson,
+      companyName,
+      orderNumber,
+      locale,
+    });
+    clientEmailStatus = clientResult.ok ? "sent" : "failed";
+    if (!clientResult.ok) {
+      console.error("Resend client confirmation error:", clientResult.error);
+    }
+  } else {
+    console.error("RESEND_API_KEY missing — briefing emails skipped");
   }
 
-  const { error: logError } = await supabase.from("email_logs").insert({
+  const { error: staffLogError } = await supabase.from("email_logs").insert({
     order_id: order.id,
     template_key: "briefing_notification",
-    status: emailStatus,
+    status: staffEmailStatus,
     payload: {
       to,
       companyName,
-      orderNumber: order.order_number,
+      orderNumber,
       uploadCount: uploadPaths.length,
     },
   });
 
-  if (logError) {
-    console.error("Supabase email_log insert error:", logError);
+  if (staffLogError) {
+    console.error("Supabase email_log insert error:", staffLogError);
   }
 
-  const senderResult = await syncBriefingToSender({
-    email,
-    contactPerson,
-    phone,
-    companyName,
-    address,
-    showPhone,
-    showAddress,
-    openingHours,
-    instagram,
-    facebook,
-    otherSocial,
-    sector,
-    businessInfo,
-    packageChoice,
-    selectedPages,
-    hasLogo,
-    brandNotes,
-    locale,
-    orderNumber: order.order_number ?? undefined,
-    privacyConsent,
+  const { error: clientLogError } = await supabase.from("email_logs").insert({
+    order_id: order.id,
+    template_key: "briefing_confirmation_client",
+    status: clientEmailStatus,
+    payload: {
+      to: email,
+      companyName,
+      orderNumber,
+      locale,
+    },
   });
 
-  if (!senderResult.ok) {
-    console.error("Sender sync skipped/failed:", senderResult.detail);
+  if (clientLogError) {
+    console.error("Supabase client email_log insert error:", clientLogError);
   }
 
   return { ok: true, orderNumber: order.order_number ?? undefined };

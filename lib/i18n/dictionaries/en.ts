@@ -294,7 +294,8 @@ export const en: Dictionary = {
     metaTitle: "Thank you",
     title: "Thank you",
     titleNamed: "Thank you, {name}",
-    body: "We are getting to work. You will receive your free preview within 48 hours.",
+    body: "We've received your briefing and will get started shortly. You'll also get a confirmation email with your reference number.",
+    orderLabel: "Your reference: {order}",
     backHome: "Back to the website",
   },
 
@@ -352,8 +353,7 @@ export const en: Dictionary = {
         ],
         list: [
           "Vercel Inc. — hosting, content delivery (CDN) and server functions. More information: vercel.com/legal/privacy-policy.",
-          "Resend — sending emails containing your briefing details to info@jewebsiteonline.com. More information: resend.com/legal/privacy-policy.",
-          "Sender.net — storing briefing contacts and automated email follow-up. More information: sender.net/privacy-policy/.",
+          "Resend — sending transactional emails (briefing confirmations to you and notifications to our team). More information: resend.com/legal/privacy-policy.",
         ],
       },
       {

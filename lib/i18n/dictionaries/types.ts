@@ -220,6 +220,8 @@ export type BedanktDictionary = {
   /** Uses `{name}`. */
   titleNamed: string;
   body: string;
+  /** Uses `{order}`. */
+  orderLabel: string;
   backHome: string;
 };
 

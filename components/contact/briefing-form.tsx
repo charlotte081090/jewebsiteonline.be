@@ -408,7 +408,10 @@ export function BriefingForm() {
         return;
       }
       const naam = encodeURIComponent(contactPerson.trim());
-      router.push(`${thankYouHref(locale, dict)}?naam=${naam}`);
+      const order = result.orderNumber
+        ? `&order=${encodeURIComponent(result.orderNumber)}`
+        : "";
+      router.push(`${thankYouHref(locale, dict)}?naam=${naam}${order}`);
     });
   }
 
