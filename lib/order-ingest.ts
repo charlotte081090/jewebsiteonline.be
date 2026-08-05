@@ -15,7 +15,7 @@ export type OrderIngestResult =
   | { ok: false; error: string; status?: number; body?: string };
 
 const DEFAULT_INGEST_URL =
-  "https://admin.jewebsiteonline.com/api/orders/ingest";
+  "https://jewebsiteonline-cms.vercel.app/api/orders/ingest";
 
 function pickString(...values: unknown[]): string | undefined {
   for (const value of values) {
