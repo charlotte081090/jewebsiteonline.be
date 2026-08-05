@@ -8,6 +8,7 @@ import {
   sendClientBriefingConfirmation,
 } from "@/lib/email";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
+import { ingestPaidOrder } from "@/lib/order-ingest";
 import { resolvePaidAccess } from "@/lib/paid-access";
 import { rateLimit } from "@/lib/rate-limit";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
@@ -61,6 +62,7 @@ const MESSAGES = {
       `“${name}”: enkel JPG, PNG, WebP of GIF.`,
     storageUnavailable: `Opslaan is tijdelijk niet beschikbaar. Mail ons op ${SUPPORT_EMAIL}.`,
     saveFailed: `Opslaan mislukt. Probeer opnieuw of mail ${SUPPORT_EMAIL}.`,
+    ingestFailed: `Uw briefing kon niet worden doorgestuurd. Probeer opnieuw of mail ${SUPPORT_EMAIL}.`,
     paymentRequired: `Deze briefing is alleen beschikbaar na betaling. Kies een pakket of mail ${SUPPORT_EMAIL}.`,
     paymentUsed: `Deze betaling is al gekoppeld aan een briefing. Mail ${SUPPORT_EMAIL} als u hulp nodig heeft.`,
     fallbackFileName: "beeld",
@@ -85,6 +87,7 @@ const MESSAGES = {
       `“${name}”: only JPG, PNG, WebP or GIF are allowed.`,
     storageUnavailable: `Saving is temporarily unavailable. Email us at ${SUPPORT_EMAIL}.`,
     saveFailed: `Saving failed. Please try again or email ${SUPPORT_EMAIL}.`,
+    ingestFailed: `Your briefing could not be forwarded. Please try again or email ${SUPPORT_EMAIL}.`,
     paymentRequired: `This briefing is only available after payment. Choose a package or email ${SUPPORT_EMAIL}.`,
     paymentUsed: `This payment is already linked to a briefing. Email ${SUPPORT_EMAIL} if you need help.`,
     fallbackFileName: "image",
@@ -354,35 +357,56 @@ export async function submitBriefing(
     { question: "Stripe checkout session", answer: paid.access.checkoutSessionId },
   ];
 
-  const { data: order, error: orderError } = await supabase
-    .from("orders")
-    .insert({
-      status: "new_order",
-      site_language: locale,
-      contact_name: contactPerson,
-      contact_email: verifiedEmail,
-      contact_phone: phone,
-      answers,
-      notes: `${companyName} | ${verifiedPackage} | ${sector} | ${verifiedReference}`,
-      payment_status: "paid",
-      paid_at: paid.access.paidAt,
-      stripe_checkout_session_id: paid.access.checkoutSessionId,
-      stripe_payment_intent_id: paid.access.paymentIntentId,
-    })
-    .select("id, order_number")
-    .single();
+  // CMS ingest is the source of truth for order creation (verifies Stripe itself).
+  const ingest = await ingestPaidOrder({
+    stripeCheckoutSessionId: paid.access.checkoutSessionId,
+    contactName: contactPerson,
+    contactEmail: verifiedEmail,
+    contactPhone: phone,
+    answers,
+    siteLanguage: locale,
+    formReferenceId: verifiedReference,
+  });
 
-  if (orderError || !order) {
-    console.error("Supabase order insert error:", orderError);
-    return { ok: false, error: messages.saveFailed };
+  if (!ingest.ok) {
+    return { ok: false, error: messages.ingestFailed };
   }
+
+  let orderId = ingest.orderId;
+  let orderNumber = ingest.orderNumber;
+
+  if (!orderId || !orderNumber) {
+    const { data: existingOrder, error: lookupError } = await supabase
+      .from("orders")
+      .select("id, order_number")
+      .eq("stripe_checkout_session_id", paid.access.checkoutSessionId)
+      .maybeSingle();
+
+    if (lookupError) {
+      console.error("Order lookup after ingest error:", lookupError);
+    } else if (existingOrder) {
+      orderId = orderId || existingOrder.id;
+      orderNumber =
+        orderNumber || existingOrder.order_number || undefined;
+    }
+  }
+
+  if (!orderId) {
+    console.error(
+      "Order ingest succeeded but no order id was returned or found",
+      ingest.raw,
+    );
+    return { ok: false, error: messages.ingestFailed };
+  }
+
+  const displayOrderNumber = orderNumber || orderId;
 
   const uploadPaths: string[] = [];
   const emailAttachments: { filename: string; content: Buffer }[] = [];
 
   async function uploadPrepared(item: PreparedUpload) {
     const safeName = item.file.name.replace(/[^\w.\-]+/g, "_").slice(0, 80);
-    const path = `orders/${order!.id}/${item.folder}/${Date.now()}-${safeName}`;
+    const path = `orders/${orderId}/${item.folder}/${Date.now()}-${safeName}`;
 
     const { error } = await supabase.storage
       .from(UPLOAD_BUCKET)
@@ -430,14 +454,14 @@ export async function submitBriefing(
   const { error: updateError } = await supabase
     .from("orders")
     .update({ answers: answersWithFiles })
-    .eq("id", order.id);
+    .eq("id", orderId);
 
   if (updateError) {
     console.error("Supabase order update error:", updateError);
   }
 
   const { error: taskError } = await supabase.from("tasks").insert({
-    order_id: order.id,
+    order_id: orderId,
     title: `Website bouwen: ${companyName}`,
     description: `Nieuwe betaalde briefing via jewebsiteonline.be. Pakket: ${verifiedPackage}. Ref: ${verifiedReference}.`,
     status: "todo",
@@ -452,15 +476,15 @@ export async function submitBriefing(
   const resend = getResendClient();
   const to = getStaffInbox();
   const from = getEmailFrom();
-  const orderNumber = order.order_number ?? order.id;
+  const orderNumberForEmail = displayOrderNumber;
 
   let staffEmailStatus = "skipped";
   let clientEmailStatus = "skipped";
 
   if (resend) {
     const html = `
-      <h2>Nieuwe briefing ${escapeHtml(orderNumber)}</h2>
-      <p><strong>Order:</strong> ${escapeHtml(orderNumber)}</p>
+      <h2>Nieuwe briefing ${escapeHtml(orderNumberForEmail)}</h2>
+      <p><strong>Order:</strong> ${escapeHtml(orderNumberForEmail)}</p>
       <h3>Contactgegevens</h3>
       <p><strong>Contactpersoon:</strong> ${escapeHtml(contactPerson)}</p>
       <p><strong>E-mail:</strong> ${escapeHtml(verifiedEmail)}</p>
@@ -488,8 +512,8 @@ export async function submitBriefing(
     `;
 
     const text = [
-      `Nieuwe briefing ${orderNumber}`,
-      `Order: ${orderNumber}`,
+      `Nieuwe briefing ${orderNumberForEmail}`,
+      `Order: ${orderNumberForEmail}`,
       "",
       `Contactpersoon: ${contactPerson}`,
       `E-mail: ${verifiedEmail}`,
@@ -506,7 +530,7 @@ export async function submitBriefing(
         from,
         to: [to],
         replyTo: verifiedEmail,
-        subject: `Briefing ${orderNumber}: ${companyName}`,
+        subject: `Briefing ${orderNumberForEmail}: ${companyName}`,
         html,
         text,
         attachments: emailAttachments.length ? emailAttachments : undefined,
@@ -523,7 +547,7 @@ export async function submitBriefing(
       to: verifiedEmail,
       contactPerson,
       companyName,
-      orderNumber,
+      orderNumber: orderNumberForEmail,
       locale,
     });
     clientEmailStatus = clientResult.ok ? "sent" : "failed";
@@ -535,13 +559,13 @@ export async function submitBriefing(
   }
 
   const { error: staffLogError } = await supabase.from("email_logs").insert({
-    order_id: order.id,
+    order_id: orderId,
     template_key: "briefing_notification",
     status: staffEmailStatus,
     payload: {
       to,
       companyName,
-      orderNumber,
+      orderNumber: orderNumberForEmail,
       uploadCount: uploadPaths.length,
       checkoutSessionId: paid.access.checkoutSessionId,
     },
@@ -552,13 +576,13 @@ export async function submitBriefing(
   }
 
   const { error: clientLogError } = await supabase.from("email_logs").insert({
-    order_id: order.id,
+    order_id: orderId,
     template_key: "briefing_confirmation_client",
     status: clientEmailStatus,
     payload: {
       to: verifiedEmail,
       companyName,
-      orderNumber,
+      orderNumber: orderNumberForEmail,
       locale,
     },
   });
@@ -567,7 +591,7 @@ export async function submitBriefing(
     console.error("Supabase client email_log insert error:", clientLogError);
   }
 
-  return { ok: true, orderNumber: order.order_number ?? undefined };
+  return { ok: true, orderNumber: displayOrderNumber };
 }
 
 function escapeHtml(value: string) {

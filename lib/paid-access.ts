@@ -22,7 +22,8 @@ export type PaidAccessResult =
 
 /**
  * Validates a Stripe Checkout Session for gated briefing access.
- * Source of truth: Stripe payment_status + unused session on orders.
+ * Payment is verified with Stripe; unused-session check uses the shared
+ * orders table (CMS ingest creates the order — lead site does not insert it).
  */
 export async function resolvePaidAccess(
   checkoutSessionId: string | undefined | null,
