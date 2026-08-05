@@ -177,6 +177,8 @@ export type PricingDictionary = {
   included: readonly string[];
   packages: readonly PricingPackage[];
   cta: string;
+  redirecting: string;
+  checkoutError: string;
 };
 
 export type FaqItem = {
@@ -212,6 +214,15 @@ export type ReviewsDictionary = {
 export type StartNuDictionary = {
   metaTitle: string;
   metaDescription: string;
+  paywallTitle: string;
+  paywallBody: string;
+  paywallCta: string;
+  usedTitle: string;
+  usedBody: string;
+  unpaidTitle: string;
+  unpaidBody: string;
+  /** Uses `{order}`. */
+  paidBadge: string;
 };
 
 export type BedanktDictionary = {
@@ -264,6 +275,8 @@ export type FormDictionary = {
     body: string;
     bullets: readonly string[];
     start: string;
+    /** Uses `{order}`. */
+    paidReference: string;
   };
   sections: FormSectionLabels;
   sectionsShort: FormSectionLabels;

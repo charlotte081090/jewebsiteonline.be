@@ -5,7 +5,7 @@ export const en: Dictionary = {
     title: "jewebsiteonline.com | Professional websites for small businesses",
     titleTemplate: "%s | jewebsiteonline.com",
     description:
-      "We build professional 1- to 3-page websites for small and medium businesses in Belgium and the Netherlands. Free preview within 48 hours, live within a day of your approval. SEO-friendly, from €199.",
+      "We build professional 1- to 3-page websites for small and medium businesses in Belgium and the Netherlands. Pay online, complete your briefing, and go live fast. SEO-friendly, from €199.",
     keywords: [
       "professional website design",
       "small business website",
@@ -14,11 +14,11 @@ export const en: Dictionary = {
       "website for SMEs",
       "website Belgium",
       "website Netherlands",
-      "free website preview",
+      "website package",
     ],
     ogTitle: "jewebsiteonline.com | Professional websites for small businesses",
     ogDescription:
-      "Get online fast with a website that actually brings in customers. Free preview within 48 hours, live within a day of your approval. From €199.",
+      "Get online fast with a website that actually brings in customers. Choose your package, pay securely, and we build your site. From €199.",
     siteName: "jewebsiteonline.com",
   },
 
@@ -27,8 +27,8 @@ export const en: Dictionary = {
     examples: "Examples",
     pricing: "Pricing",
     reviews: "Reviews",
-    cta: "Get your free preview",
-    startNow: "Start now",
+    cta: "Choose your package",
+    startNow: "Get started",
     home: "Home",
     mobileMenu: "Mobile menu",
     closeMenu: "Close menu",
@@ -39,7 +39,7 @@ export const en: Dictionary = {
 
   footer: {
     blurb:
-      "Professional 1- and 3-page websites for small businesses in Belgium and the Netherlands. Free preview within 48 hours, live within a day of your approval. SEO-friendly and transparently priced.",
+      "Professional 1- and 3-page websites for small businesses in Belgium and the Netherlands. Pay first, briefing next, then we build and launch. SEO-friendly and transparently priced.",
     navigation: "Navigation",
     legal: "Legal",
     privacy: "Privacy policy",
@@ -68,10 +68,10 @@ export const en: Dictionary = {
     eyebrow: "Welcome to Je Website Online",
     title: "Get a professional website for your business",
     body: "Professional 1- to 3-page sites. SEO-friendly, live fast, and available from €199.",
-    ctaPrimary: "Request your preview",
+    ctaPrimary: "Choose your package",
     ctaSecondary: "See examples",
     bullets: [
-      "Free preview within 48 hours",
+      "Pay securely, then brief us",
       "GDPR compliant",
       "No monthly fees or contracts",
       "Affordable and transparent",
@@ -104,27 +104,27 @@ export const en: Dictionary = {
     eyebrow: "The solution",
     title: "How it works",
     intro:
-      "From briefing to live website in five clear steps. Preview within 48 hours, live within a day of your approval.",
+      "From payment to live website in five clear steps. You pay first, then we build your site together.",
     steps: [
+      {
+        title: "Choose & pay",
+        time: "2 min",
+        body: "Pick your 1-page or 3-page package and pay securely via Stripe.",
+      },
       {
         title: "Briefing",
         time: "10 to 15 min",
-        body: "Share your details through the briefing form. Tell us who you are and what you need.",
+        body: "Complete your private briefing form. The more detail you share, the better the result.",
       },
       {
-        title: "Free preview",
+        title: "We build",
         time: "within 48 hours",
-        body: "We create a free design. You receive a preview, with no obligation whatsoever.",
+        body: "Our team designs your website and shares a private preview for review.",
       },
       {
         title: "Feedback",
         time: "1 revision round",
-        body: "Share your feedback whenever it suits you. We fine-tune everything to match your brand.",
-      },
-      {
-        title: "Updated version",
-        time: "within 24 hours",
-        body: "Once we have your feedback, you receive the revised version, ready for one final check.",
+        body: "Share your notes. We fine-tune everything to match your brand.",
       },
       {
         title: "Going live",
@@ -192,9 +192,9 @@ export const en: Dictionary = {
         highlights: [
           "One powerful landing page",
           "Contact details and a clear call to action",
-          "Preview in 48 hours, live after your approval",
+          "Private preview for review after we build",
         ],
-        cta: "Get your free preview",
+        cta: "Pay & start briefing",
       },
       {
         id: "three-page",
@@ -206,19 +206,21 @@ export const en: Dictionary = {
         highlights: [
           "Three focused pages",
           "More copy and more SEO pages",
-          "Preview in 48 hours, live after your approval",
+          "Private preview for review after we build",
         ],
-        cta: "Get your free preview",
+        cta: "Pay & start briefing",
       },
     ],
-    cta: "Get your free preview",
+    cta: "Pay & start briefing",
+    redirecting: "Redirecting to secure payment…",
+    checkoutError: "Checkout could not be started. Please try again.",
   },
 
   faq: {
     eyebrow: "Questions",
     title: "Frequently asked questions",
     intro:
-      "Answers to what business owners ask most often before their preview.",
+      "Answers to what business owners ask most often before ordering.",
     items: [
       {
         question: "Can I still request changes once the website is live?",
@@ -236,14 +238,14 @@ export const en: Dictionary = {
           "Yes. Think of change requests after launch or SEO packages. We agree on exactly what you need. For current prices, please get in touch with us.",
       },
       {
-        question: "How quickly do I get my free preview?",
+        question: "What happens after I pay?",
         answer:
-          "Once your briefing is complete, you receive a free preview within 48 hours. After your approval the site can go live the same day.",
+          "You are redirected to a private briefing form. Once that is complete, we start building and share a preview for your feedback within about 48 hours.",
       },
       {
         question: "Do I need any technical knowledge?",
         answer:
-          "No. You fill in a short briefing, give feedback on the preview, and we take care of the design, delivery and launch.",
+          "No. You pay, fill in a short briefing, give feedback on the preview, and we take care of the design, delivery and launch.",
       },
       {
         question: "What is included as standard?",
@@ -280,14 +282,25 @@ export const en: Dictionary = {
         role: "Nutrition coach, VitaminEsthi",
       },
     ],
-    ctaTitle: "Ready for your free preview?",
-    ctaButton: "Start your briefing",
+    ctaTitle: "Ready for your new website?",
+    ctaButton: "Choose your package",
   },
 
   startNu: {
-    metaTitle: "Start now · Free preview",
+    metaTitle: "Complete your briefing",
     metaDescription:
-      "Complete the briefing in 10 to 15 minutes and receive a free website preview from jewebsiteonline.com within 48 hours.",
+      "Complete your private briefing after payment so we can start building your website.",
+    paywallTitle: "Payment required",
+    paywallBody:
+      "The briefing form opens after you choose a package and complete payment. Pick 1-page or 3-page to continue.",
+    paywallCta: "View packages",
+    usedTitle: "Briefing already submitted",
+    usedBody:
+      "This payment is already linked to a briefing. Check your confirmation email for your reference number, or contact info@jewebsiteonline.com.",
+    unpaidTitle: "Payment not completed",
+    unpaidBody:
+      "We could not confirm this payment yet. If you were charged, email info@jewebsiteonline.com with your receipt.",
+    paidBadge: "Paid · reference {order}",
   },
 
   bedankt: {
@@ -354,6 +367,7 @@ export const en: Dictionary = {
         list: [
           "Vercel Inc. — hosting, content delivery (CDN) and server functions. More information: vercel.com/legal/privacy-policy.",
           "Resend — sending transactional emails (briefing confirmations to you and notifications to our team). More information: resend.com/legal/privacy-policy.",
+          "Stripe — processing payments for website packages. More information: stripe.com/privacy.",
         ],
       },
       {
@@ -392,7 +406,7 @@ export const en: Dictionary = {
   terms: {
     metaTitle: "Terms and conditions",
     metaDescription:
-      "Terms and conditions of jewebsiteonline.be for the free preview and the website packages.",
+      "Terms and conditions of jewebsiteonline.be for website packages and delivery.",
     title: "Terms and conditions",
     updated: "Last updated: 31 July 2026",
     backHome: "← Back to home",
@@ -401,22 +415,22 @@ export const en: Dictionary = {
       {
         heading: "1. Who are we?",
         paragraphs: [
-          "These terms and conditions apply to all services of jewebsiteonline.be (“we”, “us”): the free website preview and the delivery of 1- and 3-page websites for small and medium-sized businesses in Belgium and the Netherlands.",
+          "These terms and conditions apply to all services of jewebsiteonline.be (“we”, “us”): the sale and delivery of 1- and 3-page websites for small and medium-sized businesses in Belgium and the Netherlands.",
           "Contact: info@jewebsiteonline.com.",
         ],
       },
       {
-        heading: "2. Free preview",
+        heading: "2. Ordering and payment",
         paragraphs: [
-          "You can request a free website preview through the briefing form. The preview comes with no obligation: you are not committed to anything until you confirm and pay for a package.",
-          "We aim to deliver the preview within 48 hours of receiving a complete briefing. That timeframe is indicative and may be longer in the event of incomplete information, high demand or force majeure.",
-          "The preview remains the property of jewebsiteonline.be until an agreement for a paid package is in place. You may not reuse or pass on the preview commercially without our permission.",
+          "You choose a 1-page or 3-page package on our website and pay securely via Stripe before the briefing. Payment creates a paid order; the private briefing form is then unlocked for that purchase.",
+          "After a complete briefing we aim to share a private preview for review within 48 hours. That timeframe is indicative and may be longer in the event of incomplete information, high demand or force majeure.",
+          "Previews shared for review remain part of the delivery process for your paid package. You may not reuse or pass on preview materials commercially without our permission.",
         ],
       },
       {
         heading: "3. Packages and prices",
         paragraphs: [
-          "Once you approve the preview, you can choose a 1-page or a 3-page website package. Current prices are listed on our website. All amounts are exclusive or inclusive of VAT as stated alongside the price.",
+          "Current prices for the 1-page and 3-page packages are listed on our website. All amounts are exclusive or inclusive of VAT as stated alongside the price.",
           "An agreement is concluded when you confirm the package and payment (or the agreed deposit) has been received, unless agreed otherwise in writing.",
         ],
       },
@@ -469,15 +483,16 @@ export const en: Dictionary = {
 
   form: {
     intro: {
-      eyebrow: "Free preview",
-      title: "Ready for your new website?",
-      body: "Take 10 to 15 minutes to complete this briefing. The more complete your answers, the better the free preview we can create for your business. You will receive it within 48 hours.",
+      eyebrow: "Paid · briefing",
+      title: "Complete your briefing",
+      body: "Thanks for your payment. Take 10 to 15 minutes to complete this briefing. The more complete your answers, the better we can build your website.",
       bullets: [
         "No technical knowledge needed",
-        "Free preview within 48 hours",
-        "Live after your approval",
+        "We start building after this form",
+        "Private preview for your review",
       ],
       start: "Start the briefing",
+      paidReference: "Your payment reference: {order}",
     },
     sections: {
       contact: "Contact details",

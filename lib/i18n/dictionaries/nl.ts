@@ -5,7 +5,7 @@ export const nl = {
     title: "jewebsiteonline.be | Professionele websites voor KMO’s",
     titleTemplate: "%s | jewebsiteonline.be",
     description:
-      "Wij bouwen professionele websites van 1 tot 3 pagina’s voor Belgische KMO’s. Gratis preview binnen 48 uur, live binnen een dag na goedkeuring. SEO-vriendelijk en vanaf €199.",
+      "Wij bouwen professionele websites van 1 tot 3 pagina’s voor KMO’s in België en Nederland. Betaal online, vul uw briefing in en ga snel live. SEO-vriendelijk en vanaf €199.",
     keywords: [
       "website laten maken",
       "KMO website",
@@ -14,11 +14,11 @@ export const nl = {
       "goedkope website",
       "website Nederland",
       "professionele website KMO",
-      "gratis websitepreview",
+      "websitepakket",
     ],
     ogTitle: "jewebsiteonline.be | Professionele websites voor KMO’s",
     ogDescription:
-      "Razendsnel online met een website die écht klanten oplevert. Gratis preview binnen 48 uur, live binnen een dag na goedkeuring. Vanaf €199.",
+      "Razendsnel online met een website die écht klanten oplevert. Kies uw pakket, betaal veilig en wij bouwen uw site. Vanaf €199.",
     siteName: "jewebsiteonline.be",
   },
 
@@ -27,8 +27,8 @@ export const nl = {
     examples: "Voorbeelden",
     pricing: "Prijzen",
     reviews: "Reviews",
-    cta: "Vraag gratis preview aan",
-    startNow: "Start nu",
+    cta: "Kies uw pakket",
+    startNow: "Aan de slag",
     home: "Home",
     mobileMenu: "Mobiel menu",
     closeMenu: "Menu sluiten",
@@ -39,7 +39,7 @@ export const nl = {
 
   footer: {
     blurb:
-      "Professionele websites van 1 of 3 pagina’s voor KMO’s in België en Nederland. Gratis preview binnen 48 uur, live binnen een dag na goedkeuring. SEO-vriendelijk en transparant geprijsd.",
+      "Professionele websites van 1 of 3 pagina’s voor KMO’s in België en Nederland. Eerst betalen, dan briefing, daarna bouwen en livegaan. SEO-vriendelijk en transparant geprijsd.",
     navigation: "Navigatie",
     legal: "Juridisch",
     privacy: "Privacybeleid",
@@ -68,10 +68,10 @@ export const nl = {
     eyebrow: "Welkom bij Je Website Online",
     title: "Een professionele website voor uw bedrijf",
     body: "Professionele sites van 1 tot 3 pagina’s. SEO-vriendelijk, snel live en beschikbaar vanaf €199.",
-    ctaPrimary: "Vraag uw preview aan",
+    ctaPrimary: "Kies uw pakket",
     ctaSecondary: "Bekijk voorbeelden",
     bullets: [
-      "Gratis preview binnen 48 uur",
+      "Veilig betalen, daarna briefing",
       "GDPR compliant",
       "Geen maandelijkse betaling of contract",
       "Betaalbaar en transparant",
@@ -104,27 +104,27 @@ export const nl = {
     eyebrow: "De oplossing",
     title: "Hoe het werkt",
     intro:
-      "Van briefing tot live website in vijf duidelijke stappen. Preview binnen 48 uur, live binnen een dag na goedkeuring.",
+      "Van betaling tot live website in vijf duidelijke stappen. Eerst betalen, daarna bouwen we samen uw site.",
     steps: [
+      {
+        title: "Kies & betaal",
+        time: "2 min",
+        body: "Kies uw 1-pagina of 3-pagina pakket en betaal veilig via Stripe.",
+      },
       {
         title: "Briefing",
         time: "10 tot 15 min",
-        body: "Laat uw gegevens achter via het briefingformulier. Vertel wie u bent en wat u nodig heeft.",
+        body: "Vul uw privé briefingformulier in. Hoe meer detail, hoe beter het resultaat.",
       },
       {
-        title: "Gratis preview",
+        title: "Wij bouwen",
         time: "binnen 48 uur",
-        body: "Wij maken een gratis ontwerp. U ontvangt een preview, zonder verplichtingen.",
+        body: "Ons team ontwerpt uw website en deelt een privépreview ter review.",
       },
       {
         title: "Feedback",
         time: "1 revisieronde",
-        body: "Geef uw feedback wanneer het u uitkomt. We stemmen alles af op uw merk.",
-      },
-      {
-        title: "Bijgewerkte versie",
-        time: "binnen 24 uur",
-        body: "Na ontvangst van uw feedback krijgt u de aangepaste versie, klaar voor een laatste check.",
+        body: "Deel uw opmerkingen. We stemmen alles af op uw merk.",
       },
       {
         title: "Live zetten",
@@ -191,9 +191,9 @@ export const nl = {
         highlights: [
           "Eén krachtige landingspagina",
           "Contact en duidelijke knop naar actie",
-          "Preview in 48 uur, live na goedkeuring",
+          "Privépreview ter review na de bouw",
         ],
-        cta: "Vraag gratis preview aan",
+        cta: "Betaal & start briefing",
       },
       {
         id: "three-page",
@@ -205,18 +205,20 @@ export const nl = {
         highlights: [
           "Drie gerichte pagina’s",
           "Meer tekst en SEO-pagina’s",
-          "Preview in 48 uur, live na goedkeuring",
+          "Privépreview ter review na de bouw",
         ],
-        cta: "Vraag gratis preview aan",
+        cta: "Betaal & start briefing",
       },
     ],
-    cta: "Vraag gratis preview aan",
+    cta: "Betaal & start briefing",
+    redirecting: "U wordt doorgestuurd naar de veilige betaling…",
+    checkoutError: "Checkout kon niet gestart worden. Probeer opnieuw.",
   },
 
   faq: {
     eyebrow: "Vragen",
     title: "Veelgestelde vragen",
-    intro: "Antwoorden op wat ondernemers het vaakst vragen vóór hun preview.",
+    intro: "Antwoorden op wat ondernemers het vaakst vragen vóór hun bestelling.",
     items: [
       {
         question: "Kan ik nog wijzigingen vragen nadat de website live is?",
@@ -234,14 +236,14 @@ export const nl = {
           "Ja. Denk aan wijzigingsaanvragen na livegang of SEO-pakketten. Wat u precies nodig heeft, stemmen we af. Voor actuele prijzen neemt u best contact met ons op.",
       },
       {
-        question: "Hoe snel krijg ik mijn gratis preview?",
+        question: "Wat gebeurt er na betaling?",
         answer:
-          "Na een volledige briefing ontvangt u binnen 48 uur een gratis preview. Na goedkeuring kan de site dezelfde dag live.",
+          "U wordt doorgestuurd naar een privé briefingformulier. Zodra dat volledig is, starten wij met bouwen en delen we binnen ongeveer 48 uur een preview voor uw feedback.",
       },
       {
         question: "Heb ik technische kennis nodig?",
         answer:
-          "Nee. U vult een korte briefing in, geeft feedback op de preview en wij zorgen voor design, oplevering en livegang.",
+          "Nee. U betaalt, vult een korte briefing in, geeft feedback op de preview en wij zorgen voor design, oplevering en livegang.",
       },
       {
         question: "Wat zit er standaard inbegrepen?",
@@ -278,14 +280,25 @@ export const nl = {
         role: "Voedingscoach, VitaminEsthi",
       },
     ],
-    ctaTitle: "Klaar voor uw gratis preview?",
-    ctaButton: "Start uw briefing",
+    ctaTitle: "Klaar voor uw nieuwe website?",
+    ctaButton: "Kies uw pakket",
   },
 
   startNu: {
-    metaTitle: "Start nu · Gratis preview",
+    metaTitle: "Vul uw briefing in",
     metaDescription:
-      "Vul in 10 tot 15 minuten de briefing in en ontvang binnen 48 uur een gratis websitepreview van jewebsiteonline.be.",
+      "Vul na betaling uw privé briefing in zodat wij uw website kunnen beginnen bouwen.",
+    paywallTitle: "Betaling vereist",
+    paywallBody:
+      "Het briefingformulier opent nadat u een pakket kiest en de betaling afrondt. Kies 1-pagina of 3-pagina om verder te gaan.",
+    paywallCta: "Bekijk pakketten",
+    usedTitle: "Briefing al ingediend",
+    usedBody:
+      "Deze betaling is al gekoppeld aan een briefing. Check uw bevestigingsmail voor het referentienummer, of mail info@jewebsiteonline.com.",
+    unpaidTitle: "Betaling niet afgerond",
+    unpaidBody:
+      "We konden deze betaling nog niet bevestigen. Als u wel betaald heeft, mail info@jewebsiteonline.com met uw betaalbewijs.",
+    paidBadge: "Betaald · referentie {order}",
   },
 
   bedankt: {
@@ -352,6 +365,7 @@ export const nl = {
         list: [
           "Vercel Inc. — hosting, content delivery (CDN) en serverfuncties. Meer info: vercel.com/legal/privacy-policy.",
           "Resend — verzending van transactionele e-mails (bevestiging van uw briefing en meldingen naar ons team). Meer info: resend.com/legal/privacy-policy.",
+          "Stripe — verwerking van betalingen voor websitepakketten. Meer info: stripe.com/privacy.",
         ],
       },
       {
@@ -390,38 +404,38 @@ export const nl = {
   terms: {
     metaTitle: "Algemene voorwaarden",
     metaDescription:
-      "Algemene voorwaarden van jewebsiteonline.be voor de gratis preview en websitepakketten.",
+      "Algemene voorwaarden van jewebsiteonline.be voor websitepakketten en oplevering.",
     title: "Algemene voorwaarden",
-    updated: "Laatst bijgewerkt: 31 juli 2026",
+    updated: "Laatst bijgewerkt: 5 augustus 2026",
     backHome: "← Terug naar home",
     privacyLinkLabel: "privacybeleid",
     sections: [
       {
         heading: "1. Wie zijn wij?",
         paragraphs: [
-          "Deze algemene voorwaarden gelden voor alle diensten van jewebsiteonline.be (“wij”, “ons”): de gratis websitepreview en de levering van 1- of 3-pagina websites voor kleine en middelgrote ondernemingen in België en Nederland.",
+          "Deze algemene voorwaarden gelden voor alle diensten van jewebsiteonline.be (“wij”, “ons”): de verkoop en levering van 1- of 3-pagina websites voor kleine en middelgrote ondernemingen in België en Nederland.",
           "Contact: info@jewebsiteonline.com.",
         ],
       },
       {
-        heading: "2. Gratis preview",
+        heading: "2. Bestelling en betaling",
         paragraphs: [
-          "Via het briefingformulier kunt u een gratis websitepreview aanvragen. De preview is vrijblijvend: u zit nergens aan vast tot u een pakket bevestigt en betaalt.",
-          "Wij streven ernaar de preview binnen 48 uur na een volledige briefing te leveren. Die termijn is indicatief en kan langer zijn bij incomplete gegevens, hoge vraag of overmacht.",
-          "De preview blijft eigendom van jewebsiteonline.be tot er een overeenkomst is voor een betaald pakket. U mag de preview niet commercieel hergebruiken of doorgeven zonder onze toestemming.",
+          "U kiest een 1-pagina of 3-pagina pakket op onze website en betaalt veilig via Stripe vóór de briefing. Betaling creëert een betaalde bestelling; daarna wordt het privé briefingformulier voor die aankoop ontgrendeld.",
+          "Na een volledige briefing streven wij ernaar binnen 48 uur een privépreview ter review te delen. Die termijn is indicatief en kan langer zijn bij incomplete gegevens, hoge vraag of overmacht.",
+          "Previews die wij delen voor review maken deel uit van de oplevering van uw betaalde pakket. U mag previewmateriaal niet commercieel hergebruiken of doorgeven zonder onze toestemming.",
         ],
       },
       {
         heading: "3. Pakketten en prijzen",
         paragraphs: [
-          "Na goedkeuring van de preview kunt u kiezen voor een 1-pagina of 3-pagina websitepakket. De actuele prijzen staan op onze website. Alle bedragen zijn exclusief of inclusief btw zoals vermeld bij de prijsvermelding.",
-          "Een overeenkomst komt tot stand wanneer u het pakket bevestigt en de betaling (of het overeengekomen voorschot) is ontvangen, tenzij schriftelijk anders afgesproken.",
+          "De actuele prijzen voor de 1-pagina en 3-pagina pakketten staan op onze website. Alle bedragen zijn exclusief of inclusief btw zoals vermeld bij de prijsvermelding.",
+          "Een overeenkomst komt tot stand wanneer de betaling via Stripe is ontvangen, tenzij schriftelijk anders afgesproken.",
         ],
       },
       {
         heading: "4. Uw medewerking",
         paragraphs: [
-          "Voor een goede preview en oplevering heeft u ons nodig: correcte bedrijfsgegevens, teksten, logo, foto’s en snelle feedback. Als gegevens ontbreken of onjuist zijn, kan dat de planning en het resultaat beïnvloeden.",
+          "Voor een goede oplevering heeft u ons nodig: correcte bedrijfsgegevens, teksten, logo, foto’s en snelle feedback. Als gegevens ontbreken of onjuist zijn, kan dat de planning en het resultaat beïnvloeden.",
           "U garandeert dat u rechten heeft op alle materialen die u aanlevert (teksten, logo’s, beelden) en dat die geen rechten van derden schenden.",
         ],
       },
@@ -467,15 +481,16 @@ export const nl = {
 
   form: {
     intro: {
-      eyebrow: "Gratis preview",
-      title: "Klaar voor uw nieuwe website?",
-      body: "Neem 10 tot 15 minuten om deze briefing in te vullen. Hoe vollediger uw antwoorden, hoe beter wij een gratis preview kunnen maken die past bij uw zaak. U ontvangt die binnen 48 uur.",
+      eyebrow: "Betaald · briefing",
+      title: "Vul uw briefing in",
+      body: "Bedankt voor uw betaling. Neem 10 tot 15 minuten om deze briefing in te vullen. Hoe vollediger uw antwoorden, hoe beter wij uw website kunnen bouwen.",
       bullets: [
         "Geen technische kennis nodig",
-        "Gratis preview binnen 48 uur",
-        "Live na goedkeuring",
+        "Na dit formulier starten wij met bouwen",
+        "Privépreview voor uw review",
       ],
       start: "Start de briefing",
+      paidReference: "Uw betaalreferentie: {order}",
     },
     sections: {
       contact: "Contactgegevens",

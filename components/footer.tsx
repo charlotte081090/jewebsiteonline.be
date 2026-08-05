@@ -6,7 +6,6 @@ import { useLocaleContext } from "@/components/locale-provider";
 import {
   anchorHref,
   privacyHref,
-  startHref,
   termsHref,
 } from "@/lib/i18n/path";
 
@@ -22,7 +21,11 @@ export function Footer() {
       href: anchorHref(locale, dict, key),
       label: dict.nav[key],
     })),
-    { key: "startNow", href: startHref(locale, dict), label: dict.nav.startNow },
+    {
+      key: "startNow",
+      href: anchorHref(locale, dict, "pricing"),
+      label: dict.nav.startNow,
+    },
   ];
 
   return (

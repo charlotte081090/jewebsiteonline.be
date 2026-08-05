@@ -1,14 +1,31 @@
 "use client";
 
-import Link from "next/link";
+import { useState, useTransition } from "react";
+import { createCheckoutSession } from "@/app/actions/checkout";
 import { useLocaleContext } from "@/components/locale-provider";
-import { startHref } from "@/lib/i18n/path";
+import type { PricingPackageId } from "@/lib/stripe";
 
 const FEATURED_PACKAGE_ID = "three-page";
 
 export function Pricing() {
   const { locale, dict } = useLocaleContext();
-  const ctaHref = startHref(locale, dict);
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  function startCheckout(packageId: PricingPackageId) {
+    setError(null);
+    setPendingId(packageId);
+    startTransition(async () => {
+      const result = await createCheckoutSession({ packageId, locale });
+      if (!result.ok) {
+        setError(result.error || dict.pricing.checkoutError);
+        setPendingId(null);
+        return;
+      }
+      window.location.href = result.url;
+    });
+  }
 
   return (
     <section
@@ -29,6 +46,7 @@ export function Pricing() {
         <div className="mt-12 grid items-stretch gap-6 md:grid-cols-2 md:gap-8">
           {dict.pricing.packages.map((pkg) => {
             const featured = pkg.id === FEATURED_PACKAGE_ID;
+            const busy = isPending && pendingId === pkg.id;
             return (
               <div
                 key={pkg.id}
@@ -78,21 +96,31 @@ export function Pricing() {
                 </ul>
 
                 <div className="mt-auto pt-8">
-                  <Link
-                    href={ctaHref}
-                    className={`inline-flex w-full items-center justify-center rounded-md px-5 py-3.5 text-sm font-semibold transition-colors ${
+                  <button
+                    type="button"
+                    disabled={isPending}
+                    onClick={() =>
+                      startCheckout(pkg.id as PricingPackageId)
+                    }
+                    className={`inline-flex w-full items-center justify-center rounded-md px-5 py-3.5 text-sm font-semibold transition-colors disabled:opacity-60 ${
                       featured
                         ? "bg-terracotta text-cream hover:bg-terracotta-hover"
                         : "border border-forest/25 bg-transparent text-forest hover:border-forest/45 hover:bg-cream-dark/60"
                     }`}
                   >
-                    {pkg.cta}
-                  </Link>
+                    {busy ? dict.pricing.redirecting : pkg.cta}
+                  </button>
                 </div>
               </div>
             );
           })}
         </div>
+
+        {error ? (
+          <p className="mt-4 text-sm font-medium text-red-700" role="alert">
+            {error}
+          </p>
+        ) : null}
 
         <div className="mt-10 rounded-xl border border-border/80 bg-cream-dark/40 px-6 py-5">
           <p className="text-sm font-semibold text-forest">

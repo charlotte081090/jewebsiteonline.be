@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLocaleContext } from "@/components/locale-provider";
-import { startHref } from "@/lib/i18n/path";
+import { anchorHref } from "@/lib/i18n/path";
 
 const PHOTOS = [
   "/reviews/evelien-photo.webp",
@@ -108,7 +108,7 @@ export function Reviews() {
             {dict.reviews.ctaTitle}
           </p>
           <Link
-            href={startHref(locale, dict)}
+            href={anchorHref(locale, dict, "pricing")}
             className="inline-flex rounded-md bg-terracotta px-6 py-3 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
           >
             {dict.reviews.ctaButton}

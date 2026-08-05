@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLocaleContext } from "@/components/locale-provider";
-import { anchorHref, startHref } from "@/lib/i18n/path";
+import { anchorHref } from "@/lib/i18n/path";
 
 export function Hero() {
   const { locale, dict } = useLocaleContext();
@@ -49,7 +49,7 @@ export function Hero() {
 
         <div className="animate-fade-up delay-2 mt-9 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
           <Link
-            href={startHref(locale, dict)}
+            href={anchorHref(locale, dict, "pricing")}
             className="inline-flex items-center justify-center rounded-full bg-terracotta px-7 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover sm:text-base"
           >
             {dict.hero.ctaPrimary}

@@ -16,6 +16,8 @@ import type {
   CountryCode,
   FormDictionary,
 } from "@/lib/i18n/dictionaries/types";
+import type { PaidAccess } from "@/lib/paid-access";
+import type { OrderPackageId } from "@/lib/stripe";
 import { privacyHref, termsHref, thankYouHref } from "@/lib/i18n/path";
 
 /** Dial codes stay in code; the country names come from the dictionary. */
@@ -77,7 +79,7 @@ function sectionForStep(step: Step): SectionId | null {
   return null;
 }
 
-export function BriefingForm() {
+export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
   const { locale, dict } = useLocaleContext();
   const t = dict.form;
   const otherSector = t.sectors[t.sectors.length - 1] ?? "";
@@ -93,7 +95,7 @@ export function BriefingForm() {
   const [countryCode, setCountryCode] = useState("BE");
   const [phone, setPhone] = useState("");
   const [showPhone, setShowPhone] = useState(true);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(paidAccess.email);
   const [address, setAddress] = useState("");
   const [showAddress, setShowAddress] = useState(true);
   const [openingHours, setOpeningHours] = useState("");
@@ -104,7 +106,9 @@ export function BriefingForm() {
   const [sector, setSector] = useState("");
   const [sectorOther, setSectorOther] = useState("");
   const [businessInfo, setBusinessInfo] = useState("");
-  const [packageChoice, setPackageChoice] = useState<PackageChoice>("");
+  const [packageChoice, setPackageChoice] = useState<PackageChoice>(
+    paidAccess.packageChoice,
+  );
   const [selectedPages, setSelectedPages] = useState<string[]>([]);
   const [customPage, setCustomPage] = useState("");
   const [hasLogo, setHasLogo] = useState<BrandChoice>("");
@@ -391,13 +395,15 @@ export function BriefingForm() {
     formData.set("otherSocial", otherSocial.trim());
     formData.set("sector", sectorLabel);
     formData.set("businessInfo", businessInfo.trim());
-    formData.set("packageChoice", packageChoice);
+    formData.set("packageChoice", paidAccess.packageChoice);
     formData.set("selectedPages", pagesLabel);
     formData.set("hasLogo", hasLogo);
     formData.set("brandNotes", brandNotes.trim());
     formData.set("privacyConsent", privacyConsent ? "ja" : "nee");
     formData.set("imageCount", String(images.length));
     formData.set("website", honeypot);
+    formData.set("checkoutSessionId", paidAccess.checkoutSessionId);
+    formData.set("formReferenceId", paidAccess.formReferenceId);
     if (logoFile) formData.set("logo", logoFile);
     images.forEach((file) => formData.append("images", file));
 
@@ -427,6 +433,8 @@ export function BriefingForm() {
   }
 
   function selectPackage(value: PackageChoice) {
+    // Package is locked to the paid Stripe Checkout session.
+    if (value !== paidAccess.packageChoice) return;
     setPackageChoice(value);
     if (value === "1-pagina") {
       setSelectedPages([]);
@@ -513,6 +521,9 @@ export function BriefingForm() {
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
               {t.intro.body}
             </p>
+            <p className="mt-3 font-mono text-sm font-semibold tracking-wide text-forest">
+              {fill(t.intro.paidReference, { order: paidAccess.formReferenceId })}
+            </p>
             <ul className="mt-8 space-y-3">
               {t.intro.bullets.map((item) => (
                 <li
@@ -569,6 +580,7 @@ export function BriefingForm() {
               autoComplete="email"
               value={email}
               onChange={setEmail}
+              readOnly
               onEnter={next}
               placeholder={t.placeholders.email}
               autoFocus
@@ -691,6 +703,7 @@ export function BriefingForm() {
               t={t}
               prices={packagePrices}
               packageChoice={packageChoice}
+              lockedPackage={paidAccess.packageChoice}
               onSelect={selectPackage}
             />
           </Question>
@@ -940,6 +953,7 @@ export function BriefingForm() {
                     t={t}
                     prices={packagePrices}
                     packageChoice={packageChoice}
+                    lockedPackage={paidAccess.packageChoice}
                     onSelect={selectPackage}
                   />
                   {packageChoice === "3-pagina" && (
@@ -1349,11 +1363,13 @@ function PackagePicker({
   t,
   prices,
   packageChoice,
+  lockedPackage,
   onSelect,
 }: {
   t: FormDictionary;
   prices: { onePage: string; threePage: string };
   packageChoice: PackageChoice;
+  lockedPackage?: OrderPackageId;
   onSelect: (value: PackageChoice) => void;
 }) {
   const options = [
@@ -1373,14 +1389,19 @@ function PackagePicker({
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      {options.map((pkg) => (
+      {options.map((pkg) => {
+        const lockedOut = Boolean(lockedPackage && pkg.value !== lockedPackage);
+        return (
         <button
           key={pkg.value}
           type="button"
+          disabled={lockedOut}
           onClick={() => onSelect(pkg.value)}
           className={`rounded-xl border p-5 text-left transition-all duration-300 ${
             packageChoice === pkg.value
               ? "border-terracotta bg-terracotta/[0.08] shadow-[4px_6px_0_0_rgba(27,48,34,0.1)] ring-1 ring-terracotta/30"
+              : lockedOut
+                ? "cursor-not-allowed border-border/50 bg-cream-dark/30 opacity-50"
               : "border-border/80 bg-cream hover:border-terracotta/40"
           }`}
         >
@@ -1394,7 +1415,8 @@ function PackagePicker({
             {pkg.desc}
           </span>
         </button>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -1789,6 +1811,7 @@ function TextInput({
   type = "text",
   autoComplete,
   autoFocus,
+  readOnly,
 }: {
   id: string;
   label: string;
@@ -1799,6 +1822,7 @@ function TextInput({
   type?: string;
   autoComplete?: string;
   autoFocus?: boolean;
+  readOnly?: boolean;
 }) {
   return (
     <div>
@@ -1810,6 +1834,7 @@ function TextInput({
         type={type}
         autoComplete={autoComplete}
         autoFocus={autoFocus}
+        readOnly={readOnly}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => {

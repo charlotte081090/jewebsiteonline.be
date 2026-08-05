@@ -8,6 +8,7 @@ import {
   sendClientBriefingConfirmation,
 } from "@/lib/email";
 import { defaultLocale, isLocale, type Locale } from "@/lib/i18n/config";
+import { resolvePaidAccess } from "@/lib/paid-access";
 import { rateLimit } from "@/lib/rate-limit";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import {
@@ -60,6 +61,8 @@ const MESSAGES = {
       `“${name}”: enkel JPG, PNG, WebP of GIF.`,
     storageUnavailable: `Opslaan is tijdelijk niet beschikbaar. Mail ons op ${SUPPORT_EMAIL}.`,
     saveFailed: `Opslaan mislukt. Probeer opnieuw of mail ${SUPPORT_EMAIL}.`,
+    paymentRequired: `Deze briefing is alleen beschikbaar na betaling. Kies een pakket of mail ${SUPPORT_EMAIL}.`,
+    paymentUsed: `Deze betaling is al gekoppeld aan een briefing. Mail ${SUPPORT_EMAIL} als u hulp nodig heeft.`,
     fallbackFileName: "beeld",
   },
   en: {
@@ -82,6 +85,8 @@ const MESSAGES = {
       `“${name}”: only JPG, PNG, WebP or GIF are allowed.`,
     storageUnavailable: `Saving is temporarily unavailable. Email us at ${SUPPORT_EMAIL}.`,
     saveFailed: `Saving failed. Please try again or email ${SUPPORT_EMAIL}.`,
+    paymentRequired: `This briefing is only available after payment. Choose a package or email ${SUPPORT_EMAIL}.`,
+    paymentUsed: `This payment is already linked to a briefing. Email ${SUPPORT_EMAIL} if you need help.`,
     fallbackFileName: "image",
   },
 } satisfies Record<Locale, Record<string, unknown>>;
@@ -183,18 +188,37 @@ export async function submitBriefing(
   const privacyConsent = normalizeYesNo(
     String(formData.get("privacyConsent") ?? ""),
   );
+  const checkoutSessionId = String(
+    formData.get("checkoutSessionId") ?? "",
+  ).trim();
+  const formReferenceId = clip(
+    String(formData.get("formReferenceId") ?? "").trim(),
+    MAX_SHORT,
+  );
   const logo = formData.get("logo");
   const images = formData.getAll("images");
+
+  const paid = await resolvePaidAccess(checkoutSessionId);
+  if (!paid.ok) {
+    if (paid.reason === "used") {
+      return { ok: false, error: messages.paymentUsed };
+    }
+    return { ok: false, error: messages.paymentRequired };
+  }
+
+  // Never trust client package/email — use verified Stripe session values.
+  const verifiedPackage = paid.access.packageChoice;
+  const verifiedEmail = paid.access.email;
+  const verifiedReference =
+    paid.access.formReferenceId || formReferenceId || checkoutSessionId;
 
   if (
     !contactPerson ||
     !companyName ||
-    !email ||
     !phone ||
     !openingHours ||
     !sector ||
     !businessInfo ||
-    !packageChoice ||
     !hasLogo
   ) {
     return { ok: false, error: messages.requiredFields };
@@ -204,11 +228,11 @@ export async function submitBriefing(
     return { ok: false, error: messages.consent };
   }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(verifiedEmail)) {
     return { ok: false, error: messages.emailInvalid };
   }
 
-  if (!ALLOWED_PACKAGES.has(packageChoice)) {
+  if (!ALLOWED_PACKAGES.has(verifiedPackage)) {
     return { ok: false, error: messages.packageInvalid };
   }
 
@@ -224,10 +248,13 @@ export async function submitBriefing(
     return { ok: false, error: messages.showAddressInvalid };
   }
 
-  const emailLimit = rateLimit(`briefing:email:${email.toLowerCase()}`, {
-    limit: 3,
-    windowMs: 24 * 60 * 60 * 1000,
-  });
+  const emailLimit = rateLimit(
+    `briefing:email:${verifiedEmail.toLowerCase()}`,
+    {
+      limit: 3,
+      windowMs: 24 * 60 * 60 * 1000,
+    },
+  );
   if (!emailLimit.ok) {
     return { ok: false, error: messages.rateLimitEmail };
   }
@@ -298,7 +325,7 @@ export async function submitBriefing(
     { question: "Taal briefing", answer: locale === "en" ? "Engels" : "Nederlands" },
     { question: "Contactpersoon", answer: contactPerson },
     { question: "Bedrijfsnaam", answer: companyName },
-    { question: "E-mail", answer: email },
+    { question: "E-mail", answer: verifiedEmail },
     { question: "Telefoon", answer: phone },
     {
       question: "Telefoon tonen op website",
@@ -315,7 +342,7 @@ export async function submitBriefing(
     { question: "Andere link", answer: otherSocial || "Niet opgegeven" },
     { question: "Sector", answer: sector },
     { question: "Over de zaak", answer: businessInfo },
-    { question: "Pakket", answer: packageChoice },
+    { question: "Pakket", answer: verifiedPackage },
     { question: "Pagina's", answer: selectedPages || "Niet opgegeven" },
     { question: "Logo", answer: hasLogo === "ja" ? "Ja" : "Nee" },
     { question: "Brandingnotities", answer: brandNotes || "Niet opgegeven" },
@@ -323,6 +350,8 @@ export async function submitBriefing(
       question: "Privacytoestemming",
       answer: privacyConsent === "ja" ? "Ja" : "Nee",
     },
+    { question: "Betaalreferentie", answer: verifiedReference },
+    { question: "Stripe checkout session", answer: paid.access.checkoutSessionId },
   ];
 
   const { data: order, error: orderError } = await supabase
@@ -331,10 +360,14 @@ export async function submitBriefing(
       status: "new_order",
       site_language: locale,
       contact_name: contactPerson,
-      contact_email: email,
+      contact_email: verifiedEmail,
       contact_phone: phone,
       answers,
-      notes: `${companyName} | ${packageChoice} | ${sector}`,
+      notes: `${companyName} | ${verifiedPackage} | ${sector} | ${verifiedReference}`,
+      payment_status: "paid",
+      paid_at: paid.access.paidAt,
+      stripe_checkout_session_id: paid.access.checkoutSessionId,
+      stripe_payment_intent_id: paid.access.paymentIntentId,
     })
     .select("id, order_number")
     .single();
@@ -405,8 +438,8 @@ export async function submitBriefing(
 
   const { error: taskError } = await supabase.from("tasks").insert({
     order_id: order.id,
-    title: `Gratis preview maken: ${companyName}`,
-    description: `Nieuwe briefing via jewebsiteonline.be. Pakket: ${packageChoice}.`,
+    title: `Website bouwen: ${companyName}`,
+    description: `Nieuwe betaalde briefing via jewebsiteonline.be. Pakket: ${verifiedPackage}. Ref: ${verifiedReference}.`,
     status: "todo",
     priority: "high",
     task_type: "follow_up",
@@ -430,7 +463,7 @@ export async function submitBriefing(
       <p><strong>Order:</strong> ${escapeHtml(orderNumber)}</p>
       <h3>Contactgegevens</h3>
       <p><strong>Contactpersoon:</strong> ${escapeHtml(contactPerson)}</p>
-      <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
+      <p><strong>E-mail:</strong> ${escapeHtml(verifiedEmail)}</p>
       <p><strong>Telefoon:</strong> ${escapeHtml(phone)}</p>
       <p><strong>Telefoon tonen op website:</strong> ${escapeHtml(showPhone === "ja" ? "Ja" : "Nee")}</p>
       <h3>Bedrijfsgegevens</h3>
@@ -444,11 +477,13 @@ export async function submitBriefing(
       <p><strong>Sector:</strong> ${escapeHtml(sector)}</p>
       <p><strong>Over de zaak:</strong><br/>${escapeHtml(businessInfo).replace(/\n/g, "<br/>")}</p>
       <h3>Website & branding</h3>
-      <p><strong>Pakket:</strong> ${escapeHtml(packageChoice)}</p>
+      <p><strong>Pakket:</strong> ${escapeHtml(verifiedPackage)}</p>
       <p><strong>Pagina's:</strong> ${escapeHtml(selectedPages || "Niet opgegeven")}</p>
       <p><strong>Logo:</strong> ${escapeHtml(hasLogo === "ja" ? "Ja" : "Nee")}</p>
       <p><strong>Brandingnotities:</strong><br/>${escapeHtml(brandNotes || "Niet opgegeven").replace(/\n/g, "<br/>")}</p>
       <p><strong>Privacytoestemming:</strong> ${escapeHtml(privacyConsent === "ja" ? "Ja" : "Nee")}</p>
+      <p><strong>Betaalreferentie:</strong> ${escapeHtml(verifiedReference)}</p>
+      <p><strong>Stripe session:</strong> ${escapeHtml(paid.access.checkoutSessionId)}</p>
       <p><strong>Uploads in Storage:</strong> ${escapeHtml(String(uploadPaths.length))}</p>
     `;
 
@@ -457,19 +492,20 @@ export async function submitBriefing(
       `Order: ${orderNumber}`,
       "",
       `Contactpersoon: ${contactPerson}`,
-      `E-mail: ${email}`,
+      `E-mail: ${verifiedEmail}`,
       `Telefoon: ${phone}`,
       `Bedrijf: ${companyName}`,
       `Sector: ${sector}`,
-      `Pakket: ${packageChoice}`,
+      `Pakket: ${verifiedPackage}`,
       `Pagina's: ${selectedPages || "Niet opgegeven"}`,
+      `Betaalreferentie: ${verifiedReference}`,
     ].join("\n");
 
     try {
       const { error } = await resend.emails.send({
         from,
         to: [to],
-        replyTo: email,
+        replyTo: verifiedEmail,
         subject: `Briefing ${orderNumber}: ${companyName}`,
         html,
         text,
@@ -484,7 +520,7 @@ export async function submitBriefing(
     }
 
     const clientResult = await sendClientBriefingConfirmation(resend, {
-      to: email,
+      to: verifiedEmail,
       contactPerson,
       companyName,
       orderNumber,
@@ -507,6 +543,7 @@ export async function submitBriefing(
       companyName,
       orderNumber,
       uploadCount: uploadPaths.length,
+      checkoutSessionId: paid.access.checkoutSessionId,
     },
   });
 
@@ -519,7 +556,7 @@ export async function submitBriefing(
     template_key: "briefing_confirmation_client",
     status: clientEmailStatus,
     payload: {
-      to: email,
+      to: verifiedEmail,
       companyName,
       orderNumber,
       locale,

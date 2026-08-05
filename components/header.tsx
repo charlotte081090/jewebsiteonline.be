@@ -10,7 +10,6 @@ import { useLocaleContext } from "@/components/locale-provider";
 import {
   anchorHref,
   localePath,
-  startHref,
   stripLocale,
 } from "@/lib/i18n/path";
 import { isHomeSectionSlug } from "@/lib/i18n/routes";
@@ -36,7 +35,7 @@ export function Header() {
     href: anchorHref(locale, dict, key, isHome),
     label: dict.nav[key],
   }));
-  const ctaHref = startHref(locale, dict);
+  const ctaHref = anchorHref(locale, dict, "pricing", isHome);
 
   useEffect(() => {
     setMounted(true);
