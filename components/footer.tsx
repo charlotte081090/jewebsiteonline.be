@@ -10,7 +10,7 @@ import {
   termsHref,
 } from "@/lib/i18n/path";
 
-const NAV_KEYS = ["howItWorks", "examples", "pricing", "faq"] as const;
+const NAV_KEYS = ["examples", "howItWorks", "pricing", "faq"] as const;
 
 export function Footer() {
   const { locale, dict } = useLocaleContext();

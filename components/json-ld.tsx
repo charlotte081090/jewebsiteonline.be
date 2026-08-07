@@ -34,20 +34,26 @@ export function JsonLd({ locale, dict }: JsonLdProps) {
     inLanguage,
   };
 
+  const faqItems = dict.productFit.items.flatMap((item) => item.faqs);
+  const seen = new Set<string>();
+  const uniqueFaqs = faqItems.filter((item) => {
+    if (seen.has(item.question)) return false;
+    seen.add(item.question);
+    return true;
+  });
+
   const faqPage = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     inLanguage,
-    mainEntity: dict.faq.sections.flatMap((section) =>
-      section.items.map((item) => ({
-        "@type": "Question",
-        name: item.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: item.answer,
-        },
-      })),
-    ),
+    mainEntity: uniqueFaqs.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
   };
 
   const payloads = [organization, website, faqPage];

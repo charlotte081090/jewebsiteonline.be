@@ -165,11 +165,11 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
 
   const packagePrices = {
     onePage:
-      dict.pricing.packages.find((p) => p.id === "one-page")?.price ?? "€199",
+      dict.pricing.packages.find((p) => p.id === "one-page")?.price ?? "€249",
     threePage:
-      dict.pricing.packages.find((p) => p.id === "three-page")?.price ?? "€349",
+      dict.pricing.packages.find((p) => p.id === "three-page")?.price ?? "€599",
     fivePage:
-      dict.pricing.packages.find((p) => p.id === "five-page")?.price ?? "€499",
+      dict.pricing.packages.find((p) => p.id === "five-page")?.price ?? "€949",
   };
 
   const packageLabel =
@@ -1088,7 +1088,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
             type="button"
             onClick={next}
             disabled={pending}
-            className="rounded-md bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover disabled:opacity-60"
+            className="rounded-full bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover disabled:opacity-60"
           >
             {pending
               ? t.nav.submitting
@@ -1601,7 +1601,7 @@ function BrandingFields({
               key={`${inputId}-empty`}
               type="file"
               accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
-              className="mt-3 block w-full text-sm text-muted file:mr-4 file:rounded-md file:border-0 file:bg-terracotta file:px-4 file:py-2 file:text-sm file:font-semibold file:text-cream"
+              className="mt-3 block w-full text-sm text-muted file:mr-4 file:rounded-full file:border-0 file:bg-terracotta file:px-4 file:py-2 file:text-sm file:font-semibold file:text-cream"
               onChange={(e) => {
                 const file = e.target.files?.[0] ?? null;
                 if (!file) {

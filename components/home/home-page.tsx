@@ -5,7 +5,6 @@ import { Problem } from "@/components/home/problem";
 import { HowItWorks } from "@/components/home/how-it-works";
 import { Pricing } from "@/components/home/pricing";
 import { ProductFit } from "@/components/home/product-fit";
-import { Faq } from "@/components/home/faq";
 import { Reviews } from "@/components/home/reviews";
 
 export function HomePage() {
@@ -18,7 +17,6 @@ export function HomePage() {
       <HowItWorks />
       <Pricing />
       <ProductFit />
-      <Faq />
       <Reviews />
     </>
   );

@@ -60,7 +60,7 @@ function GateMessage({
       </p>
       <Link
         href={ctaHref}
-        className="mt-8 inline-flex rounded-md bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
+        className="mt-8 inline-flex rounded-full bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
       >
         {ctaLabel}
       </Link>

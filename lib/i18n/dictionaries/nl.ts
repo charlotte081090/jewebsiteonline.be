@@ -2,10 +2,10 @@ import type { Dictionary } from "./types";
 
 export const nl = {
   meta: {
-    title: "jewebsiteonline.be | Professionele websites voor KMO’s",
-    titleTemplate: "%s | jewebsiteonline.be",
+    title: "jewebsiteonline | Professionele websites voor KMO’s",
+    titleTemplate: "%s | jewebsiteonline",
     description:
-      "Wij bouwen professionele websites van 1 tot 5 pagina’s voor KMO’s in België en Nederland. Betaal online, vul uw briefing in en ga snel live. SEO-vriendelijk en vanaf €199.",
+      "Wij bouwen professionele websites van 1 tot 5 pagina’s voor KMO’s in België en Nederland. Van briefing tot live, Google-geoptimaliseerd en vanaf €249. Geen maandelijkse kosten.",
     keywords: [
       "website laten maken",
       "KMO website",
@@ -16,20 +16,20 @@ export const nl = {
       "professionele website KMO",
       "websitepakket",
     ],
-    ogTitle: "jewebsiteonline.be | Professionele websites voor KMO’s",
+    ogTitle: "jewebsiteonline | Professionele websites voor KMO’s",
     ogDescription:
-      "Razendsnel online met een website die écht klanten oplevert. Kies uw pakket, betaal veilig en wij bouwen uw site. Vanaf €199.",
-    siteName: "jewebsiteonline.be",
+      "Snel online met een website die klanten oplevert. Kies uw pakket, vul uw briefing in en wij bouwen uw website. Vanaf €249, geen maandelijkse kosten.",
+    siteName: "jewebsiteonline",
   },
 
   nav: {
     howItWorks: "Hoe het werkt",
-    examples: "Voorbeelden",
-    pricing: "Prijzen",
+    examples: "Inspiratie",
+    pricing: "Oplossingen",
     reviews: "Reviews",
-    faq: "FAQ",
-    cta: "Begin met uw project",
-    startNow: "Begin met uw project",
+    faq: "Gids",
+    cta: "Start nu",
+    startNow: "Start nu",
     home: "Home",
     mobileMenu: "Mobiel menu",
     closeMenu: "Menu sluiten",
@@ -40,12 +40,12 @@ export const nl = {
 
   footer: {
     blurb:
-      "Professionele websites van 1 of 3 pagina’s voor KMO’s in België en Nederland. Eerst betalen, dan briefing, daarna bouwen en livegaan. SEO-vriendelijk en transparant geprijsd.",
+      "Wij werken samen aan uw succes: u deelt uw visie, wij ontwerpen uw website en sturen bij op basis van uw feedback. Het resultaat? Een ijzersterke website die snel live staat, tegen een heldere en transparante prijs.",
     navigation: "Navigatie",
     legal: "Juridisch",
     privacy: "Privacybeleid",
     terms: "Algemene voorwaarden",
-    rights: "© {year} jewebsiteonline.be. Alle rechten voorbehouden.",
+    rights: "© {year} jewebsiteonline. Alle rechten voorbehouden.",
     emailAria: "Stuur een e-mail",
     instagramAria: "Volg ons op Instagram",
   },
@@ -62,24 +62,26 @@ export const nl = {
   },
 
   brand: {
-    homeAria: "Jewebsiteonline.com, naar homepagina",
+    homeAria: "jewebsiteonline, naar homepagina",
   },
 
   hero: {
     eyebrow: "Welkom bij Je Website Online",
     title: "Een professionele website voor uw bedrijf",
-    body: "Professionele sites van 1 tot 5 pagina’s. SEO-vriendelijk, snel live en beschikbaar vanaf €199.",
+    body: "Een website die past bij u en uw klanten overtuigt.\nOp maat ontworpen, professioneel en snel online.",
     ctaPrimary: "Begin met uw project",
-    ctaSecondary: "Bekijk voorbeelden",
+    ctaSecondary: "Inspiratie",
     bullets: [
-      "Veilig starten, daarna briefing",
+      "Van briefing tot live in enkele dagen",
       "GDPR compliant",
-      "Geen maandelijkse betaling of contract",
-      "Transparante prijzen",
+      "Persoonlijk klantportaal",
+      "Eenmalige investering",
     ],
     imageAlt:
       "Laptop op een houten bureau in een sfeervolle open workspace",
     pulseLabel: "{count} websites momenteel in productie",
+    socialProof: "Vertrouwd door 250+ ondernemers",
+    socialProofStarsAria: "5 van 5 sterren",
   },
 
   usps: {
@@ -87,50 +89,63 @@ export const nl = {
   },
 
   showcase: {
-    eyebrow: "Zij gingen u voor",
-    title: "Bekijk onze voorbeelden",
-    body: "Elke site is mobielvriendelijk, snel en klaar om klanten binnen te halen, of u nu kapper, studio of coach bent.",
-    prev: "Vorige voorbeelden",
-    next: "Volgende voorbeelden",
+    title: "Uw project als volgende",
+    body: "",
+    moreLabel: "200+ meer",
+    itemAlt: "Voorbeeldwebsite {n}",
+    cta: "Bekijk onze pakketten",
+    items: [
+      { alt: "Voorbeeldwebsite 1" },
+      { alt: "Voorbeeldwebsite 2" },
+      { alt: "Voorbeeldwebsite 3" },
+      { alt: "Voorbeeldwebsite 4" },
+      { alt: "Voorbeeldwebsite 5" },
+      { alt: "Voorbeeldwebsite 6" },
+      { alt: "Voorbeeldwebsite 7" },
+      { alt: "Voorbeeldwebsite 8" },
+      { alt: "Voorbeeldwebsite 9" },
+    ],
   },
 
   problem: {
     eyebrow: "Het probleem",
     title: "Nog geen website, of één die niet overtuigt?",
-    body: "Klanten zoeken online naar lokale diensten. Zonder website, of met een verouderde site die info mist, verdwijnt u in de zoekresultaten en kiest men de concurrent. Wij maken een snelle, SEO-vriendelijke website waarmee Belgische KMO’s gevonden én gekozen worden.",
+    body: "Klanten zoeken online naar lokale diensten. Zonder website, of met een verouderde site die info mist, verdwijnt u in de zoekresultaten en kiest men de concurrent. Wij maken een snelle, Google-vriendelijke website waarmee uw bedrijf gevonden én gekozen wordt.",
     cta: "Zo lossen wij het op",
+    croLead: "Geoptimaliseerd voor",
+    croItems: ["Google", "AI", "Performance"],
   },
 
   howItWorks: {
     eyebrow: "De oplossing",
     title: "Hoe het werkt",
     intro:
-      "Van pakket tot live website in vijf duidelijke stappen. U start, wij bouwen samen verder.",
+      "In vijf duidelijke stappen online. U geeft ons alle informatie over uw bedrijf en wij bouwen uw website.",
     steps: [
       {
-        title: "Kies & start",
+        title: "Maak uw keuze",
         time: "2 min",
-        body: "Kies uw pakket en uw website — Light, Medium of Pro.",
+        body: "Kies het pakket dat past bij uw zaak: Light, Medium of Pro.",
       },
       {
         title: "Briefing",
         time: "10 tot 15 min",
-        body: "Vul uw privé briefingformulier in. Hoe meer detail, hoe beter het resultaat.",
+        body: "Vul de briefing in met uw bedrijfsinformatie. Hoe meer detail, hoe beter het resultaat.",
       },
       {
         title: "Wij bouwen",
-        time: "binnen 48 uur",
-        body: "Ons team ontwerpt uw website en deelt een privépreview ter review.",
+        time: "3 werkdagen",
+        body: "Ons team ontwerpt uw website. Via uw persoonlijke klantportaal bekijkt u de eerste preview.",
       },
       {
         title: "Feedback",
-        time: "1 revisieronde",
-        body: "Deel uw opmerkingen. We stemmen alles af op uw merk.",
+        time: "revisies",
+        body: "Deel uw opmerkingen. We stemmen alles af op uw noden.",
       },
       {
         title: "Live zetten",
-        time: "dezelfde dag",
-        body: "Na uw goedkeuring zetten we de website live, vaak nog dezelfde dag.",
+        time: "Uw website is af!",
+        body: "Na uw goedkeuring en het voorbereiden van het domein gaat uw website live.",
       },
     ],
   },
@@ -172,64 +187,74 @@ export const nl = {
 
   pricing: {
     eyebrow: "Transparantie",
-    title: "Prijzen & pakketten",
-    intro: "Duidelijke prijzen. Geen verrassingen. Kies wat past bij uw zaak.",
+    title: "Oplossingen en pakketten",
+    intro: "Wij bieden duidelijke pakketten zonder verrassingen. Kies wat past bij uw zaak en ga meteen verder.",
     mostPopular: "Meest gekozen",
+    exclVat: "excl. btw",
+    oneTimeCost: "Eenmalige kost",
     packages: [
       {
         id: "one-page",
         name: "Light",
-        price: "€199",
+        price: "€249",
         description:
-          "Een strakke startpagina die meteen duidelijk maakt wie u bent en hoe klanten contact opnemen.",
+          "Een strakke startpagina die meteen duidelijk maakt wie u bent en hoe klanten contact met u kunnen opnemen.",
         pageLabel: "1-pagina website",
         pageTooltip:
           "Alles op één pagina: introductie, aanbod en contact. Ideaal als u snel en helder online wilt staan zonder aparte submenu’s.",
+        domainLabel: "Domein: wij koppelen of regelen het voor u",
+        domainTooltip:
+          "Heeft u al een domein? Dan helpen wij het te koppelen. Heeft u er nog geen? Dan kunt u er één kopen via uw klantportaal. Wij regelen de rest.",
         highlights: [
           "Op maat ontworpen",
           "Geoptimaliseerd voor smartphone",
-          "SEO-basis zodat Google u beter vindt",
-          "Domein & SSL koppelen we indien nodig",
+          "SEO-basis voor Google vanaf de start",
         ],
-        cta: "Start met Light",
+        cta: "Koop Light",
       },
       {
         id: "three-page",
         name: "Medium",
-        price: "€349",
-        wasPrice: "€399",
+        price: "€599",
+        wasPrice: "€649",
         description:
           "Meer ruimte om diensten of producten uit te leggen en uw merkverhaal te vertellen.",
         pageLabel: "3-pagina website",
         pageTooltip:
           "Drie gerichte pagina’s, bijvoorbeeld home, diensten of over ons, en contact. Meer structuur voor bezoekers én betere vindbaarheid.",
+        domainLabel: "Domein: wij koppelen of regelen het voor u",
+        domainTooltip:
+          "Heeft u al een domein? Dan helpen wij het te koppelen. Heeft u er nog geen? Dan kunt u er één kopen via uw klantportaal. Wij regelen de rest.",
         highlights: [
           "Op maat ontworpen",
           "Geoptimaliseerd voor smartphone",
-          "SEO-basis zodat Google u beter vindt",
-          "Ruimte voor diensten of productinfo",
-          "Domein & SSL koppelen we indien nodig",
+          "SEO-basis voor Google vanaf de start",
         ],
-        cta: "Start met Medium",
+        extras: ["Ruimte voor diensten of productinfo"],
+        cta: "Koop Medium",
       },
       {
         id: "five-page",
         name: "Pro",
-        price: "€549",
+        price: "€949",
         description:
           "Voor wie meer content, landingspagina’s of een uitgebreider online verhaal nodig heeft.",
         pageLabel: "5-pagina website",
         pageTooltip:
           "Vijf pagina’s voor een vollediger aanbod: bijvoorbeeld home, over ons, diensten, projecten of blog, en contact. Extra pagina’s voor diepere content.",
+        domainLabel: "Domein: wij koppelen of regelen het voor u",
+        domainTooltip:
+          "Heeft u al een domein? Dan helpen wij het te koppelen. Heeft u er nog geen? Dan kunt u er één kopen via uw klantportaal. Wij regelen de rest.",
         highlights: [
-          "Op maat ontworpen, met meer mogelijkheden",
+          "Op maat ontworpen",
           "Geoptimaliseerd voor smartphone",
-          "SEO-basis zodat Google u beter vindt",
-          "Ruimte voor uitgebreide content en landingspagina’s",
-          "Domein & SSL koppelen we indien nodig",
-          "Extra ontwikkelwerk mogelijk op aanvraag",
+          "SEO-basis voor Google vanaf de start",
         ],
-        cta: "Start met Pro",
+        extras: [
+          "Ruimte voor uitgebreide content en landingspagina’s",
+          "Extra opties & maatwerk mogelijk op aanvraag",
+        ],
+        cta: "Koop Pro",
       },
     ],
     cta: "Begin met uw project",
@@ -237,39 +262,154 @@ export const nl = {
     checkoutError: "Checkout kon niet gestart worden. Probeer opnieuw.",
     whyChooseUs: {
       title: "Waarom kiezen voor ons?",
-      body: "Wij combineren design, techniek en een helder proces — zodat u zonder gedoe online staat met een website die klanten écht verder helpt.",
+      body: "Geen abonnement, geen verrassingen. Wel een website die klanten écht verder helpt.",
       bullets: [
-        "Jarenlange ervaring met uiteenlopende partners en agencies",
-        "Duidelijk traject van briefing tot livegang",
-        "Persoonlijke aanpak, afgestemd op uw merk",
+        "Eenmalige kost, geen maandelijkse kosten of contracten",
+        "Persoonlijke aanpak, afgestemd op de noden van uw bedrijf",
+        "Blog, webshop, SEO of extra pagina’s nodig? Contacteer ons!",
       ],
-      imageAlt: "Team aan het werk in een lichte workspace",
+      imageAlt: "Twee collega’s overleggen aan een bureau in een warme workspace",
     },
   },
 
   productFit: {
-    title: "Welk pakket past bij mij?",
+    title: "Welk pakket kiezen?",
     intro:
-      "Korte richtlijnen zodat u meteen weet welk pakket het beste aansluit bij uw zaak.",
-    cta: "Bekijk de pakketten",
+      "Elke onderneming is uniek. Met behulp van onderstaande richtlijnen ontdekt u snel welk pakket de juiste functies en ondersteuning biedt voor de verdere groei van uw bedrijf.",
+    cta: "Kies uw pakket",
+    openHint: "Bekijk vragen & antwoorden",
+    closeLabel: "Sluiten",
     items: [
       {
+        id: "light",
         packageName: "Light",
-        title: "U wilt snel en duidelijk online",
-        body: "Eén sterke pagina volstaat wanneer uw aanbod helder is en bezoekers vooral contact moeten kunnen opnemen.",
+        title: "Snel online",
+        body: "Eén pagina volstaat wanneer uw aanbod helder is en bezoekers vooral contact moeten kunnen opnemen.",
         bestFor: "Coaches, lokale diensten, starters",
+        drawerTitle: "Light, 1 pagina",
+        drawerIntro:
+          "Korte antwoorden over inhoud, proces en wat er na livegang mogelijk is.",
+        faqs: [
+          {
+            question: "Wanneer is Light genoeg?",
+            answer:
+              "Als uw aanbod helder is en bezoekers vooral moeten weten wie u bent, wat u doet en hoe ze contact opnemen. Ideaal voor coaches, lokale diensten en starters.",
+          },
+          {
+            question: "Wat zit er standaard inbegrepen?",
+            answer:
+              "Hosting, SEO-basis voor Google en een design dat goed werkt op smartphone. Op maat ontworpen, eenmalige kost.",
+          },
+          {
+            question: "Wat gebeurt er na betaling?",
+            answer:
+              "U vult een privé briefing in. Daarna bouwen wij uw website. Via uw klantportaal bekijkt u binnen 3 werkdagen de eerste preview.",
+          },
+          {
+            question: "Heb ik technische kennis nodig?",
+            answer:
+              "Nee. U deelt uw bedrijfsinfo, geeft feedback op de preview en wij zorgen voor ontwerp, oplevering en livegang.",
+          },
+          {
+            question: "Kan ik later uitbreiden naar meer pagina’s?",
+            answer:
+              "Ja. Start gerust met Light. Wilt u later pagina’s toevoegen, dan kan dat via een upgrade of add-on, zonder opnieuw te beginnen.",
+          },
+          {
+            question: "Kan ik nog wijzigingen vragen nadat de website live is?",
+            answer:
+              "Ja. Na livegang kunt u aanpassingen laten doorvoeren via add-ons, zoals tekstupdates of kleine tweaks. Scope en prijs stemmen we vooraf af.",
+          },
+        ],
       },
       {
+        id: "medium",
         packageName: "Medium",
-        title: "U wilt meer vertellen en tonen",
-        body: "Drie pagina’s geven ruimte voor diensten, over ons of een duidelijk aanbod — en houden het overzichtelijk.",
+        title: "Meer vertellen",
+        body: "Drie pagina’s geven ruimte voor diensten, over ons of een duidelijk aanbod, en houden alles overzichtelijk.",
         bestFor: "KMO’s met meerdere diensten of een merkverhaal",
+        drawerTitle: "Medium, 3 pagina’s",
+        drawerIntro:
+          "Korte antwoorden over pagina’s, proces en mogelijkheden na livegang.",
+        faqs: [
+          {
+            question: "Wat is het verschil met Light en Pro?",
+            answer:
+              "Light is één landingspagina. Medium geeft drie gerichte pagina’s voor diensten en verhaal. Pro biedt vijf pagina’s voor meer content en aparte landingspagina’s.",
+          },
+          {
+            question: "Welke pagina’s kies ik typisch bij Medium?",
+            answer:
+              "Meestal Home, Diensten of Aanbod, en Over ons of Contact. In de briefing stemmen we de structuur af zodat elke pagina een duidelijke rol heeft.",
+          },
+          {
+            question: "Wat zit er standaard inbegrepen?",
+            answer:
+              "Hosting, SEO-basis voor Google en een smartphonevriendelijk design. Op maat ontworpen, met ruimte voor diensten of productinfo.",
+          },
+          {
+            question: "Wat gebeurt er na betaling?",
+            answer:
+              "U vult de privé briefing in. Wij bouwen, u geeft feedback via uw klantportaal. De eerste preview staat binnen 3 werkdagen klaar.",
+          },
+          {
+            question: "Zijn er add-ons beschikbaar na livegang?",
+            answer:
+              "Ja. Denk aan tekst- of sectie-updates, SEO-pakketten of extra pagina’s. We spreken scope en prijs vooraf af.",
+          },
+          {
+            question: "Hoe snel kunnen jullie een aanpassing doorvoeren?",
+            answer:
+              "Kleine tekst- of beeldupdates plannen we meestal snel in. Grotere wijzigingen bekijken we samen, met timing en prijs vóór we starten.",
+          },
+        ],
       },
       {
+        id: "pro",
         packageName: "Pro",
-        title: "U heeft meer content of landingspagina’s nodig",
-        body: "Vijf pagina’s passen bij een breder aanbod, projecten, of aparte pagina’s per dienst of doelgroep.",
+        title: "Compleet aanbod",
+        body: "Vijf pagina’s passen bij een breder aanbod, projecten of aparte pagina’s per dienst of doelgroep.",
         bestFor: "Groeiende merken met meer online inhoud",
+        drawerTitle: "Pro, 5 pagina’s",
+        drawerIntro:
+          "Korte antwoorden over wanneer Pro past, het proces en uitbreidingen.",
+        faqs: [
+          {
+            question: "Wanneer kies ik Pro in plaats van Medium?",
+            answer:
+              "Als u meer dan drie pagina’s nodig heeft: aparte landingspagina’s per dienst, projecten of content per doelgroep. Pro geeft vijf pagina’s, zonder webshop.",
+          },
+          {
+            question: "Wat zit er standaard inbegrepen?",
+            answer:
+              "Hosting, SEO-basis voor Google en een design geoptimaliseerd voor smartphone. Extra opties en maatwerk zijn mogelijk op aanvraag.",
+          },
+          {
+            question: "Kan ik landingspagina’s per dienst of campagne hebben?",
+            answer:
+              "Ja. Pro is gemaakt voor die structuur. In de briefing bepalen we samen welke vijf pagina’s het meeste opleveren.",
+          },
+          {
+            question: "Wat gebeurt er na betaling?",
+            answer:
+              "U vult de privé briefing in. Wij bouwen, u reviewt via uw klantportaal, en na goedkeuring zetten we live.",
+          },
+          {
+            question: "Wanneer gaat mijn website live?",
+            answer:
+              "Na goedkeuring van de preview, vaak dezelfde dag.",
+          },
+          {
+            question: "Heb ik technische kennis nodig?",
+            answer:
+              "Nee. U focust op briefing en feedback. Wij regelen design, techniek en livegang.",
+          },
+          {
+            question: "Kan ik na livegang nog pagina’s of secties toevoegen?",
+            answer:
+              "Ja, via add-ons. Nieuwe secties of extra pagina’s stemmen we af met een duidelijke prijs en timing vóór we starten.",
+          },
+        ],
       },
     ],
   },
@@ -277,80 +417,9 @@ export const nl = {
   faq: {
     eyebrow: "Vragen",
     title: "Veelgestelde vragen",
-    intro: "Antwoorden op wat ondernemers het vaakst vragen vóór en na hun bestelling.",
-    sections: [
-      {
-        id: "packages",
-        title: "Pakketten",
-        intro: "Wat u krijgt en hoe het proces start.",
-        items: [
-          {
-            question: "Wat zit er standaard inbegrepen?",
-            answer:
-              "Elk pakket omvat hosting, een SEO-basis en een design dat goed werkt op smartphone. Domein en SSL zijn niet standaard inbegrepen; heeft of wilt u die, dan helpen we met de koppeling.",
-          },
-          {
-            question: "Wat gebeurt er na betaling?",
-            answer:
-              "U wordt doorgestuurd naar een privé briefingformulier. Zodra dat volledig is, starten wij met bouwen en delen we binnen ongeveer 48 uur een preview voor uw feedback.",
-          },
-          {
-            question: "Heb ik technische kennis nodig?",
-            answer:
-              "Nee. U betaalt, vult een korte briefing in, geeft feedback op de preview en wij zorgen voor design, oplevering en livegang.",
-          },
-          {
-            question: "Wat is het verschil tussen Light, Medium en Pro?",
-            answer:
-              "Light is één sterke landingspagina. Medium geeft u drie gerichte pagina’s om uw verhaal en diensten uit te werken. Pro biedt vijf pagina’s voor meer content en landingspagina’s.",
-          },
-        ],
-      },
-      {
-        id: "after-live",
-        title: "Wat als de website live is",
-        intro: "Wijzigingen, updates en verdere ondersteuning.",
-        items: [
-          {
-            question: "Kan ik nog wijzigingen vragen nadat de website live is?",
-            answer:
-              "Ja. Na de livegang kunt u aanpassingen laten doorvoeren via add-ons. Denk aan tekstupdates, nieuwe secties of kleine aanpassingen. We bespreken vooraf wat er nodig is en wat het kost.",
-          },
-          {
-            question: "Zijn er add-ons beschikbaar?",
-            answer:
-              "Ja. Denk aan wijzigingsaanvragen na livegang of SEO-pakketten. Wat u precies nodig heeft, stemmen we af. Voor actuele prijzen neemt u best contact met ons op.",
-          },
-          {
-            question: "Hoe snel kunnen jullie een aanpassing doorvoeren?",
-            answer:
-              "Kleine tekst- of beeldupdates plannen we meestal snel in. Grotere wijzigingen of nieuwe pagina’s bekijken we samen en geven we een duidelijke timing en prijs vóór we starten.",
-          },
-        ],
-      },
-      {
-        id: "domain-setup",
-        title: "Domein & livegang",
-        intro: "Nog geen domein? Geen probleem — wij helpen u verder.",
-        items: [
-          {
-            question: "Ik heb nog geen domeinnaam. Kunnen jullie helpen?",
-            answer:
-              "Absoluut. Wij helpen u bij de keuze van een passende naam, de aankoop bij een domeinprovider en de technische koppeling. De domeinnaam koopt u zelf bij die provider, zodat die altijd van u blijft.",
-          },
-          {
-            question: "Ik heb al een domein. Hoe werkt de koppeling?",
-            answer:
-              "Dan koppelen wij uw bestaande domein aan de nieuwe website. U krijgt duidelijke instructies of wij regelen de DNS-instellingen samen met u, zodat alles veilig en correct live gaat.",
-          },
-          {
-            question: "Wanneer gaat mijn website live?",
-            answer:
-              "Na uw goedkeuring van de preview zetten we de site live, vaak nog dezelfde dag. Heeft u nog geen domein, dan starten we de livegang zodra het domein gereed is om te koppelen.",
-          },
-        ],
-      },
-    ],
+    intro:
+      "Antwoorden op wat ondernemers het vaakst vragen vóór en na hun bestelling.",
+    sections: [],
   },
 
   reviews: {
@@ -413,7 +482,7 @@ export const nl = {
   privacy: {
     metaTitle: "Privacybeleid",
     metaDescription:
-      "Privacy- en cookiebeleid van jewebsiteonline.be — hoe wij persoonsgegevens verwerken.",
+      "Privacy- en cookiebeleid van jewebsiteonline — hoe wij persoonsgegevens verwerken.",
     title: "Privacybeleid",
     updated: "Laatst bijgewerkt: 28 juli 2026",
     backHome: "← Terug naar home",
@@ -421,8 +490,8 @@ export const nl = {
       {
         heading: "1. Wie zijn wij?",
         paragraphs: [
-          "jewebsiteonline.be (“wij”, “ons”) biedt professionele Light (1-pagina), Medium (3-pagina) en Pro (5-pagina) websites aan voor kleine en middelgrote ondernemingen in België en Nederland.",
-          "Verwerkingsverantwoordelijke: jewebsiteonline.be. E-mail: info@jewebsiteonline.com.",
+          "jewebsiteonline (“wij”, “ons”) biedt professionele Light (1-pagina), Medium (3-pagina) en Pro (5-pagina) websites aan voor kleine en middelgrote ondernemingen in België en Nederland.",
+          "Verwerkingsverantwoordelijke: jewebsiteonline. E-mail: info@jewebsiteonline.com.",
           "(Volledige vennootschapsgegevens — adres en BTW-nummer — worden hier aangevuld zodra beschikbaar.)",
         ],
       },
@@ -504,7 +573,7 @@ export const nl = {
   terms: {
     metaTitle: "Algemene voorwaarden",
     metaDescription:
-      "Algemene voorwaarden van jewebsiteonline.be voor websitepakketten en oplevering.",
+      "Algemene voorwaarden van jewebsiteonline voor websitepakketten en oplevering.",
     title: "Algemene voorwaarden",
     updated: "Laatst bijgewerkt: 5 augustus 2026",
     backHome: "← Terug naar home",
@@ -513,7 +582,7 @@ export const nl = {
       {
         heading: "1. Wie zijn wij?",
         paragraphs: [
-          "Deze algemene voorwaarden gelden voor alle diensten van jewebsiteonline.be (“wij”, “ons”): de verkoop en levering van Light, Medium en Pro websites voor kleine en middelgrote ondernemingen in België en Nederland.",
+          "Deze algemene voorwaarden gelden voor alle diensten van jewebsiteonline (“wij”, “ons”): de verkoop en levering van Light, Medium en Pro websites voor kleine en middelgrote ondernemingen in België en Nederland.",
           "Contact: info@jewebsiteonline.com.",
         ],
       },
@@ -554,7 +623,7 @@ export const nl = {
       {
         heading: "7. Intellectuele eigendom",
         paragraphs: [
-          "Na volledige betaling krijgt u een gebruiksrecht op de opgeleverde website voor uw onderneming. Ons ontwerpproces, templates en niet-opgeleverde concepten blijven van jewebsiteonline.be, tenzij schriftelijk anders afgesproken.",
+          "Na volledige betaling krijgt u een gebruiksrecht op de opgeleverde website voor uw onderneming. Ons ontwerpproces, templates en niet-opgeleverde concepten blijven van jewebsiteonline, tenzij schriftelijk anders afgesproken.",
         ],
       },
       {
@@ -857,6 +926,42 @@ export const nl = {
     label: "Taal",
     nl: "Nederlands",
     en: "Engels",
+  },
+
+  contactWidget: {
+    openAria: "Contact openen",
+    closeAria: "Contact sluiten",
+    title: "Neem contact op",
+    intro:
+      "Stel uw vraag. Wij antwoorden zo snel mogelijk via e-mail.",
+    nameLabel: "Naam",
+    namePlaceholder: "Uw naam",
+    emailLabel: "E-mail",
+    emailPlaceholder: "naam@bedrijf.be",
+    topicLabel: "Onderwerp",
+    topicPlaceholder: "Kies een onderwerp",
+    topics: [
+      { value: "general", label: "Algemene vraag" },
+      { value: "light", label: "Vraag over Light" },
+      { value: "medium", label: "Vraag over Medium" },
+      { value: "pro", label: "Vraag over Pro" },
+      { value: "after-live", label: "Na livegang / support" },
+      { value: "other", label: "Iets anders" },
+    ],
+    messageLabel: "Bericht",
+    messagePlaceholder: "Waarmee kunnen wij u helpen?",
+    consentBefore: "Ik ga akkoord met het ",
+    consentPrivacy: "privacybeleid",
+    consentAfter: ".",
+    consentRequired: "Bevestig dat u akkoord gaat met het privacybeleid.",
+    submit: "Verstuur",
+    sending: "Versturen…",
+    successTitle: "Bericht verstuurd",
+    successBody:
+      "Bedankt. We hebben uw vraag ontvangen en antwoorden zo snel mogelijk via e-mail.",
+    successClose: "Sluiten",
+    error: "Versturen mislukt. Probeer opnieuw of mail info@jewebsiteonline.com.",
+    rateLimit: "Te veel berichten. Probeer later opnieuw of mail info@jewebsiteonline.com.",
   },
 } satisfies Dictionary;
 

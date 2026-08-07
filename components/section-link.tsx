@@ -12,13 +12,13 @@ function sectionIdFromHref(href: string) {
 
 export function scrollToSection(sectionId: string) {
   if (sectionId === "home" || sectionId === "") {
-    window.scrollTo({ top: 0, behavior: "auto" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
   const el = document.getElementById(sectionId);
   if (!el) return;
   el.scrollIntoView({
-    behavior: "auto",
+    behavior: "smooth",
     block: "start",
   });
 }
@@ -28,8 +28,8 @@ type SectionLinkProps = Omit<ComponentProps<typeof Link>, "href"> & {
 };
 
 /**
- * Home section links jump instantly (no smooth scroll).
- * Same-route clicks also re-jump after the user has scrolled away.
+ * Home section links scroll smoothly to the target section.
+ * Same-route clicks also re-scroll after the user has scrolled away.
  */
 export function SectionLink({ href, onClick, ...props }: SectionLinkProps) {
   const pathname = usePathname();
@@ -60,7 +60,7 @@ export function SectionLink({ href, onClick, ...props }: SectionLinkProps) {
     if (current !== target) {
       router.push(target, { scroll: false });
     }
-    // Jump immediately; SectionScroll also runs after route updates
+    // Scroll immediately; SectionScroll also runs after route updates
     requestAnimationFrame(() => scrollToSection(sectionId));
     window.setTimeout(() => scrollToSection(sectionId), 0);
   }

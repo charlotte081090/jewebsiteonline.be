@@ -27,7 +27,7 @@ export function Usps() {
   const { dict } = useLocaleContext();
 
   return (
-    <section className="border-t border-border/60 bg-cream">
+    <section className="bg-cream">
       <div className="mx-auto max-w-6xl px-5 py-8 md:px-8 md:py-10">
         <ul className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-6 sm:gap-y-3">
           {dict.hero.bullets.map((item) => (

@@ -1,137 +1,80 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { SectionLink } from "@/components/section-link";
 import { useLocaleContext } from "@/components/locale-provider";
+import { anchorHref } from "@/lib/i18n/path";
 
-const VISUALS = [
-  { bg: "#f7f7f5", image: "/examples/vitaminesthi.png" },
-  { bg: "#eeeeec", image: "/examples/mellow.webp" },
-  { bg: "#f3f5f2", image: "/examples/freebeyondborders.png" },
-  { bg: "#f0f0ee", image: "/examples/salon-placeholder.webp" },
-];
+const DESIGNS = Array.from({ length: 9 }, (_, i) => ({
+  src: `/examples/grid/${String(i + 1).padStart(2, "0")}.webp`,
+}));
 
 export function Showcase() {
-  const { dict } = useLocaleContext();
-  const items = dict.portfolio.items.map((item, i) => ({
-    ...item,
-    bg: VISUALS[i]?.bg ?? "#f3e4dc",
-    image: VISUALS[i]?.image ?? "/examples/salon-placeholder.webp",
-  }));
-  const total = items.length;
-  const [index, setIndex] = useState(0);
-  const [visible, setVisible] = useState(2);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const update = () => {
-      const nextVisible = mq.matches ? 2 : 1;
-      setVisible(nextVisible);
-      setIndex((i) => Math.min(i, Math.max(0, total - nextVisible)));
-    };
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, [total]);
-
-  const maxIndex = Math.max(0, total - visible);
-  const canPrev = index > 0;
-  const canNext = index < maxIndex;
+  const { locale, dict } = useLocaleContext();
+  const t = dict.showcase;
 
   return (
     <section id={dict.routes.anchors.examples} className="bg-cream">
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 py-14 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:items-center md:gap-10 md:px-8 md:py-20 lg:gap-14">
-        <div className="max-w-md">
-          <h2 className="font-display text-3xl font-bold tracking-tight text-forest sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
-            {dict.showcase.title}
+      <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+        <div className="max-w-2xl text-left">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-forest sm:text-4xl md:text-5xl md:leading-[1.1]">
+            {t.title}
           </h2>
-          <p className="mt-5 text-base leading-relaxed text-muted sm:text-lg">
-            {dict.showcase.body}
-          </p>
+          {t.body ? (
+            <p className="mt-4 text-base leading-relaxed text-muted sm:text-lg">
+              {t.body}
+            </p>
+          ) : null}
+        </div>
 
-          <div className="mt-8 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setIndex((i) => Math.max(0, i - 1))}
-              disabled={!canPrev}
-              aria-label={dict.showcase.prev}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-forest/20 text-forest transition-colors hover:border-forest/40 hover:bg-cream-dark/50 disabled:cursor-not-allowed disabled:opacity-35"
-            >
-              <ArrowIcon direction="left" />
-            </button>
-            <button
-              type="button"
-              onClick={() => setIndex((i) => Math.min(maxIndex, i + 1))}
-              disabled={!canNext}
-              aria-label={dict.showcase.next}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-forest/20 text-forest transition-colors hover:border-forest/40 hover:bg-cream-dark/50 disabled:cursor-not-allowed disabled:opacity-35"
-            >
-              <ArrowIcon direction="right" />
-            </button>
+        <div className="relative mt-12 md:mt-16">
+          <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-5">
+            {DESIGNS.map((design, i) => {
+              const alt =
+                t.items[i]?.alt ?? t.itemAlt.replace("{n}", String(i + 1));
+              return (
+                <li
+                  key={design.src}
+                  className={`group relative aspect-square overflow-hidden rounded-2xl border border-border/50 bg-cream-dark select-none ${
+                    i >= 6 ? "hidden md:block" : ""
+                  }`}
+                >
+                  <div
+                    role="img"
+                    aria-label={alt}
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                    style={{ backgroundImage: `url(${design.src})` }}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 flex h-[38%] items-end justify-center pb-5 sm:pb-6 md:h-[34%] md:pb-8"
+            aria-hidden
+          >
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.72) 42%, rgba(255,255,255,0.96) 100%)",
+              }}
+            />
+            <p className="relative font-display text-2xl font-bold tracking-tight text-forest sm:text-3xl md:text-4xl">
+              {t.moreLabel}
+            </p>
           </div>
         </div>
 
-        <div className="overflow-hidden" aria-live="polite">
-          <div
-            className="flex transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-            style={{
-              width: `${(total / visible) * 100}%`,
-              transform: `translateX(-${(index / total) * 100}%)`,
-            }}
+        <div className="mt-10 flex justify-center md:mt-12">
+          <SectionLink
+            href={anchorHref(locale, dict, "pricing")}
+            className="inline-flex items-center justify-center rounded-full bg-terracotta px-7 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
           >
-            {items.map((item) => (
-              <article
-                key={item.name}
-                className="group box-border px-2 sm:px-3"
-                style={{ width: `${100 / total}%` }}
-              >
-                <div
-                  className="relative aspect-[4/5] overflow-hidden rounded-2xl"
-                  style={{ backgroundColor: item.bg }}
-                >
-                  <div className="absolute inset-x-[10%] top-[6%] bottom-[5%] overflow-hidden rounded-[1.2rem] border-[3px] border-forest/15 bg-cream shadow-md transition-transform duration-500 group-hover:-translate-y-1">
-                    <div className="relative h-full w-full">
-                      <Image
-                        src={item.image}
-                        alt={item.alt}
-                        fill
-                        className="object-cover object-top"
-                        sizes="(max-width: 768px) 85vw, 300px"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-terracotta">
-                  {item.category}
-                </p>
-                <h3 className="mt-1 font-display text-2xl font-bold text-forest">
-                  {item.name}
-                </h3>
-                <p className="mt-1 text-sm text-muted">{item.focus}</p>
-              </article>
-            ))}
-          </div>
+            {t.cta}
+          </SectionLink>
         </div>
       </div>
     </section>
-  );
-}
-
-function ArrowIcon({ direction }: { direction: "left" | "right" }) {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-      className={direction === "left" ? "rotate-180" : undefined}
-    >
-      <path d="M5 12h14M13 5l7 7-7 7" />
-    </svg>
   );
 }

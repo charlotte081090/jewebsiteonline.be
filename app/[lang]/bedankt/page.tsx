@@ -75,7 +75,7 @@ export default async function BedanktPage({
           ) : null}
           <Link
             href={homeHref(lang, dict)}
-            className="mt-8 inline-flex rounded-md bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
+            className="mt-8 inline-flex rounded-full bg-terracotta px-6 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
           >
             {dict.bedankt.backHome}
           </Link>

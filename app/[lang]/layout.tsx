@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CookieBanner } from "@/components/cookie-banner";
+import { ContactWidget } from "@/components/contact-widget";
 import { JsonLd } from "@/components/json-ld";
 import { LocaleProvider } from "@/components/locale-provider";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
@@ -73,6 +74,7 @@ export default async function LocaleLayout({
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <ContactWidget />
       <CookieBanner />
     </LocaleProvider>
   );

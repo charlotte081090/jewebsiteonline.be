@@ -94,3 +94,59 @@ export async function sendClientBriefingConfirmation(
     return { ok: false, error };
   }
 }
+
+type ContactInquiryInput = {
+  from: string;
+  to: string;
+  replyTo: string;
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+  locale: Locale;
+  ip: string;
+};
+
+/** Staff notification for the sticky contact widget. */
+export async function sendContactInquiry(
+  resend: Resend,
+  input: ContactInquiryInput,
+): Promise<{ ok: boolean; error?: unknown }> {
+  const subject = `Contact: ${input.topic} - ${input.name}`;
+
+  const text = [
+    `Name: ${input.name}`,
+    `Email: ${input.email}`,
+    `Topic: ${input.topic}`,
+    `Locale: ${input.locale}`,
+    `IP: ${input.ip}`,
+    "",
+    input.message,
+  ].join("\n");
+
+  const html = `
+    <h2>New contact message</h2>
+    <p><strong>Name:</strong> ${escapeHtml(input.name)}</p>
+    <p><strong>Email:</strong> ${escapeHtml(input.email)}</p>
+    <p><strong>Topic:</strong> ${escapeHtml(input.topic)}</p>
+    <p><strong>Locale:</strong> ${escapeHtml(input.locale)}</p>
+    <p><strong>IP:</strong> ${escapeHtml(input.ip)}</p>
+    <hr />
+    <p style="white-space:pre-wrap;">${escapeHtml(input.message)}</p>
+  `;
+
+  try {
+    const { error } = await resend.emails.send({
+      from: input.from,
+      to: [input.to],
+      replyTo: input.replyTo,
+      subject,
+      text,
+      html,
+    });
+    if (error) return { ok: false, error };
+    return { ok: true };
+  } catch (error) {
+    return { ok: false, error };
+  }
+}

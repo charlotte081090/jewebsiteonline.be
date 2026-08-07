@@ -14,7 +14,7 @@ import {
 } from "@/lib/i18n/path";
 import { isHomeSectionSlug } from "@/lib/i18n/routes";
 
-const NAV_KEYS = ["howItWorks", "examples", "pricing", "faq"] as const;
+const NAV_KEYS = ["examples", "howItWorks", "pricing", "faq"] as const;
 
 export function Header() {
   const { locale, dict } = useLocaleContext();
@@ -22,6 +22,9 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeKey, setActiveKey] = useState<(typeof NAV_KEYS)[number] | null>(
+    null,
+  );
 
   const home = localePath(locale);
   const pathSlug = stripLocale(pathname).replace(/^\//, "");
@@ -57,6 +60,51 @@ export function Header() {
   }, [isHome]);
 
   useEffect(() => {
+    const fromPath = NAV_KEYS.find(
+      (key) => dict.routes.anchors[key] === pathSlug,
+    );
+    if (fromPath) {
+      setActiveKey(fromPath);
+    }
+
+    if (!isHome) return;
+
+    const sections = NAV_KEYS.map((key) => ({
+      key,
+      el: document.getElementById(dict.routes.anchors[key]),
+    })).filter((s): s is { key: (typeof NAV_KEYS)[number]; el: HTMLElement } =>
+      Boolean(s.el),
+    );
+
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (a, b) =>
+              a.boundingClientRect.top - b.boundingClientRect.top ||
+              b.intersectionRatio - a.intersectionRatio,
+          );
+        const top = visible[0];
+        if (!top?.target?.id) return;
+        const match = NAV_KEYS.find(
+          (key) => dict.routes.anchors[key] === top.target.id,
+        );
+        if (match) setActiveKey(match);
+      },
+      {
+        rootMargin: "-28% 0px -55% 0px",
+        threshold: [0, 0.2, 0.45, 0.7],
+      },
+    );
+
+    for (const section of sections) observer.observe(section.el);
+    return () => observer.disconnect();
+  }, [dict.routes.anchors, isHome, pathSlug]);
+
+  useEffect(() => {
     if (!open) return;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -77,6 +125,21 @@ export function Header() {
     setOpen(false);
   }, [pathname]);
 
+  function navClass(key: (typeof NAV_KEYS)[number], mobile = false) {
+    const active = activeKey === key;
+    if (mobile) {
+      return active
+        ? "rounded-2xl px-3 py-3.5 font-display text-2xl font-bold text-terracotta transition-colors hover:bg-cream/10"
+        : "rounded-2xl px-3 py-3.5 font-display text-2xl font-bold text-cream transition-colors hover:bg-cream/10 hover:text-terracotta-soft";
+    }
+    if (active) {
+      return "text-sm font-medium text-terracotta transition-colors";
+    }
+    return solid
+      ? "text-sm font-medium text-forest-muted transition-colors hover:text-terracotta"
+      : "text-sm font-medium text-cream/85 transition-colors hover:text-cream";
+  }
+
   const menu = mounted
     ? createPortal(
         <div className="lg:hidden" aria-hidden={!open}>
@@ -92,8 +155,10 @@ export function Header() {
             role="dialog"
             aria-modal="true"
             aria-label={dict.nav.mobileMenu}
-            className={`fixed inset-y-0 right-0 z-[90] flex h-[100dvh] w-[min(88vw,22rem)] flex-col border-l border-cream/25 bg-cream/18 shadow-[-20px_0_60px_rgba(27,48,34,0.28)] backdrop-blur-xl transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              open ? "translate-x-0" : "translate-x-full"
+            className={`fixed inset-y-0 right-0 z-[90] flex h-[100dvh] w-[min(88vw,22rem)] flex-col border-l border-cream/25 bg-cream/18 backdrop-blur-xl transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              open
+                ? "translate-x-0 shadow-[-20px_0_60px_rgba(27,48,34,0.28)]"
+                : "pointer-events-none translate-x-full shadow-none"
             }`}
             style={{
               background:
@@ -129,7 +194,8 @@ export function Header() {
                 <SectionLink
                   key={link.key}
                   href={link.href}
-                  className="rounded-2xl px-3 py-3.5 font-display text-2xl font-bold text-cream transition-colors hover:bg-cream/10 hover:text-terracotta-soft"
+                  className={navClass(link.key, true)}
+                  aria-current={activeKey === link.key ? "true" : undefined}
                   onClick={() => setOpen(false)}
                 >
                   {link.label}
@@ -162,7 +228,11 @@ export function Header() {
   return (
     <>
       <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
-        <div className="pointer-events-auto mx-auto max-w-6xl px-3 pt-3 sm:px-5 md:px-8 md:pt-4">
+        <div
+          className={`pointer-events-auto mx-auto max-w-6xl px-5 transition-[padding] duration-300 sm:px-5 md:px-8 ${
+            solid ? "pt-[15px] md:pt-[19px]" : "pt-[25px] md:pt-[29px]"
+          }`}
+        >
           <div
             className={`flex items-center justify-between gap-2 rounded-full px-3 py-2.5 transition-[background-color,box-shadow,border-color,backdrop-filter] duration-300 sm:gap-4 sm:px-4 sm:py-3 ${
               solid
@@ -184,11 +254,8 @@ export function Header() {
                 <SectionLink
                   key={link.key}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors ${
-                    solid
-                      ? "text-forest-muted hover:text-terracotta"
-                      : "text-cream/85 hover:text-cream"
-                  }`}
+                  className={navClass(link.key)}
+                  aria-current={activeKey === link.key ? "true" : undefined}
                 >
                   {link.label}
                 </SectionLink>

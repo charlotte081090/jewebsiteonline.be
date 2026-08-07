@@ -2,10 +2,10 @@ import type { Dictionary } from "./types";
 
 export const en: Dictionary = {
   meta: {
-    title: "jewebsiteonline.com | Professional websites for small businesses",
-    titleTemplate: "%s | jewebsiteonline.com",
+    title: "jewebsiteonline | Professional websites for small businesses",
+    titleTemplate: "%s | jewebsiteonline",
     description:
-      "We build professional 1- to 5-page websites for small and medium businesses in Belgium and the Netherlands. Pay online, complete your briefing, and go live fast. SEO-friendly, from €199.",
+      "We build professional 1- to 5-page websites for SMEs in Belgium and the Netherlands. From briefing to go-live, Google-optimised from €249. No monthly costs.",
     keywords: [
       "professional website design",
       "small business website",
@@ -16,20 +16,20 @@ export const en: Dictionary = {
       "website Netherlands",
       "website package",
     ],
-    ogTitle: "jewebsiteonline.com | Professional websites for small businesses",
+    ogTitle: "jewebsiteonline | Professional websites for small businesses",
     ogDescription:
-      "Get online fast with a website that actually brings in customers. Choose your package, pay securely, and we build your site. From €199.",
-    siteName: "jewebsiteonline.com",
+      "Go online fast with a website that wins customers. Choose your package, complete your briefing and we build your website. From €249, no monthly costs.",
+    siteName: "jewebsiteonline",
   },
 
   nav: {
     howItWorks: "How it works",
-    examples: "Examples",
-    pricing: "Pricing",
+    examples: "Inspiration",
+    pricing: "Solutions",
     reviews: "Reviews",
-    faq: "FAQ",
-    cta: "Get started now",
-    startNow: "Get started now",
+    faq: "Guide",
+    cta: "Start now",
+    startNow: "Start now",
     home: "Home",
     mobileMenu: "Mobile menu",
     closeMenu: "Close menu",
@@ -40,12 +40,12 @@ export const en: Dictionary = {
 
   footer: {
     blurb:
-      "Professional 1- to 5-page websites for small businesses in Belgium and the Netherlands. Pay first, briefing next, then we build and launch. SEO-friendly and transparently priced.",
+      "We work together on your success: you share your vision, we design your website and refine it based on your feedback. The result? A rock-solid website that goes live quickly, at a clear and transparent price.",
     navigation: "Navigation",
     legal: "Legal",
     privacy: "Privacy policy",
     terms: "Terms and conditions",
-    rights: "© {year} jewebsiteonline.com. All rights reserved.",
+    rights: "© {year} jewebsiteonline. All rights reserved.",
     emailAria: "Send us an email",
     instagramAria: "Follow us on Instagram",
   },
@@ -62,24 +62,26 @@ export const en: Dictionary = {
   },
 
   brand: {
-    homeAria: "Jewebsiteonline.com, go to homepage",
+    homeAria: "jewebsiteonline, go to homepage",
   },
 
   hero: {
     eyebrow: "Welcome to Je Website Online",
     title: "Get a professional website for your business",
-    body: "Professional 1- to 5-page sites. SEO-friendly, live fast, and available from €199.",
-    ctaPrimary: "Get started now",
-    ctaSecondary: "See examples",
+    body: "A website that fits you and wins over your customers.\nCustom designed, professional and online fast.",
+    ctaPrimary: "Start your project",
+    ctaSecondary: "Inspiration",
     bullets: [
-      "Start securely, then brief us",
+      "From briefing to live in a few days",
       "GDPR compliant",
-      "No monthly fees or contracts",
-      "Transparent pricing",
+      "Personal client portal",
+      "One-time investment",
     ],
     imageAlt:
       "Laptop on a wooden desk in a warm open workspace",
     pulseLabel: "{count} websites currently in production",
+    socialProof: "Trusted by 250+ entrepreneurs",
+    socialProofStarsAria: "5 out of 5 stars",
   },
 
   usps: {
@@ -87,50 +89,63 @@ export const en: Dictionary = {
   },
 
   showcase: {
-    eyebrow: "They went before you",
-    title: "See our examples",
-    body: "Every site is mobile-friendly, fast and ready to win customers, whether you run a salon, a studio or a coaching practice.",
-    prev: "Previous examples",
-    next: "Next examples",
+    title: "Your project could be next",
+    body: "",
+    moreLabel: "200+ more",
+    itemAlt: "Example website {n}",
+    cta: "View our packages",
+    items: [
+      { alt: "Example website 1" },
+      { alt: "Example website 2" },
+      { alt: "Example website 3" },
+      { alt: "Example website 4" },
+      { alt: "Example website 5" },
+      { alt: "Example website 6" },
+      { alt: "Example website 7" },
+      { alt: "Example website 8" },
+      { alt: "Example website 9" },
+    ],
   },
 
   problem: {
     eyebrow: "The problem",
     title: "No website yet, or one that fails to convince?",
-    body: "Customers search online for local services. Without a website, or with an outdated one that leaves out key information, you disappear from the search results and people choose your competitor instead. We build fast, SEO-friendly websites that help small businesses get found and get chosen.",
+    body: "Customers search online for local services. Without a website, or with an outdated one that leaves out key information, you disappear from the search results and people choose your competitor instead. We build a fast, Google-friendly website that helps your business get found and get chosen.",
     cta: "See how we solve it",
+    croLead: "Optimised for",
+    croItems: ["Google", "AI", "Performance"],
   },
 
   howItWorks: {
     eyebrow: "The solution",
     title: "How it works",
     intro:
-      "From package to live website in five clear steps. You start, we build further together.",
+      "Online in five clear steps. You give us all the information about your business and we build your website.",
     steps: [
       {
-        title: "Choose & start",
+        title: "Make your choice",
         time: "2 min",
-        body: "Pick your package and your website — Light, Medium or Pro.",
+        body: "Pick the package that fits your business: Light, Medium or Pro.",
       },
       {
         title: "Briefing",
         time: "10 to 15 min",
-        body: "Complete your private briefing form. The more detail you share, the better the result.",
+        body: "Complete the briefing with your company information. The more detail you share, the better the result.",
       },
       {
         title: "We build",
-        time: "within 48 hours",
-        body: "Our team designs your website and shares a private preview for review.",
+        time: "3 business days",
+        body: "Our team designs your website. In your personal client portal you review the first preview.",
       },
       {
         title: "Feedback",
-        time: "1 revision round",
-        body: "Share your notes. We fine-tune everything to match your brand.",
+        time: "revisions",
+        body: "Share your notes. We fine-tune everything to match your needs.",
       },
       {
         title: "Going live",
-        time: "same day",
-        body: "After your approval we publish the website, often on the very same day.",
+        time: "Your website is ready!",
+        body: "After your approval and preparing the domain, your website goes live.",
       },
     ],
   },
@@ -172,65 +187,75 @@ export const en: Dictionary = {
 
   pricing: {
     eyebrow: "Transparency",
-    title: "Pricing & packages",
+    title: "Solutions and packages",
     intro:
-      "Clear prices. No surprises. Choose whatever fits your business best.",
+      "We offer clear packages with no surprises. Choose what fits your business and continue right away.",
     mostPopular: "Most popular",
+    exclVat: "excl. VAT",
+    oneTimeCost: "One-time cost",
     packages: [
       {
         id: "one-page",
         name: "Light",
-        price: "€199",
+        price: "€249",
         description:
-          "A clear landing page that shows who you are and how customers can reach you.",
+          "A clear landing page that shows who you are and how customers can get in touch with you.",
         pageLabel: "1-page website",
         pageTooltip:
           "Everything on one page: introduction, offer and contact. Ideal if you want to get online quickly without separate submenus.",
+        domainLabel: "Domain: we connect it or arrange it for you",
+        domainTooltip:
+          "Already have a domain? We’ll help you connect it. Don’t have one yet? You can buy one in your client portal. We take care of the rest.",
         highlights: [
           "Custom designed",
           "Optimised for smartphones",
-          "SEO essentials so Google can find you",
-          "Domain & SSL connected when needed",
+          "SEO foundations for Google from day one",
         ],
-        cta: "Start with Light",
+        cta: "Buy Light",
       },
       {
         id: "three-page",
         name: "Medium",
-        price: "€349",
-        wasPrice: "€399",
+        price: "€599",
+        wasPrice: "€649",
         description:
           "More room to explain your services or products and tell your brand story.",
         pageLabel: "3-page website",
         pageTooltip:
-          "Three focused pages — for example home, services or about, and contact. More structure for visitors and stronger discoverability.",
+          "Three focused pages, for example home, services or about, and contact. More structure for visitors and stronger discoverability.",
+        domainLabel: "Domain: we connect it or arrange it for you",
+        domainTooltip:
+          "Already have a domain? We’ll help you connect it. Don’t have one yet? You can buy one in your client portal. We take care of the rest.",
         highlights: [
           "Custom designed",
           "Optimised for smartphones",
-          "SEO essentials so Google can find you",
-          "Room for services or product details",
-          "Domain & SSL connected when needed",
+          "SEO foundations for Google from day one",
         ],
-        cta: "Start with Medium",
+        extras: ["Room for services or product details"],
+        cta: "Buy Medium",
       },
       {
         id: "five-page",
         name: "Pro",
-        price: "€549",
+        price: "€949",
         description:
           "For businesses that need more content, landing pages or a fuller online story.",
         pageLabel: "5-page website",
         pageTooltip:
-          "Five pages for a fuller site — for example home, about, services, projects or blog, and contact. Extra pages for deeper content.",
+          "Five pages for a fuller site, for example home, about, services, projects or blog, and contact. Extra pages for deeper content.",
+        domainLabel: "Domain: we connect it or arrange it for you",
+        domainTooltip:
+          "Already have a domain? We’ll help you connect it. Don’t have one yet? You can buy one in your client portal. We take care of the rest.",
         highlights: [
-          "Custom designed, with more options",
+          "Custom designed",
           "Optimised for smartphones",
-          "SEO essentials so Google can find you",
-          "Room for richer content and landing pages",
-          "Domain & SSL connected when needed",
-          "Extra development available on request",
+          "SEO foundations for Google from day one",
         ],
-        cta: "Start with Pro",
+        extras: [
+          "Room for richer content and landing pages",
+          "Extra options & custom work available on request",
+        ],
+        cta: "Buy Pro",
       },
     ],
     cta: "Get started now",
@@ -238,39 +263,154 @@ export const en: Dictionary = {
     checkoutError: "Checkout could not be started. Please try again.",
     whyChooseUs: {
       title: "Why choose us?",
-      body: "We combine design, tech and a clear process — so you go online without the hassle, with a website that actually helps customers take the next step.",
+      body: "No subscription, no surprises. Just a website that helps customers take the next step.",
       bullets: [
-        "Years of experience with partners and agencies across industries",
-        "A clear path from briefing to go-live",
-        "A personal approach, tailored to your brand",
+        "One-time cost, no monthly costs or contracts",
+        "A personal approach, tailored to your business needs",
+        "Need a blog, online shop, SEO or extra pages? Contact us!",
       ],
-      imageAlt: "Team working in a bright workspace",
+      imageAlt: "Two colleagues collaborating at a desk in a warm workspace",
     },
   },
 
   productFit: {
-    title: "Which package fits me?",
+    title: "Which package to choose?",
     intro:
-      "A short guide so you know which package matches your business best.",
-    cta: "View the packages",
+      "Every business is unique. With the guidelines below, you’ll quickly discover which package offers the right features and support for your company’s continued growth.",
+    cta: "Choose your package",
+    openHint: "View questions & answers",
+    closeLabel: "Close",
     items: [
       {
+        id: "light",
         packageName: "Light",
-        title: "You want to get online quickly and clearly",
-        body: "One strong page is enough when your offer is clear and visitors mainly need an easy way to contact you.",
+        title: "Online fast",
+        body: "One page is enough when your offer is clear and visitors mainly need an easy way to contact you.",
         bestFor: "Coaches, local services, starters",
+        drawerTitle: "Light, 1 page",
+        drawerIntro:
+          "Short answers on what’s included, the process and what happens after go-live.",
+        faqs: [
+          {
+            question: "When is Light enough?",
+            answer:
+              "When your offer is clear and visitors mainly need to know who you are, what you do and how to get in touch. Ideal for coaches, local services and starters.",
+          },
+          {
+            question: "What’s included as standard?",
+            answer:
+              "Hosting, SEO foundations for Google and a smartphone-friendly design. Custom designed, one-time cost.",
+          },
+          {
+            question: "What happens after payment?",
+            answer:
+              "You complete a private briefing. Then we build your website. In your client portal you review the first preview within 3 business days.",
+          },
+          {
+            question: "Do I need technical knowledge?",
+            answer:
+              "No. You share your business info, give feedback on the preview and we handle design, delivery and go-live.",
+          },
+          {
+            question: "Can I expand to more pages later?",
+            answer:
+              "Yes. Start with Light. If you later want extra pages, we can expand via an upgrade or add-on, without starting from scratch.",
+          },
+          {
+            question: "Can I request changes after the website is live?",
+            answer:
+              "Yes. After go-live you can request updates through add-ons, such as text edits or small tweaks. We agree scope and price up front.",
+          },
+        ],
       },
       {
+        id: "medium",
         packageName: "Medium",
-        title: "You want more room to show and tell",
-        body: "Three pages give space for services, about us or a clear offer — while staying easy to navigate.",
+        title: "More to tell",
+        body: "Three pages give space for services, about us or a clear offer, and keep everything easy to navigate.",
         bestFor: "SMEs with multiple services or a brand story",
+        drawerTitle: "Medium, 3 pages",
+        drawerIntro:
+          "Short answers on pages, process and options after go-live.",
+        faqs: [
+          {
+            question: "What’s the difference with Light and Pro?",
+            answer:
+              "Light is one landing page. Medium gives three focused pages for services and story. Pro offers five pages for more content and separate landing pages.",
+          },
+          {
+            question: "Which pages do I typically choose with Medium?",
+            answer:
+              "Usually Home, Services or Offer, and About or Contact. In the briefing we align the structure so each page has a clear job.",
+          },
+          {
+            question: "What’s included as standard?",
+            answer:
+              "Hosting, SEO foundations for Google and a smartphone-friendly design. Custom designed, with room for services or product details.",
+          },
+          {
+            question: "What happens after payment?",
+            answer:
+              "You complete the private briefing. We build, you give feedback in your client portal. The first preview is ready within 3 business days.",
+          },
+          {
+            question: "Are add-ons available after go-live?",
+            answer:
+              "Yes. Think text or section updates, SEO packages or extra pages. We agree scope and price beforehand.",
+          },
+          {
+            question: "How quickly can you make a change?",
+            answer:
+              "Small text or image updates are usually scheduled quickly. Larger changes we scope together first, with timing and price before we start.",
+          },
+        ],
       },
       {
+        id: "pro",
         packageName: "Pro",
-        title: "You need more content or landing pages",
-        body: "Five pages suit a broader offer, projects, or separate pages per service or audience.",
+        title: "Complete offering",
+        body: "Five pages suit a broader offer, projects or separate pages per service or audience.",
         bestFor: "Growing brands with more online content",
+        drawerTitle: "Pro, 5 pages",
+        drawerIntro:
+          "Short answers on when Pro fits, the process and expansions.",
+        faqs: [
+          {
+            question: "When should I choose Pro instead of Medium?",
+            answer:
+              "When you need more than three pages: separate landing pages per service, projects or content per audience. Pro gives five pages, without an online shop.",
+          },
+          {
+            question: "What’s included as standard?",
+            answer:
+              "Hosting, SEO foundations for Google and a design optimised for smartphones. Extra options and custom work are available on request.",
+          },
+          {
+            question: "Can I have landing pages per service or campaign?",
+            answer:
+              "Yes. Pro is built for that structure. In the briefing we decide together which five pages deliver the most.",
+          },
+          {
+            question: "What happens after payment?",
+            answer:
+              "You complete the private briefing. We build, you review in your client portal, and after approval we go live.",
+          },
+          {
+            question: "When does my website go live?",
+            answer:
+              "After you approve the preview, often the same day.",
+          },
+          {
+            question: "Do I need technical knowledge?",
+            answer:
+              "No. You focus on briefing and feedback. We handle design, tech and go-live.",
+          },
+          {
+            question: "Can I add pages or sections after go-live?",
+            answer:
+              "Yes, through add-ons. New sections or extra pages are scoped with a clear price and timeline before we start.",
+          },
+        ],
       },
     ],
   },
@@ -280,79 +420,7 @@ export const en: Dictionary = {
     title: "Frequently asked questions",
     intro:
       "Answers to what business owners ask most often before and after ordering.",
-    sections: [
-      {
-        id: "packages",
-        title: "Packages",
-        intro: "What you get and how the process starts.",
-        items: [
-          {
-            question: "What is included as standard?",
-            answer:
-              "Every package includes hosting, SEO essentials and a smartphone-optimised design. Domain and SSL are not included by default; if you have or want them, we help with the connection.",
-          },
-          {
-            question: "What happens after I pay?",
-            answer:
-              "You are redirected to a private briefing form. Once that is complete, we start building and share a preview for your feedback within about 48 hours.",
-          },
-          {
-            question: "Do I need any technical knowledge?",
-            answer:
-              "No. You pay, fill in a short briefing, give feedback on the preview, and we take care of the design, delivery and launch.",
-          },
-          {
-            question: "What is the difference between Light, Medium and Pro?",
-            answer:
-              "Light is one strong landing page. Medium gives you three focused pages to tell your story and present your services. Pro offers five pages for more content and landing pages.",
-          },
-        ],
-      },
-      {
-        id: "after-live",
-        title: "Once the website is live",
-        intro: "Changes, updates and ongoing support.",
-        items: [
-          {
-            question: "Can I still request changes once the website is live?",
-            answer:
-              "Yes. After launch you can have changes made through add-ons, such as text updates, new sections or small tweaks. We agree on what is needed and what it costs up front.",
-          },
-          {
-            question: "Are add-ons available?",
-            answer:
-              "Yes. Think of change requests after launch or SEO packages. We agree on exactly what you need. For current prices, please get in touch with us.",
-          },
-          {
-            question: "How quickly can you make a change?",
-            answer:
-              "Small text or image updates are usually scheduled quickly. Larger changes or new pages are scoped together first, with a clear timeline and price before we start.",
-          },
-        ],
-      },
-      {
-        id: "domain-setup",
-        title: "Domain & go-live",
-        intro: "Don’t have a domain yet? No problem — we’ll help you.",
-        items: [
-          {
-            question: "I don’t have a domain name yet. Can you help?",
-            answer:
-              "Absolutely. We help you choose a fitting name, purchase it with a domain provider and connect it technically. You buy the domain yourself from that provider, so it always stays yours.",
-          },
-          {
-            question: "I already have a domain. How does the connection work?",
-            answer:
-              "We connect your existing domain to the new website. You get clear instructions, or we handle the DNS settings with you, so everything goes live safely and correctly.",
-          },
-          {
-            question: "When does my website go live?",
-            answer:
-              "After you approve the preview we launch the site, often the same day. If you don’t have a domain yet, we go live as soon as the domain is ready to connect.",
-          },
-        ],
-      },
-    ],
+    sections: [],
   },
 
   reviews: {
@@ -415,7 +483,7 @@ export const en: Dictionary = {
   privacy: {
     metaTitle: "Privacy policy",
     metaDescription:
-      "Privacy and cookie policy of jewebsiteonline.be — how we process personal data.",
+      "Privacy and cookie policy of jewebsiteonline — how we process personal data.",
     title: "Privacy policy",
     updated: "Last updated: 28 July 2026",
     backHome: "← Back to home",
@@ -423,8 +491,8 @@ export const en: Dictionary = {
       {
         heading: "1. Who are we?",
         paragraphs: [
-          "jewebsiteonline.be (“we”, “us”) provides professional Light (1-page), Medium (3-page) and Pro (5-page) websites for small and medium-sized businesses in Belgium and the Netherlands.",
-          "Data controller: jewebsiteonline.be. Email: info@jewebsiteonline.com.",
+          "jewebsiteonline (“we”, “us”) provides professional Light (1-page), Medium (3-page) and Pro (5-page) websites for small and medium-sized businesses in Belgium and the Netherlands.",
+          "Data controller: jewebsiteonline. Email: info@jewebsiteonline.com.",
           "(Full company details — registered address and VAT number — will be added here as soon as they are available.)",
         ],
       },
@@ -506,7 +574,7 @@ export const en: Dictionary = {
   terms: {
     metaTitle: "Terms and conditions",
     metaDescription:
-      "Terms and conditions of jewebsiteonline.be for website packages and delivery.",
+      "Terms and conditions of jewebsiteonline for website packages and delivery.",
     title: "Terms and conditions",
     updated: "Last updated: 31 July 2026",
     backHome: "← Back to home",
@@ -515,7 +583,7 @@ export const en: Dictionary = {
       {
         heading: "1. Who are we?",
         paragraphs: [
-          "These terms and conditions apply to all services of jewebsiteonline.be (“we”, “us”): the sale and delivery of Light, Medium and Pro websites for small and medium-sized businesses in Belgium and the Netherlands.",
+          "These terms and conditions apply to all services of jewebsiteonline (“we”, “us”): the sale and delivery of Light, Medium and Pro websites for small and medium-sized businesses in Belgium and the Netherlands.",
           "Contact: info@jewebsiteonline.com.",
         ],
       },
@@ -556,7 +624,7 @@ export const en: Dictionary = {
       {
         heading: "7. Intellectual property",
         paragraphs: [
-          "After full payment you receive a right of use to the delivered website for your business. Our design process, templates and undelivered concepts remain the property of jewebsiteonline.be, unless agreed otherwise in writing.",
+          "After full payment you receive a right of use to the delivered website for your business. Our design process, templates and undelivered concepts remain the property of jewebsiteonline, unless agreed otherwise in writing.",
         ],
       },
       {
@@ -861,5 +929,40 @@ export const en: Dictionary = {
     label: "Language",
     nl: "Dutch",
     en: "English",
+  },
+
+  contactWidget: {
+    openAria: "Open contact",
+    closeAria: "Close contact",
+    title: "Get in touch",
+    intro: "Send your question. We’ll reply by email as soon as we can.",
+    nameLabel: "Name",
+    namePlaceholder: "Your name",
+    emailLabel: "Email",
+    emailPlaceholder: "name@company.com",
+    topicLabel: "Topic",
+    topicPlaceholder: "Choose a topic",
+    topics: [
+      { value: "general", label: "General question" },
+      { value: "light", label: "Question about Light" },
+      { value: "medium", label: "Question about Medium" },
+      { value: "pro", label: "Question about Pro" },
+      { value: "after-live", label: "After go-live / support" },
+      { value: "other", label: "Something else" },
+    ],
+    messageLabel: "Message",
+    messagePlaceholder: "How can we help?",
+    consentBefore: "I agree to the ",
+    consentPrivacy: "privacy policy",
+    consentAfter: ".",
+    consentRequired: "Please confirm that you agree to the privacy policy.",
+    submit: "Send",
+    sending: "Sending…",
+    successTitle: "Message sent",
+    successBody:
+      "Thanks. We’ve received your question and will reply by email as soon as we can.",
+    successClose: "Close",
+    error: "Sending failed. Please try again or email info@jewebsiteonline.com.",
+    rateLimit: "Too many messages. Please try again later or email info@jewebsiteonline.com.",
   },
 };

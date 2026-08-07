@@ -82,14 +82,14 @@ export function CookieBanner() {
           <button
             type="button"
             onClick={() => save("essential")}
-            className="rounded-md border border-border px-4 py-2.5 text-sm font-medium text-forest transition-colors hover:bg-cream-dark"
+            className="rounded-full border border-border px-4 py-2.5 text-sm font-medium text-forest transition-colors hover:bg-cream-dark"
           >
             {dict.cookie.essential}
           </button>
           <button
             type="button"
             onClick={() => save("accepted")}
-            className="rounded-md bg-terracotta px-4 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
+            className="rounded-full bg-terracotta px-4 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
           >
             {dict.cookie.accept}
           </button>

@@ -109,18 +109,26 @@ export type HeroDictionary = {
   imageAlt: string;
   /** Uses `{count}`. */
   pulseLabel: string;
+  socialProof: string;
+  socialProofStarsAria: string;
 };
 
 export type UspsDictionary = {
   label: string;
 };
 
+export type ShowcaseItem = {
+  alt: string;
+};
+
 export type ShowcaseDictionary = {
-  eyebrow: string;
   title: string;
   body: string;
-  prev: string;
-  next: string;
+  moreLabel: string;
+  /** Uses `{n}`. */
+  itemAlt: string;
+  cta: string;
+  items: readonly ShowcaseItem[];
 };
 
 export type ProblemDictionary = {
@@ -128,6 +136,8 @@ export type ProblemDictionary = {
   title: string;
   body: string;
   cta: string;
+  croLead: string;
+  croItems: readonly string[];
 };
 
 export type HowItWorksStep = {
@@ -167,7 +177,10 @@ export type PricingPackage = {
   description: string;
   pageLabel: string;
   pageTooltip: string;
+  domainLabel: string;
+  domainTooltip: string;
   highlights: readonly string[];
+  extras?: readonly string[];
   cta: string;
 };
 
@@ -176,6 +189,8 @@ export type PricingDictionary = {
   title: string;
   intro: string;
   mostPopular: string;
+  exclVat: string;
+  oneTimeCost: string;
   packages: readonly PricingPackage[];
   cta: string;
   redirecting: string;
@@ -208,16 +223,22 @@ export type FaqDictionary = {
 };
 
 export type ProductFitItem = {
+  id: string;
   packageName: string;
   title: string;
   body: string;
   bestFor: string;
+  drawerTitle: string;
+  drawerIntro: string;
+  faqs: readonly FaqItem[];
 };
 
 export type ProductFitDictionary = {
   title: string;
   intro: string;
   cta: string;
+  openHint: string;
+  closeLabel: string;
   items: readonly ProductFitItem[];
 };
 
@@ -507,6 +528,33 @@ export type LanguageToggleDictionary = {
   en: string;
 };
 
+export type ContactWidgetDictionary = {
+  openAria: string;
+  closeAria: string;
+  title: string;
+  intro: string;
+  nameLabel: string;
+  namePlaceholder: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  topicLabel: string;
+  topicPlaceholder: string;
+  topics: readonly { value: string; label: string }[];
+  messageLabel: string;
+  messagePlaceholder: string;
+  consentBefore: string;
+  consentPrivacy: string;
+  consentAfter: string;
+  consentRequired: string;
+  submit: string;
+  sending: string;
+  successTitle: string;
+  successBody: string;
+  successClose: string;
+  error: string;
+  rateLimit: string;
+};
+
 export type Dictionary = {
   meta: MetaDictionary;
   nav: NavDictionary;
@@ -530,4 +578,5 @@ export type Dictionary = {
   form: FormDictionary;
   routes: RoutesDictionary;
   languageToggle: LanguageToggleDictionary;
+  contactWidget: ContactWidgetDictionary;
 };

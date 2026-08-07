@@ -1,26 +1,50 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useLocaleContext } from "@/components/locale-provider";
 
 function LiveConfetti() {
+  const colors = ["#ff2e00", "#ff6a4a", "#1b3022", "#f7f7f5", "#ffb199"];
+  const particles = Array.from({ length: 56 }, (_, i) => {
+    const angle = (i / 56) * Math.PI * 2 + (i % 3) * 0.35;
+    const dist = 90 + (i % 7) * 28;
+    return {
+      left: `${48 + ((i * 7) % 10) - 5}%`,
+      top: `${40 + ((i * 11) % 14) - 7}%`,
+      delay: `${(i % 12) * 0.04}s`,
+      width: i % 5 === 0 ? 14 : i % 3 === 0 ? 10 : i % 2 === 0 ? 8 : 6,
+      height: i % 4 === 0 ? 18 : i % 3 === 0 ? 12 : 7,
+      radius: i % 3 === 0 ? 999 : i % 2 === 0 ? 3 : 1,
+      color: colors[i % colors.length],
+      dx: `${Math.cos(angle) * dist}px`,
+      dy: `${Math.sin(angle) * dist * 0.85 - 70 - (i % 5) * 18}px`,
+      rot: `${(i % 2 === 0 ? 1 : -1) * (40 + (i % 9) * 18)}deg`,
+    };
+  });
+
   return (
     <div
-      className="pointer-events-none absolute inset-x-0 -top-4 bottom-0 overflow-hidden"
+      className="pointer-events-none absolute -inset-[40%] z-20 overflow-visible md:-inset-x-[70%] md:-inset-y-[55%]"
       aria-hidden
     >
-      {Array.from({ length: 18 }).map((_, i) => (
+      {particles.map((p, i) => (
         <span
           key={i}
-          className="absolute rounded-full bg-terracotta celebrate-particle"
-          style={{
-            left: `${6 + ((i * 19) % 88)}%`,
-            top: `${12 + ((i * 29) % 70)}%`,
-            animationDelay: `${(i % 8) * 0.07}s`,
-            width: i % 3 === 0 ? 6 : 4,
-            height: i % 4 === 0 ? 8 : 4,
-            borderRadius: i % 2 === 0 ? 999 : 2,
-          }}
+          className="absolute celebrate-particle"
+          style={
+            {
+              left: p.left,
+              top: p.top,
+              animationDelay: p.delay,
+              width: p.width,
+              height: p.height,
+              borderRadius: p.radius,
+              backgroundColor: p.color,
+              "--dx": p.dx,
+              "--dy": p.dy,
+              "--rot": p.rot,
+            } as CSSProperties
+          }
         />
       ))}
     </div>
@@ -32,10 +56,14 @@ export function HowItWorks() {
   const steps = dict.howItWorks.steps;
   const trackRef = useRef<HTMLDivElement>(null);
   const dotsRowRef = useRef<HTMLDivElement>(null);
+  const mobileListRef = useRef<HTMLOListElement>(null);
   const firstDotRef = useRef<HTMLSpanElement>(null);
   const lastDotRef = useRef<HTMLSpanElement>(null);
+  const mobileFirstDotRef = useRef<HTMLSpanElement>(null);
+  const mobileLastDotRef = useRef<HTMLSpanElement>(null);
   const [active, setActive] = useState(0);
   const [line, setLine] = useState({ left: 12, width: 0 });
+  const [mobileLine, setMobileLine] = useState({ top: 12, height: 0 });
   const isLive = active === steps.length - 1;
 
   useEffect(() => {
@@ -77,16 +105,32 @@ export function HowItWorks() {
       const row = dotsRowRef.current;
       const first = firstDotRef.current;
       const last = lastDotRef.current;
-      if (!row || !first || !last) return;
-      const rowBox = row.getBoundingClientRect();
-      const firstBox = first.getBoundingClientRect();
-      const lastBox = last.getBoundingClientRect();
-      const firstCenter = firstBox.left + firstBox.width / 2 - rowBox.left;
-      const lastCenter = lastBox.left + lastBox.width / 2 - rowBox.left;
-      setLine({
-        left: firstCenter,
-        width: Math.max(lastCenter - firstCenter, 0),
-      });
+      if (row && first && last) {
+        const rowBox = row.getBoundingClientRect();
+        const firstBox = first.getBoundingClientRect();
+        const lastBox = last.getBoundingClientRect();
+        const firstCenter = firstBox.left + firstBox.width / 2 - rowBox.left;
+        const lastCenter = lastBox.left + lastBox.width / 2 - rowBox.left;
+        setLine({
+          left: firstCenter,
+          width: Math.max(lastCenter - firstCenter, 0),
+        });
+      }
+
+      const list = mobileListRef.current;
+      const mobileFirst = mobileFirstDotRef.current;
+      const mobileLast = mobileLastDotRef.current;
+      if (list && mobileFirst && mobileLast) {
+        const listBox = list.getBoundingClientRect();
+        const firstBox = mobileFirst.getBoundingClientRect();
+        const lastBox = mobileLast.getBoundingClientRect();
+        const firstCenter = firstBox.top + firstBox.height / 2 - listBox.top;
+        const lastCenter = lastBox.top + lastBox.height / 2 - listBox.top;
+        setMobileLine({
+          top: firstCenter,
+          height: Math.max(lastCenter - firstCenter, 0),
+        });
+      }
     }
 
     measureLine();
@@ -104,13 +148,11 @@ export function HowItWorks() {
   return (
     <section
       id={dict.routes.anchors.howItWorks}
-      className="border-t border-border/70 bg-cream"
+      className="bg-cream"
     >
       <div ref={trackRef} className="relative md:h-[165vh]">
         <div className="md:sticky md:top-[var(--site-header-offset)] md:flex md:min-h-[calc(100svh-var(--site-header-offset))] md:items-center md:py-10">
           <div className="relative mx-auto w-full max-w-6xl px-5 py-20 md:px-8 md:py-12">
-            {isLive ? <LiveConfetti /> : null}
-
             <div className="relative z-10 max-w-2xl">
               <h2 className="font-display text-3xl font-bold tracking-tight text-forest md:text-4xl">
                 {dict.howItWorks.title}
@@ -119,15 +161,20 @@ export function HowItWorks() {
             </div>
 
             {/* Mobile: vertical timeline */}
-            <ol className="relative z-10 mt-14 flex flex-col md:hidden">
+            <ol
+              ref={mobileListRef}
+              className="relative z-10 mt-14 flex flex-col md:hidden"
+            >
               <div
-                className="absolute bottom-3 left-[0.6875rem] top-3 w-px bg-border"
+                className="absolute left-[0.6875rem] w-px bg-border"
+                style={{ top: mobileLine.top, height: mobileLine.height }}
                 aria-hidden
               />
               <div
-                className="absolute left-[0.6875rem] top-3 w-px origin-top bg-terracotta transition-[height] duration-500 ease-out"
+                className="absolute left-[0.6875rem] w-px origin-top bg-terracotta transition-[height] duration-500 ease-out"
                 style={{
-                  height: `calc((100% - 1.5rem) * ${fillPercent / 100})`,
+                  top: mobileLine.top,
+                  height: mobileLine.height * (fillPercent / 100),
                 }}
                 aria-hidden
               />
@@ -141,7 +188,17 @@ export function HowItWorks() {
                       lit ? "opacity-100" : "opacity-35"
                     }`}
                   >
+                    {isLive && index === steps.length - 1 ? (
+                      <LiveConfetti />
+                    ) : null}
                     <span
+                      ref={
+                        index === 0
+                          ? mobileFirstDotRef
+                          : index === steps.length - 1
+                            ? mobileLastDotRef
+                            : undefined
+                      }
                       className={`relative z-10 mt-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 bg-cream transition-colors duration-500 ${
                         lit ? "border-terracotta" : "border-border"
                       }`}
@@ -186,7 +243,7 @@ export function HowItWorks() {
             </ol>
 
             {/* Desktop */}
-            <div className="relative z-10 mt-16 hidden md:block">
+            <div className="relative z-10 mt-16 hidden overflow-visible md:block">
               <div ref={dotsRowRef} className="relative mb-5 h-6">
                 <div
                   className="absolute top-1/2 h-px -translate-y-1/2 bg-border"
@@ -236,7 +293,7 @@ export function HowItWorks() {
                 </div>
               </div>
 
-              <ol className="grid grid-cols-5 gap-4 lg:gap-6">
+              <ol className="grid grid-cols-5 gap-4 overflow-visible lg:gap-6">
                 {steps.map((step, index) => {
                   const lit = index <= active;
                   const current = index === active;
@@ -245,8 +302,13 @@ export function HowItWorks() {
                       key={step.title}
                       className={`relative flex flex-col transition-opacity duration-500 ${
                         lit ? "opacity-100" : "opacity-30"
+                      } ${
+                        index === steps.length - 1 ? "overflow-visible" : ""
                       }`}
                     >
+                      {isLive && index === steps.length - 1 ? (
+                        <LiveConfetti />
+                      ) : null}
                       <p
                         className={`text-[0.7rem] font-semibold uppercase tracking-wider transition-colors duration-500 ${
                           lit ? "text-terracotta" : "text-muted"

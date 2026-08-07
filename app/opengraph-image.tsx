@@ -57,7 +57,7 @@ export default function OpenGraphImage() {
               lineHeight: 1.35,
             }}
           >
-            Free preview within 48 hours · from €199
+            Free preview within 48 hours · from €249
           </div>
         </div>
 

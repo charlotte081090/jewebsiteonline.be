@@ -41,21 +41,21 @@ export function BrandLogo({
       className={`relative inline-flex ${sizeClasses[size]} aspect-[1024/319] w-auto max-w-[11rem] sm:max-w-[13.5rem] ${className}`}
     >
       <Image
-        src="/logo-header-light.png"
+        src="/logo-header-light.webp"
         alt=""
         fill
-        sizes="220px"
-        priority
+        sizes="180px"
+        priority={tone === "light"}
         className={`object-contain object-left transition-opacity duration-300 ${
           tone === "light" ? "opacity-100" : "opacity-0"
         }`}
       />
       <Image
-        src="/logo-header-dark.png"
+        src="/logo-header-dark.webp"
         alt=""
         fill
-        sizes="220px"
-        priority
+        sizes="180px"
+        priority={tone === "dark"}
         className={`object-contain object-left transition-opacity duration-300 ${
           tone === "dark" ? "opacity-100" : "opacity-0"
         }`}
