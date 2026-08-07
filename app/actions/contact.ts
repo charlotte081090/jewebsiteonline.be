@@ -33,7 +33,7 @@ const MAX_SHORT = 120;
 const MAX_MEDIUM = 300;
 const MAX_LONG = 4000;
 
-const ALLOWED_PACKAGES = new Set(["1-pagina", "3-pagina"]);
+const ALLOWED_PACKAGES = new Set(["1-pagina", "3-pagina", "5-pagina"]);
 const ALLOWED_YES_NO = new Set(["ja", "nee"]);
 
 const SUPPORT_EMAIL = "info@jewebsiteonline.com";

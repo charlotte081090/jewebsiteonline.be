@@ -54,7 +54,7 @@ const COUNTRY_DIAL_CODES: readonly { code: CountryCode; dial: string }[] = [
   { code: "CY", dial: "+357" },
 ];
 
-type PackageChoice = "1-pagina" | "3-pagina" | "";
+type PackageChoice = "1-pagina" | "3-pagina" | "5-pagina" | "";
 type BrandChoice = "ja" | "nee" | "";
 type SectionId = "contact" | "company" | "website" | "review";
 type EditBlock = "contact" | "company" | "website" | null;
@@ -63,6 +63,16 @@ type Step = number;
 const MAX_IMAGES = 5;
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 const MAX_CUSTOM_PAGE = 50;
+
+function pageLimitForPackage(packageChoice: PackageChoice) {
+  if (packageChoice === "5-pagina") return 5;
+  if (packageChoice === "3-pagina") return 3;
+  return 1;
+}
+
+function isMultiPagePackage(packageChoice: PackageChoice) {
+  return packageChoice === "3-pagina" || packageChoice === "5-pagina";
+}
 
 function fill(template: string, values: Record<string, string | number>) {
   return Object.entries(values).reduce(
@@ -134,6 +144,8 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
     [packageChoice],
   );
 
+  const pageLimit = pageLimitForPackage(packageChoice);
+
   const stepIndex = activeSteps.indexOf(step);
   const totalQuestions = activeSteps.length;
   const questionNumber = stepIndex >= 0 ? stepIndex + 1 : 0;
@@ -147,7 +159,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
     page === otherPage ? customPage.trim() || otherPage : page,
   );
   const pagesLabel =
-    packageChoice === "3-pagina"
+    isMultiPagePackage(packageChoice)
       ? resolvedPages.join(", ")
       : t.summary.homeOnePage;
 
@@ -156,6 +168,8 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
       dict.pricing.packages.find((p) => p.id === "one-page")?.price ?? "€199",
     threePage:
       dict.pricing.packages.find((p) => p.id === "three-page")?.price ?? "€349",
+    fivePage:
+      dict.pricing.packages.find((p) => p.id === "five-page")?.price ?? "€499",
   };
 
   const packageLabel =
@@ -163,7 +177,9 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
       ? t.packages.onePage.label
       : packageChoice === "3-pagina"
         ? t.packages.threePage.label
-        : t.summary.notChosen;
+        : packageChoice === "5-pagina"
+          ? t.packages.fivePage.label
+          : t.summary.notChosen;
 
   const imagePreviews = useMemo(
     () => images.map((file) => ({ file, url: URL.createObjectURL(file) })),
@@ -246,8 +262,8 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
       return;
     }
     if (step === 11) {
-      if (selectedPages.length !== 3) {
-        setError(t.errors.pagesExactly3);
+      if (selectedPages.length !== pageLimit) {
+        setError(fill(t.errors.pagesExactly3, { count: pageLimit }));
         return;
       }
       if (selectedPages.includes(otherPage) && !customPage.trim()) {
@@ -342,9 +358,12 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
       openSummaryBlock("website", t.errors.websiteIncomplete);
       return false;
     }
-    if (packageChoice === "3-pagina") {
-      if (selectedPages.length !== 3) {
-        openSummaryBlock("website", t.errors.pagesExactly3);
+    if (isMultiPagePackage(packageChoice)) {
+      if (selectedPages.length !== pageLimit) {
+        openSummaryBlock(
+          "website",
+          fill(t.errors.pagesExactly3, { count: pageLimit }),
+        );
         return false;
       }
       if (selectedPages.includes(otherPage) && !customPage.trim()) {
@@ -427,7 +446,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
         if (page === otherPage) setCustomPage("");
         return current.filter((p) => p !== page);
       }
-      if (current.length >= 3) return current;
+      if (current.length >= pageLimit) return current;
       return [...current, page];
     });
   }
@@ -515,7 +534,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
             <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">
               {t.intro.eyebrow}
             </p>
-            <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-forest md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
+            <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-forest md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
               {t.intro.title}
             </h1>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
@@ -712,10 +731,14 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
         {step === 11 && (
           <Question
             title={t.questions.q11title}
-            hint={fill(t.questions.q11hint, { count: selectedPages.length })}
+            hint={fill(t.questions.q11hint, {
+              count: selectedPages.length,
+              required: pageLimit,
+            })}
           >
             <PagePicker
               t={t}
+              maxPages={pageLimit}
               selectedPages={selectedPages}
               customPage={customPage}
               setCustomPage={setCustomPage}
@@ -755,7 +778,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
 
         {isSummary && (
           <div className="relative">
-            <h2 className="font-display text-2xl font-semibold tracking-tight text-forest md:text-3xl">
+            <h2 className="font-display text-2xl font-bold tracking-tight text-forest md:text-3xl">
               {t.summary.title}
             </h2>
             <p className="mt-3 text-base text-muted">{t.summary.intro}</p>
@@ -956,9 +979,10 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
                     lockedPackage={paidAccess.packageChoice}
                     onSelect={selectPackage}
                   />
-                  {packageChoice === "3-pagina" && (
+                  {isMultiPagePackage(packageChoice) && (
                     <PagePicker
                       t={t}
+                      maxPages={pageLimit}
                       selectedPages={selectedPages}
                       customPage={customPage}
                       setCustomPage={setCustomPage}
@@ -1224,7 +1248,7 @@ function Question({
 }) {
   return (
     <div className="relative">
-      <h2 className="font-display text-2xl font-semibold tracking-tight text-forest md:text-3xl">
+      <h2 className="font-display text-2xl font-bold tracking-tight text-forest md:text-3xl">
         {title}
       </h2>
       {hint ? (
@@ -1367,7 +1391,7 @@ function PackagePicker({
   onSelect,
 }: {
   t: FormDictionary;
-  prices: { onePage: string; threePage: string };
+  prices: { onePage: string; threePage: string; fivePage: string };
   packageChoice: PackageChoice;
   lockedPackage?: OrderPackageId;
   onSelect: (value: PackageChoice) => void;
@@ -1385,10 +1409,16 @@ function PackagePicker({
       price: prices.threePage,
       desc: t.packages.threePage.description,
     },
+    {
+      value: "5-pagina" as const,
+      title: t.packages.fivePage.label,
+      price: prices.fivePage,
+      desc: t.packages.fivePage.description,
+    },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-3">
       {options.map((pkg) => {
         const lockedOut = Boolean(lockedPackage && pkg.value !== lockedPackage);
         return (
@@ -1405,7 +1435,7 @@ function PackagePicker({
               : "border-border/80 bg-cream hover:border-terracotta/40"
           }`}
         >
-          <span className="font-display text-2xl font-semibold text-forest">
+          <span className="font-display text-2xl font-bold text-forest">
             {pkg.title}
           </span>
           <span className="mt-1 block text-sm font-semibold text-terracotta">
@@ -1423,12 +1453,14 @@ function PackagePicker({
 
 function PagePicker({
   t,
+  maxPages,
   selectedPages,
   customPage,
   setCustomPage,
   onToggle,
 }: {
   t: FormDictionary;
+  maxPages: number;
   selectedPages: string[];
   customPage: string;
   setCustomPage: (value: string) => void;
@@ -1441,7 +1473,7 @@ function PagePicker({
       <div className="flex flex-wrap gap-2.5">
         {t.pages.map((page) => {
           const selected = selectedPages.includes(page);
-          const locked = !selected && selectedPages.length >= 3;
+          const locked = !selected && selectedPages.length >= maxPages;
           return (
             <button
               key={page}
@@ -1650,7 +1682,7 @@ function ImageUpload({
         htmlFor="gallery"
         className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed border-terracotta/40 bg-terracotta/[0.06] px-4 py-10 text-center transition-colors hover:border-terracotta/60 hover:bg-terracotta/[0.1]"
       >
-        <span className="font-display text-lg font-semibold text-forest">
+        <span className="font-display text-lg font-bold text-forest">
           {t.images.dropTitle}
         </span>
         <span className="mt-1 text-sm text-muted">
@@ -1762,7 +1794,7 @@ function SummaryBlock({
       className="rounded-xl border border-border/80 bg-cream-dark/30 p-5"
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="font-display text-lg font-semibold text-forest">
+        <h3 className="font-display text-lg font-bold text-forest">
           {title}
         </h3>
         <button

@@ -57,6 +57,7 @@ export type NavDictionary = {
   examples: string;
   pricing: string;
   reviews: string;
+  faq: string;
   /** Primary header call to action. */
   cta: string;
   startNow: string;
@@ -164,6 +165,8 @@ export type PricingPackage = {
   price: string;
   wasPrice?: string;
   description: string;
+  pageLabel: string;
+  pageTooltip: string;
   highlights: readonly string[];
   cta: string;
 };
@@ -173,12 +176,16 @@ export type PricingDictionary = {
   title: string;
   intro: string;
   mostPopular: string;
-  alwaysIncluded: string;
-  included: readonly string[];
   packages: readonly PricingPackage[];
   cta: string;
   redirecting: string;
   checkoutError: string;
+  whyChooseUs: {
+    title: string;
+    body: string;
+    bullets: readonly string[];
+    imageAlt: string;
+  };
 };
 
 export type FaqItem = {
@@ -186,11 +193,32 @@ export type FaqItem = {
   answer: string;
 };
 
+export type FaqSection = {
+  id: string;
+  title: string;
+  intro?: string;
+  items: readonly FaqItem[];
+};
+
 export type FaqDictionary = {
   eyebrow: string;
   title: string;
   intro: string;
-  items: readonly FaqItem[];
+  sections: readonly FaqSection[];
+};
+
+export type ProductFitItem = {
+  packageName: string;
+  title: string;
+  body: string;
+  bestFor: string;
+};
+
+export type ProductFitDictionary = {
+  title: string;
+  intro: string;
+  cta: string;
+  items: readonly ProductFitItem[];
 };
 
 export type ReviewItem = {
@@ -390,7 +418,7 @@ export type FormDictionary = {
     q10title: string;
     q10hint: string;
     q11title: string;
-    /** Uses `{count}`. */
+    /** Uses `{count}` and `{required}`. */
     q11hint: string;
     q12title: string;
     q13title: string;
@@ -401,6 +429,7 @@ export type FormDictionary = {
   packages: {
     onePage: { label: string; description: string };
     threePage: { label: string; description: string };
+    fivePage: { label: string; description: string };
   };
   logo: {
     yes: string;
@@ -431,6 +460,7 @@ export type FormDictionary = {
     sectorOther: string;
     businessInfo: string;
     packageChoice: string;
+    /** Uses `{count}`. */
     pagesExactly3: string;
     customPage: string;
     logoChoice: string;
@@ -490,6 +520,7 @@ export type Dictionary = {
   howItWorks: HowItWorksDictionary;
   portfolio: PortfolioDictionary;
   pricing: PricingDictionary;
+  productFit: ProductFitDictionary;
   faq: FaqDictionary;
   reviews: ReviewsDictionary;
   startNu: StartNuDictionary;

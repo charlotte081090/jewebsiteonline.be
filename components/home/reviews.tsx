@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { SectionLink } from "@/components/section-link";
 import { useLocaleContext } from "@/components/locale-provider";
 import { anchorHref } from "@/lib/i18n/path";
 
@@ -44,7 +44,7 @@ export function Reviews() {
         aria-hidden
         style={{
           background:
-            "radial-gradient(ellipse 70% 80% at 0% 50%, rgba(192,127,99,0.28), transparent 55%), radial-gradient(ellipse 50% 60% at 100% 20%, rgba(250,245,240,0.08), transparent 50%)",
+            "radial-gradient(ellipse 70% 80% at 0% 50%, rgba(255,46,0,0.22), transparent 55%), radial-gradient(ellipse 50% 60% at 100% 20%, rgba(255,255,255,0.08), transparent 50%)",
         }}
       />
       <div
@@ -52,7 +52,7 @@ export function Reviews() {
         aria-hidden
         style={{
           backgroundImage:
-            "linear-gradient(rgba(250,245,240,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(250,245,240,0.35) 1px, transparent 1px)",
+            "linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)",
           backgroundSize: "48px 48px",
           maskImage:
             "radial-gradient(ellipse 80% 70% at 70% 50%, black 20%, transparent 75%)",
@@ -61,10 +61,7 @@ export function Reviews() {
 
       <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wider text-terracotta-soft">
-            {dict.reviews.eyebrow}
-          </p>
-          <h2 className="mt-2 font-display text-3xl font-semibold tracking-tight md:text-4xl">
+          <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
             {dict.reviews.title}
           </h2>
           <p className="mt-3 text-base text-cream/75 md:text-lg">
@@ -104,15 +101,15 @@ export function Reviews() {
         </div>
 
         <div className="mt-10 flex flex-col items-start gap-4 border-t border-cream/15 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-display text-xl font-semibold md:text-2xl">
+          <p className="font-display text-xl font-bold md:text-2xl">
             {dict.reviews.ctaTitle}
           </p>
-          <Link
+          <SectionLink
             href={anchorHref(locale, dict, "pricing")}
             className="inline-flex rounded-md bg-terracotta px-6 py-3 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
           >
             {dict.reviews.ctaButton}
-          </Link>
+          </SectionLink>
         </div>
       </div>
     </section>

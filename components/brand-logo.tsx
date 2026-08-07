@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocaleContext } from "@/components/locale-provider";
@@ -10,13 +11,14 @@ type BrandLogoProps = {
   className?: string;
   size?: "sm" | "md" | "lg";
   label?: string;
+  /** `light` = white “Je Website” (over hero). `dark` = dark “Je Website” (scrolled / footer). */
   tone?: "dark" | "light";
 };
 
 const sizeClasses = {
-  sm: "text-xl sm:text-2xl",
-  md: "text-2xl sm:text-[1.65rem]",
-  lg: "text-2xl sm:text-3xl",
+  sm: "h-7 sm:h-8",
+  md: "h-8 sm:h-9",
+  lg: "h-10 sm:h-12",
 };
 
 export function BrandLogo({
@@ -32,16 +34,33 @@ export function BrandLogo({
   const home = localePath(locale);
   const homeSection = homeHref(locale, dict);
   const target = href ?? homeSection;
-  const nameColor = tone === "light" ? "text-cream" : "text-forest";
-  const accentColor =
-    tone === "light" ? "text-terracotta-soft" : "text-terracotta";
+  const aria = label ?? dict.brand.homeAria;
 
   const mark = (
     <span
-      className={`font-display font-semibold tracking-tight ${nameColor} ${sizeClasses[size]} ${className}`}
+      className={`relative inline-flex ${sizeClasses[size]} aspect-[1024/319] w-auto max-w-[11rem] sm:max-w-[13.5rem] ${className}`}
     >
-      Jewebsiteonline
-      <span className={accentColor}>.com</span>
+      <Image
+        src="/logo-header-light.png"
+        alt=""
+        fill
+        sizes="220px"
+        priority
+        className={`object-contain object-left transition-opacity duration-300 ${
+          tone === "light" ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      <Image
+        src="/logo-header-dark.png"
+        alt=""
+        fill
+        sizes="220px"
+        priority
+        className={`object-contain object-left transition-opacity duration-300 ${
+          tone === "dark" ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      <span className="sr-only">{aria}</span>
     </span>
   );
 
@@ -53,7 +72,7 @@ export function BrandLogo({
     <Link
       href={target}
       className="inline-flex min-w-0 shrink items-center"
-      aria-label={label ?? dict.brand.homeAria}
+      aria-label={aria}
       onClick={(event) => {
         const onHome =
           pathname === home ||
@@ -62,7 +81,7 @@ export function BrandLogo({
         if (!onHome) return;
         if (target !== homeSection && target !== home) return;
         event.preventDefault();
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: "auto" });
         window.history.replaceState(null, "", homeSection);
       }}
     >

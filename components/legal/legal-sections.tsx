@@ -92,7 +92,7 @@ export function LegalSections({ sections, inlineLink }: LegalSectionsProps) {
             id={isCookies ? "cookies" : undefined}
             className={isCookies ? "scroll-mt-24" : undefined}
           >
-            <h2 className="font-display text-2xl font-semibold text-forest">
+            <h2 className="font-display text-2xl font-bold text-forest">
               {section.heading}
             </h2>
 

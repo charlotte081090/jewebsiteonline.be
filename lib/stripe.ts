@@ -1,12 +1,25 @@
 import Stripe from "stripe";
 import type { Locale } from "@/lib/i18n/config";
 
-export type PricingPackageId = "one-page" | "three-page";
-export type OrderPackageId = "1-pagina" | "3-pagina";
+export type PricingPackageId = "one-page" | "three-page" | "five-page";
+export type OrderPackageId = "1-pagina" | "3-pagina" | "5-pagina";
 
 const PRICE_BY_PACKAGE: Record<PricingPackageId, string | undefined> = {
   "one-page": process.env.STRIPE_PRICE_1_PAGE,
   "three-page": process.env.STRIPE_PRICE_3_PAGE,
+  "five-page": process.env.STRIPE_PRICE_5_PAGE,
+};
+
+const PRICING_TO_ORDER: Record<PricingPackageId, OrderPackageId> = {
+  "one-page": "1-pagina",
+  "three-page": "3-pagina",
+  "five-page": "5-pagina",
+};
+
+const ORDER_TO_PRICING: Record<OrderPackageId, PricingPackageId> = {
+  "1-pagina": "one-page",
+  "3-pagina": "three-page",
+  "5-pagina": "five-page",
 };
 
 export function getStripe() {
@@ -23,13 +36,13 @@ export function getStripe() {
 export function pricingToOrderPackage(
   packageId: PricingPackageId,
 ): OrderPackageId {
-  return packageId === "three-page" ? "3-pagina" : "1-pagina";
+  return PRICING_TO_ORDER[packageId];
 }
 
 export function orderToPricingPackage(
   packageId: OrderPackageId,
 ): PricingPackageId {
-  return packageId === "3-pagina" ? "three-page" : "one-page";
+  return ORDER_TO_PRICING[packageId];
 }
 
 export function priceIdForPackage(packageId: PricingPackageId): string {
@@ -41,11 +54,11 @@ export function priceIdForPackage(packageId: PricingPackageId): string {
 }
 
 export function isPricingPackageId(value: string): value is PricingPackageId {
-  return value === "one-page" || value === "three-page";
+  return value === "one-page" || value === "three-page" || value === "five-page";
 }
 
 export function isOrderPackageId(value: string): value is OrderPackageId {
-  return value === "1-pagina" || value === "3-pagina";
+  return value === "1-pagina" || value === "3-pagina" || value === "5-pagina";
 }
 
 export function siteBaseUrl() {

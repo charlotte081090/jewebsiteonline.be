@@ -63,7 +63,7 @@ export function CookieBanner() {
         <div className="flex-1">
           <h2
             id="cookie-title"
-            className="font-display text-xl font-semibold text-forest"
+            className="font-display text-xl font-bold text-forest"
           >
             {dict.cookie.title}
           </h2>

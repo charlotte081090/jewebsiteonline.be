@@ -52,7 +52,7 @@ function GateMessage({
 }) {
   return (
     <div className="mx-auto w-full max-w-xl py-10 text-center">
-      <h1 className="font-display text-3xl font-semibold text-forest md:text-4xl">
+      <h1 className="font-display text-3xl font-bold text-forest md:text-4xl">
         {title}
       </h1>
       <p className="mx-auto mt-4 max-w-md text-lg leading-relaxed text-muted">

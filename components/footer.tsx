@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
+import { SectionLink } from "@/components/section-link";
 import { useLocaleContext } from "@/components/locale-provider";
 import {
   anchorHref,
@@ -9,7 +10,7 @@ import {
   termsHref,
 } from "@/lib/i18n/path";
 
-const NAV_KEYS = ["howItWorks", "examples", "pricing", "reviews"] as const;
+const NAV_KEYS = ["howItWorks", "examples", "pricing", "faq"] as const;
 
 export function Footer() {
   const { locale, dict } = useLocaleContext();
@@ -29,20 +30,20 @@ export function Footer() {
   ];
 
   return (
-    <footer className="relative overflow-hidden border-t border-border bg-cream-dark/60">
+    <footer className="relative overflow-hidden border-t border-border bg-cream-dark">
       <div
         className="pointer-events-none absolute inset-0"
         aria-hidden
         style={{
           background:
-            "radial-gradient(ellipse 50% 80% at 0% 100%, rgba(192,127,99,0.1), transparent 55%)",
+            "radial-gradient(ellipse 50% 80% at 0% 100%, rgba(255,46,0,0.08), transparent 55%)",
         }}
       />
 
       <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-16">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between md:gap-12">
           <div className="max-w-md">
-            <BrandLogo size="lg" label={dict.brand.homeAria} />
+            <BrandLogo size="lg" tone="dark" label={dict.brand.homeAria} />
             <p className="mt-4 text-sm leading-relaxed text-muted">
               {dict.footer.blurb}
             </p>
@@ -75,12 +76,12 @@ export function Footer() {
               <ul className="mt-4 flex flex-col gap-2.5 text-sm">
                 {navLinks.map((link) => (
                   <li key={link.key}>
-                    <Link
+                    <SectionLink
                       href={link.href}
                       className="text-forest-muted transition-colors hover:text-terracotta"
                     >
                       {link.label}
-                    </Link>
+                    </SectionLink>
                   </li>
                 ))}
               </ul>

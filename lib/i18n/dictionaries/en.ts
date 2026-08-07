@@ -5,7 +5,7 @@ export const en: Dictionary = {
     title: "jewebsiteonline.com | Professional websites for small businesses",
     titleTemplate: "%s | jewebsiteonline.com",
     description:
-      "We build professional 1- to 3-page websites for small and medium businesses in Belgium and the Netherlands. Pay online, complete your briefing, and go live fast. SEO-friendly, from €199.",
+      "We build professional 1- to 5-page websites for small and medium businesses in Belgium and the Netherlands. Pay online, complete your briefing, and go live fast. SEO-friendly, from €199.",
     keywords: [
       "professional website design",
       "small business website",
@@ -27,8 +27,9 @@ export const en: Dictionary = {
     examples: "Examples",
     pricing: "Pricing",
     reviews: "Reviews",
-    cta: "Choose your package",
-    startNow: "Get started",
+    faq: "FAQ",
+    cta: "Get started now",
+    startNow: "Get started now",
     home: "Home",
     mobileMenu: "Mobile menu",
     closeMenu: "Close menu",
@@ -39,7 +40,7 @@ export const en: Dictionary = {
 
   footer: {
     blurb:
-      "Professional 1- and 3-page websites for small businesses in Belgium and the Netherlands. Pay first, briefing next, then we build and launch. SEO-friendly and transparently priced.",
+      "Professional 1- to 5-page websites for small businesses in Belgium and the Netherlands. Pay first, briefing next, then we build and launch. SEO-friendly and transparently priced.",
     navigation: "Navigation",
     legal: "Legal",
     privacy: "Privacy policy",
@@ -67,14 +68,14 @@ export const en: Dictionary = {
   hero: {
     eyebrow: "Welcome to Je Website Online",
     title: "Get a professional website for your business",
-    body: "Professional 1- to 3-page sites. SEO-friendly, live fast, and available from €199.",
-    ctaPrimary: "Choose your package",
+    body: "Professional 1- to 5-page sites. SEO-friendly, live fast, and available from €199.",
+    ctaPrimary: "Get started now",
     ctaSecondary: "See examples",
     bullets: [
-      "Pay securely, then brief us",
+      "Start securely, then brief us",
       "GDPR compliant",
       "No monthly fees or contracts",
-      "Affordable and transparent",
+      "Transparent pricing",
     ],
     imageAlt:
       "Laptop on a wooden desk in a warm open workspace",
@@ -104,12 +105,12 @@ export const en: Dictionary = {
     eyebrow: "The solution",
     title: "How it works",
     intro:
-      "From payment to live website in five clear steps. You pay first, then we build your site together.",
+      "From package to live website in five clear steps. You start, we build further together.",
     steps: [
       {
-        title: "Choose & pay",
+        title: "Choose & start",
         time: "2 min",
-        body: "Pick your 1-page or 3-page package and pay securely via Stripe.",
+        body: "Pick your package and your website — Light, Medium or Pro.",
       },
       {
         title: "Briefing",
@@ -174,83 +175,182 @@ export const en: Dictionary = {
     title: "Pricing & packages",
     intro:
       "Clear prices. No surprises. Choose whatever fits your business best.",
-    mostPopular: "Most chosen",
-    alwaysIncluded: "Always included",
-    included: [
-      "Hosting included",
-      "SEO essentials",
-      "SSL certificate",
-      "Mobile-friendly design",
-    ],
+    mostPopular: "Most popular",
     packages: [
       {
         id: "one-page",
-        name: "1-page",
+        name: "Light",
         price: "€199",
         description:
-          "A professional landing page for your business: who you are, what you do, and how customers find and reach you.",
+          "A clear landing page that shows who you are and how customers can reach you.",
+        pageLabel: "1-page website",
+        pageTooltip:
+          "Everything on one page: introduction, offer and contact. Ideal if you want to get online quickly without separate submenus.",
         highlights: [
-          "One powerful landing page",
-          "Contact details and a clear call to action",
-          "Private preview for review after we build",
+          "Custom designed",
+          "Optimised for smartphones",
+          "SEO essentials so Google can find you",
+          "Domain & SSL connected when needed",
         ],
-        cta: "Pay & start briefing",
+        cta: "Start with Light",
       },
       {
         id: "three-page",
-        name: "3-page",
+        name: "Medium",
         price: "€349",
         wasPrice: "€399",
         description:
-          "More visibility online with a home page, a services or about page, and a contact page. Extra pages for stronger SEO and a fuller brand story.",
+          "More room to explain your services or products and tell your brand story.",
+        pageLabel: "3-page website",
+        pageTooltip:
+          "Three focused pages — for example home, services or about, and contact. More structure for visitors and stronger discoverability.",
         highlights: [
-          "Three focused pages",
-          "More copy and more SEO pages",
-          "Private preview for review after we build",
+          "Custom designed",
+          "Optimised for smartphones",
+          "SEO essentials so Google can find you",
+          "Room for services or product details",
+          "Domain & SSL connected when needed",
         ],
-        cta: "Pay & start briefing",
+        cta: "Start with Medium",
+      },
+      {
+        id: "five-page",
+        name: "Pro",
+        price: "€549",
+        description:
+          "For businesses that need more content, landing pages or a fuller online story.",
+        pageLabel: "5-page website",
+        pageTooltip:
+          "Five pages for a fuller site — for example home, about, services, projects or blog, and contact. Extra pages for deeper content.",
+        highlights: [
+          "Custom designed, with more options",
+          "Optimised for smartphones",
+          "SEO essentials so Google can find you",
+          "Room for richer content and landing pages",
+          "Domain & SSL connected when needed",
+          "Extra development available on request",
+        ],
+        cta: "Start with Pro",
       },
     ],
-    cta: "Pay & start briefing",
-    redirecting: "Redirecting to secure payment…",
+    cta: "Get started now",
+    redirecting: "Redirecting…",
     checkoutError: "Checkout could not be started. Please try again.",
+    whyChooseUs: {
+      title: "Why choose us?",
+      body: "We combine design, tech and a clear process — so you go online without the hassle, with a website that actually helps customers take the next step.",
+      bullets: [
+        "Years of experience with partners and agencies across industries",
+        "A clear path from briefing to go-live",
+        "A personal approach, tailored to your brand",
+      ],
+      imageAlt: "Team working in a bright workspace",
+    },
+  },
+
+  productFit: {
+    title: "Which package fits me?",
+    intro:
+      "A short guide so you know which package matches your business best.",
+    cta: "View the packages",
+    items: [
+      {
+        packageName: "Light",
+        title: "You want to get online quickly and clearly",
+        body: "One strong page is enough when your offer is clear and visitors mainly need an easy way to contact you.",
+        bestFor: "Coaches, local services, starters",
+      },
+      {
+        packageName: "Medium",
+        title: "You want more room to show and tell",
+        body: "Three pages give space for services, about us or a clear offer — while staying easy to navigate.",
+        bestFor: "SMEs with multiple services or a brand story",
+      },
+      {
+        packageName: "Pro",
+        title: "You need more content or landing pages",
+        body: "Five pages suit a broader offer, projects, or separate pages per service or audience.",
+        bestFor: "Growing brands with more online content",
+      },
+    ],
   },
 
   faq: {
     eyebrow: "Questions",
     title: "Frequently asked questions",
     intro:
-      "Answers to what business owners ask most often before ordering.",
-    items: [
+      "Answers to what business owners ask most often before and after ordering.",
+    sections: [
       {
-        question: "Can I still request changes once the website is live?",
-        answer:
-          "Yes. After launch you can have changes made through add-ons, such as text updates, new sections or small tweaks. We agree on what is needed and what it costs up front.",
+        id: "packages",
+        title: "Packages",
+        intro: "What you get and how the process starts.",
+        items: [
+          {
+            question: "What is included as standard?",
+            answer:
+              "Every package includes hosting, SEO essentials and a smartphone-optimised design. Domain and SSL are not included by default; if you have or want them, we help with the connection.",
+          },
+          {
+            question: "What happens after I pay?",
+            answer:
+              "You are redirected to a private briefing form. Once that is complete, we start building and share a preview for your feedback within about 48 hours.",
+          },
+          {
+            question: "Do I need any technical knowledge?",
+            answer:
+              "No. You pay, fill in a short briefing, give feedback on the preview, and we take care of the design, delivery and launch.",
+          },
+          {
+            question: "What is the difference between Light, Medium and Pro?",
+            answer:
+              "Light is one strong landing page. Medium gives you three focused pages to tell your story and present your services. Pro offers five pages for more content and landing pages.",
+          },
+        ],
       },
       {
-        question: "Do you provide a domain name as well?",
-        answer:
-          "We are happy to help you choose a domain name, purchase it with a domain provider and connect it technically. You buy the domain name directly from that provider, so it always stays yours.",
+        id: "after-live",
+        title: "Once the website is live",
+        intro: "Changes, updates and ongoing support.",
+        items: [
+          {
+            question: "Can I still request changes once the website is live?",
+            answer:
+              "Yes. After launch you can have changes made through add-ons, such as text updates, new sections or small tweaks. We agree on what is needed and what it costs up front.",
+          },
+          {
+            question: "Are add-ons available?",
+            answer:
+              "Yes. Think of change requests after launch or SEO packages. We agree on exactly what you need. For current prices, please get in touch with us.",
+          },
+          {
+            question: "How quickly can you make a change?",
+            answer:
+              "Small text or image updates are usually scheduled quickly. Larger changes or new pages are scoped together first, with a clear timeline and price before we start.",
+          },
+        ],
       },
       {
-        question: "Are add-ons available?",
-        answer:
-          "Yes. Think of change requests after launch or SEO packages. We agree on exactly what you need. For current prices, please get in touch with us.",
-      },
-      {
-        question: "What happens after I pay?",
-        answer:
-          "You are redirected to a private briefing form. Once that is complete, we start building and share a preview for your feedback within about 48 hours.",
-      },
-      {
-        question: "Do I need any technical knowledge?",
-        answer:
-          "No. You pay, fill in a short briefing, give feedback on the preview, and we take care of the design, delivery and launch.",
-      },
-      {
-        question: "What is included as standard?",
-        answer:
-          "Every package includes hosting, SEO essentials, an SSL certificate and a mobile-friendly design. So you start online looking professional from day one.",
+        id: "domain-setup",
+        title: "Domain & go-live",
+        intro: "Don’t have a domain yet? No problem — we’ll help you.",
+        items: [
+          {
+            question: "I don’t have a domain name yet. Can you help?",
+            answer:
+              "Absolutely. We help you choose a fitting name, purchase it with a domain provider and connect it technically. You buy the domain yourself from that provider, so it always stays yours.",
+          },
+          {
+            question: "I already have a domain. How does the connection work?",
+            answer:
+              "We connect your existing domain to the new website. You get clear instructions, or we handle the DNS settings with you, so everything goes live safely and correctly.",
+          },
+          {
+            question: "When does my website go live?",
+            answer:
+              "After you approve the preview we launch the site, often the same day. If you don’t have a domain yet, we go live as soon as the domain is ready to connect.",
+          },
+        ],
       },
     ],
   },
@@ -283,7 +383,7 @@ export const en: Dictionary = {
       },
     ],
     ctaTitle: "Ready for your new website?",
-    ctaButton: "Choose your package",
+    ctaButton: "Get started now",
   },
 
   startNu: {
@@ -292,8 +392,8 @@ export const en: Dictionary = {
       "Complete your private briefing after payment so we can start building your website.",
     paywallTitle: "Payment required",
     paywallBody:
-      "The briefing form opens after you choose a package and complete payment. Pick 1-page or 3-page to continue.",
-    paywallCta: "View packages",
+      "The briefing form opens after you choose a package and complete payment. Pick Light, Medium or Pro to continue.",
+    paywallCta: "Get started now",
     usedTitle: "Briefing already submitted",
     usedBody:
       "This payment is already linked to a briefing. Check your confirmation email for your reference number, or contact info@jewebsiteonline.com.",
@@ -323,7 +423,7 @@ export const en: Dictionary = {
       {
         heading: "1. Who are we?",
         paragraphs: [
-          "jewebsiteonline.be (“we”, “us”) provides professional 1- and 3-page websites for small and medium-sized businesses in Belgium and the Netherlands.",
+          "jewebsiteonline.be (“we”, “us”) provides professional Light (1-page), Medium (3-page) and Pro (5-page) websites for small and medium-sized businesses in Belgium and the Netherlands.",
           "Data controller: jewebsiteonline.be. Email: info@jewebsiteonline.com.",
           "(Full company details — registered address and VAT number — will be added here as soon as they are available.)",
         ],
@@ -415,14 +515,14 @@ export const en: Dictionary = {
       {
         heading: "1. Who are we?",
         paragraphs: [
-          "These terms and conditions apply to all services of jewebsiteonline.be (“we”, “us”): the sale and delivery of 1- and 3-page websites for small and medium-sized businesses in Belgium and the Netherlands.",
+          "These terms and conditions apply to all services of jewebsiteonline.be (“we”, “us”): the sale and delivery of Light, Medium and Pro websites for small and medium-sized businesses in Belgium and the Netherlands.",
           "Contact: info@jewebsiteonline.com.",
         ],
       },
       {
         heading: "2. Ordering and payment",
         paragraphs: [
-          "You choose a 1-page or 3-page package on our website and pay securely via Stripe before the briefing. Payment creates a paid order; the private briefing form is then unlocked for that purchase.",
+          "You choose a Light, Medium or Pro package on our website and pay securely via Stripe before the briefing. Payment creates a paid order; the private briefing form is then unlocked for that purchase.",
           "After a complete briefing we aim to share a private preview for review within 48 hours. That timeframe is indicative and may be longer in the event of incomplete information, high demand or force majeure.",
           "Previews shared for review remain part of the delivery process for your paid package. You may not reuse or pass on preview materials commercially without our permission.",
         ],
@@ -430,7 +530,7 @@ export const en: Dictionary = {
       {
         heading: "3. Packages and prices",
         paragraphs: [
-          "Current prices for the 1-page and 3-page packages are listed on our website. All amounts are exclusive or inclusive of VAT as stated alongside the price.",
+          "Current prices for the Light, Medium and Pro packages are listed on our website. All amounts are exclusive or inclusive of VAT as stated alongside the price.",
           "An agreement is concluded when you confirm the package and payment (or the agreed deposit) has been received, unless agreed otherwise in writing.",
         ],
       },
@@ -621,7 +721,7 @@ export const en: Dictionary = {
       q10hint:
         "You can still adjust this later. It helps us focus the preview.",
       q11title: "Which 3 pages would you like?",
-      q11hint: "Choose exactly 3 pages. Selected: {count}/3",
+      q11hint: "Choose exactly {required} pages. Selected: {count}/{required}",
       q12title: "Do you already have a logo?",
       q13title: "Do you have images for the website?",
       q13hint:
@@ -650,12 +750,16 @@ export const en: Dictionary = {
     ],
     packages: {
       onePage: {
-        label: "1-page",
-        description: "One strong landing page with everything that matters.",
+        label: "Light",
+        description: "1-page website — engage customers online.",
       },
       threePage: {
-        label: "3-page",
-        description: "More room for your story, your services and SEO.",
+        label: "Medium",
+        description: "3-page website — show and tell your story.",
+      },
+      fivePage: {
+        label: "Pro",
+        description: "5-page website — more room for a fuller brand story.",
       },
     },
     logo: {
@@ -684,8 +788,8 @@ export const en: Dictionary = {
       sectorOther: "Please briefly describe your sector.",
       businessInfo:
         "Please tell us a little more about your business (min. 20 characters).",
-      packageChoice: "Please choose 1-page or 3-page.",
-      pagesExactly3: "Please select exactly 3 pages.",
+      packageChoice: "Please choose Light, Medium or Pro.",
+      pagesExactly3: "Please select exactly {count} pages.",
       customPage: "Please enter the name of the other page.",
       logoChoice: "Please indicate whether you have a logo.",
       logoUpload: "Please upload your logo to continue.",

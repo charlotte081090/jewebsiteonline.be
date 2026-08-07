@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { BrandLogo } from "@/components/brand-logo";
 import { LanguageToggle } from "@/components/language-toggle";
+import { SectionLink } from "@/components/section-link";
 import { useLocaleContext } from "@/components/locale-provider";
 import {
   anchorHref,
@@ -14,7 +14,7 @@ import {
 } from "@/lib/i18n/path";
 import { isHomeSectionSlug } from "@/lib/i18n/routes";
 
-const NAV_KEYS = ["howItWorks", "examples", "pricing", "reviews"] as const;
+const NAV_KEYS = ["howItWorks", "examples", "pricing", "faq"] as const;
 
 export function Header() {
   const { locale, dict } = useLocaleContext();
@@ -126,14 +126,14 @@ export function Header() {
               aria-label={dict.nav.mobileNav}
             >
               {navLinks.map((link) => (
-                <Link
+                <SectionLink
                   key={link.key}
                   href={link.href}
-                  className="rounded-2xl px-3 py-3.5 font-display text-2xl font-semibold text-cream transition-colors hover:bg-cream/10 hover:text-terracotta-soft"
+                  className="rounded-2xl px-3 py-3.5 font-display text-2xl font-bold text-cream transition-colors hover:bg-cream/10 hover:text-terracotta-soft"
                   onClick={() => setOpen(false)}
                 >
                   {link.label}
-                </Link>
+                </SectionLink>
               ))}
             </nav>
 
@@ -145,13 +145,13 @@ export function Header() {
                 enLabel={dict.languageToggle.en}
                 tone="light"
               />
-              <Link
+              <SectionLink
                 href={ctaHref}
                 className="inline-flex w-full items-center justify-center rounded-full bg-terracotta px-4 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
                 onClick={() => setOpen(false)}
               >
                 {dict.nav.cta}
-              </Link>
+              </SectionLink>
             </div>
           </div>
         </div>,
@@ -174,7 +174,6 @@ export function Header() {
               size="md"
               label={dict.brand.homeAria}
               tone={solid ? "dark" : "light"}
-              className="whitespace-nowrap !text-[1.05rem] leading-none sm:!text-[1.65rem]"
             />
 
             <nav
@@ -182,7 +181,7 @@ export function Header() {
               aria-label={dict.nav.mainNav}
             >
               {navLinks.map((link) => (
-                <Link
+                <SectionLink
                   key={link.key}
                   href={link.href}
                   className={`text-sm font-medium transition-colors ${
@@ -192,7 +191,7 @@ export function Header() {
                   }`}
                 >
                   {link.label}
-                </Link>
+                </SectionLink>
               ))}
             </nav>
 
@@ -207,12 +206,12 @@ export function Header() {
                 />
               </div>
 
-              <Link
+              <SectionLink
                 href={ctaHref}
                 className="hidden rounded-full bg-terracotta px-4 py-2.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover sm:inline-flex"
               >
                 {dict.nav.cta}
-              </Link>
+              </SectionLink>
 
               <button
                 type="button"

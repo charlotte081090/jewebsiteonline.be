@@ -2,14 +2,13 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { HeroPulse } from "@/components/home/hero-pulse";
 import { useLocaleContext } from "@/components/locale-provider";
 
 const VISUALS = [
-  { bg: "#f3ebe3", image: "/examples/vitaminesthi.png" },
-  { bg: "#e8e4dc", image: "/examples/mellow.webp" },
-  { bg: "#e8eee4", image: "/examples/freebeyondborders.png" },
-  { bg: "#f3e4dc", image: "/examples/salon-placeholder.webp" },
+  { bg: "#f7f7f5", image: "/examples/vitaminesthi.png" },
+  { bg: "#eeeeec", image: "/examples/mellow.webp" },
+  { bg: "#f3f5f2", image: "/examples/freebeyondborders.png" },
+  { bg: "#f0f0ee", image: "/examples/salon-placeholder.webp" },
 ];
 
 export function Showcase() {
@@ -41,18 +40,9 @@ export function Showcase() {
 
   return (
     <section id={dict.routes.anchors.examples} className="bg-cream">
-      <div className="mx-auto max-w-6xl px-5 pt-10 md:px-8 md:pt-14">
-        <div className="flex justify-center">
-          <HeroPulse tone="light" className="self-center lg:self-center" />
-        </div>
-      </div>
-
       <div className="mx-auto grid max-w-6xl gap-12 px-5 py-14 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] md:items-center md:gap-10 md:px-8 md:py-20 lg:gap-14">
         <div className="max-w-md">
-          <p className="text-sm font-semibold uppercase tracking-wider text-terracotta">
-            {dict.showcase.eyebrow}
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-forest sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-forest sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
             {dict.showcase.title}
           </h2>
           <p className="mt-5 text-base leading-relaxed text-muted sm:text-lg">
@@ -114,7 +104,7 @@ export function Showcase() {
                 <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-terracotta">
                   {item.category}
                 </p>
-                <h3 className="mt-1 font-display text-2xl font-semibold text-forest">
+                <h3 className="mt-1 font-display text-2xl font-bold text-forest">
                   {item.name}
                 </h3>
                 <p className="mt-1 text-sm text-muted">{item.focus}</p>

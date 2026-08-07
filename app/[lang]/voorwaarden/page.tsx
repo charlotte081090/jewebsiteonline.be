@@ -41,7 +41,7 @@ export default async function TermsPage({ params }: TermsPageProps) {
 
   return (
     <article className="mx-auto max-w-3xl px-5 py-14 md:px-8 md:py-20">
-      <h1 className="font-display text-4xl font-semibold tracking-tight text-forest">
+      <h1 className="font-display text-4xl font-bold tracking-tight text-forest">
         {dict.terms.title}
       </h1>
       <p className="mt-3 text-sm text-muted">{dict.terms.updated}</p>

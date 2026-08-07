@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { SectionLink } from "@/components/section-link";
 import { useLocaleContext } from "@/components/locale-provider";
 import { anchorHref } from "@/lib/i18n/path";
 
@@ -14,7 +14,7 @@ export function Problem() {
         aria-hidden
         style={{
           background:
-            "radial-gradient(ellipse 70% 80% at 0% 50%, rgba(192,127,99,0.28), transparent 55%), radial-gradient(ellipse 50% 60% at 100% 20%, rgba(250,245,240,0.08), transparent 50%)",
+            "radial-gradient(ellipse 70% 80% at 0% 50%, rgba(255,46,0,0.22), transparent 55%), radial-gradient(ellipse 50% 60% at 100% 20%, rgba(255,255,255,0.08), transparent 50%)",
         }}
       />
 
@@ -23,7 +23,7 @@ export function Problem() {
         aria-hidden
         style={{
           backgroundImage:
-            "linear-gradient(rgba(250,245,240,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(250,245,240,0.35) 1px, transparent 1px)",
+            "linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)",
           backgroundSize: "48px 48px",
           maskImage:
             "radial-gradient(ellipse 80% 70% at 70% 50%, black 20%, transparent 75%)",
@@ -49,10 +49,7 @@ export function Problem() {
 
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8 px-5 py-16 md:flex-row md:items-center md:justify-between md:gap-16 md:px-8 md:py-20">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-wider text-terracotta-soft">
-            {dict.problem.eyebrow}
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold tracking-tight text-cream md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-cream md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
             {dict.problem.title}
           </h2>
           <p className="mt-5 max-w-xl text-base leading-relaxed text-cream/75 sm:text-lg">
@@ -61,13 +58,13 @@ export function Problem() {
         </div>
 
         <div className="shrink-0">
-          <Link
+          <SectionLink
             href={anchorHref(locale, dict, "howItWorks", false)}
             className="inline-flex items-center gap-2 rounded-md bg-terracotta px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
           >
             {dict.problem.cta}
             <span aria-hidden>→</span>
-          </Link>
+          </SectionLink>
         </div>
       </div>
     </section>

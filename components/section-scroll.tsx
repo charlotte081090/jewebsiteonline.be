@@ -1,28 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { scrollToSection } from "@/components/section-link";
 
 export function SectionScroll({ sectionId }: { sectionId: string }) {
-  useEffect(() => {
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const pathname = usePathname();
 
+  useEffect(() => {
     const timer = window.setTimeout(() => {
-      if (sectionId === "home") {
-        window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
-        return;
-      }
-      const el = document.getElementById(sectionId);
-      if (!el) return;
-      el.scrollIntoView({
-        behavior: reduce ? "auto" : "smooth",
-        block: "start",
-      });
-    }, 50);
+      scrollToSection(sectionId);
+    }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [sectionId]);
+  }, [sectionId, pathname]);
 
   return null;
 }

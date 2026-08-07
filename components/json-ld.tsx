@@ -38,14 +38,16 @@ export function JsonLd({ locale, dict }: JsonLdProps) {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     inLanguage,
-    mainEntity: dict.faq.items.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
+    mainEntity: dict.faq.sections.flatMap((section) =>
+      section.items.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer,
+        },
+      })),
+    ),
   };
 
   const payloads = [organization, website, faqPage];

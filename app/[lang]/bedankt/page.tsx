@@ -60,7 +60,7 @@ export default async function BedanktPage({
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-terracotta/15 text-2xl text-terracotta">
             ✓
           </div>
-          <h1 className="mt-5 font-display text-3xl font-semibold text-forest md:text-4xl">
+          <h1 className="mt-5 font-display text-3xl font-bold text-forest md:text-4xl">
             {name
               ? dict.bedankt.titleNamed.replace("{name}", name)
               : dict.bedankt.title}
