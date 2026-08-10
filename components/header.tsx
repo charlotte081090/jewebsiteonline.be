@@ -5,6 +5,12 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { BrandLogo } from "@/components/brand-logo";
 import { LanguageToggle } from "@/components/language-toggle";
+import { MobileMenuFace } from "@/components/mobile-menu-face";
+import {
+  MOBILE_NAV_KEYS,
+  useMobileNav,
+  type MobileNavKey,
+} from "@/components/mobile-nav-context";
 import { SectionLink } from "@/components/section-link";
 import { useLocaleContext } from "@/components/locale-provider";
 import {
@@ -14,17 +20,12 @@ import {
 } from "@/lib/i18n/path";
 import { isHomeSectionSlug } from "@/lib/i18n/routes";
 
-const NAV_KEYS = ["examples", "howItWorks", "pricing", "faq"] as const;
-
 export function Header() {
   const { locale, dict } = useLocaleContext();
+  const { open, setOpen, toggle, activeKey, setActiveKey } = useMobileNav();
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeKey, setActiveKey] = useState<(typeof NAV_KEYS)[number] | null>(
-    null,
-  );
 
   const home = localePath(locale);
   const pathSlug = stripLocale(pathname).replace(/^\//, "");
@@ -32,8 +33,8 @@ export function Header() {
     pathname === home ||
     pathname === `${home}/` ||
     (!!pathSlug && isHomeSectionSlug(locale, pathSlug));
-  const solid = !isHome || scrolled;
-  const navLinks = NAV_KEYS.map((key) => ({
+  const solid = !isHome || scrolled || open;
+  const navLinks = MOBILE_NAV_KEYS.map((key) => ({
     key,
     href: anchorHref(locale, dict, key, isHome),
     label: dict.nav[key],
@@ -60,7 +61,7 @@ export function Header() {
   }, [isHome]);
 
   useEffect(() => {
-    const fromPath = NAV_KEYS.find(
+    const fromPath = MOBILE_NAV_KEYS.find(
       (key) => dict.routes.anchors[key] === pathSlug,
     );
     if (fromPath) {
@@ -69,11 +70,11 @@ export function Header() {
 
     if (!isHome) return;
 
-    const sections = NAV_KEYS.map((key) => ({
+    const sections = MOBILE_NAV_KEYS.map((key) => ({
       key,
       el: document.getElementById(dict.routes.anchors[key]),
-    })).filter((s): s is { key: (typeof NAV_KEYS)[number]; el: HTMLElement } =>
-      Boolean(s.el),
+    })).filter(
+      (s): s is { key: MobileNavKey; el: HTMLElement } => Boolean(s.el),
     );
 
     if (sections.length === 0) return;
@@ -89,7 +90,7 @@ export function Header() {
           );
         const top = visible[0];
         if (!top?.target?.id) return;
-        const match = NAV_KEYS.find(
+        const match = MOBILE_NAV_KEYS.find(
           (key) => dict.routes.anchors[key] === top.target.id,
         );
         if (match) setActiveKey(match);
@@ -102,7 +103,7 @@ export function Header() {
 
     for (const section of sections) observer.observe(section.el);
     return () => observer.disconnect();
-  }, [dict.routes.anchors, isHome, pathSlug]);
+  }, [dict.routes.anchors, isHome, pathSlug, setActiveKey]);
 
   useEffect(() => {
     if (!open) return;
@@ -119,19 +120,14 @@ export function Header() {
       document.documentElement.style.overflow = "";
       window.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [open, setOpen]);
 
   useEffect(() => {
     setOpen(false);
-  }, [pathname]);
+  }, [pathname, setOpen]);
 
-  function navClass(key: (typeof NAV_KEYS)[number], mobile = false) {
+  function navClass(key: MobileNavKey) {
     const active = activeKey === key;
-    if (mobile) {
-      return active
-        ? "rounded-2xl px-3 py-3.5 font-display text-2xl font-bold text-terracotta transition-colors hover:bg-cream/10"
-        : "rounded-2xl px-3 py-3.5 font-display text-2xl font-bold text-cream transition-colors hover:bg-cream/10 hover:text-terracotta-soft";
-    }
     if (active) {
       return "text-sm font-medium text-terracotta transition-colors";
     }
@@ -140,94 +136,44 @@ export function Header() {
       : "text-sm font-medium text-cream/85 transition-colors hover:text-cream";
   }
 
-  const menu = mounted
-    ? createPortal(
-        <div className="lg:hidden" aria-hidden={!open}>
-          <div
-            className={`fixed inset-0 z-[80] bg-forest/40 backdrop-blur-[3px] transition-opacity duration-300 ${
-              open ? "opacity-100" : "pointer-events-none opacity-0"
-            }`}
-            onClick={() => setOpen(false)}
-          />
-
-          <div
-            id="mobile-menu"
-            role="dialog"
-            aria-modal="true"
-            aria-label={dict.nav.mobileMenu}
-            className={`fixed inset-y-0 right-0 z-[90] flex h-[100dvh] w-[min(88vw,22rem)] flex-col border-l border-cream/25 bg-cream/18 backdrop-blur-xl transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              open
-                ? "translate-x-0 shadow-[-20px_0_60px_rgba(27,48,34,0.28)]"
-                : "pointer-events-none translate-x-full shadow-none"
-            }`}
-            style={{
-              background:
-                "linear-gradient(165deg, rgba(250,245,240,0.22) 0%, rgba(27,48,34,0.55) 55%, rgba(27,48,34,0.72) 100%)",
-            }}
-          >
-            <div className="flex items-center justify-end px-4 py-4 pt-[max(1rem,env(safe-area-inset-top))]">
-              <button
-                type="button"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-cream/35 text-cream transition-colors hover:border-cream/60 hover:bg-cream/10"
-                aria-label={dict.nav.closeMenu}
-                onClick={() => setOpen(false)}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden
-                >
-                  <path d="M6 6l12 12M18 6L6 18" />
-                </svg>
-              </button>
-            </div>
-
-            <nav
-              className="flex flex-1 flex-col gap-1 overflow-y-auto px-5 py-4"
-              aria-label={dict.nav.mobileNav}
+  /* Non-home: same rounded hero-shaped flip panel (home uses the real hero) */
+  const nonHomeMenu =
+    mounted && !isHome
+      ? createPortal(
+          <div className="lg:hidden" aria-hidden={!open}>
+            <div
+              className={`fixed inset-0 z-[80] bg-cream transition-opacity duration-300 ${
+                open ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+            />
+            <div
+              className={`fixed inset-3 z-[90] transition-opacity duration-300 md:inset-4 ${
+                open
+                  ? "opacity-100"
+                  : "pointer-events-none opacity-0"
+              }`}
             >
-              {navLinks.map((link) => (
-                <SectionLink
-                  key={link.key}
-                  href={link.href}
-                  className={navClass(link.key, true)}
-                  aria-current={activeKey === link.key ? "true" : undefined}
-                  onClick={() => setOpen(false)}
+              <div className="hero-flip-scene h-full">
+                <div
+                  className={`hero-flip-card relative h-[calc(100dvh-1.5rem)] md:h-[calc(100dvh-2rem)] ${
+                    open ? "hero-flip-card--open" : ""
+                  }`}
                 >
-                  {link.label}
-                </SectionLink>
-              ))}
-            </nav>
-
-            <div className="flex flex-col gap-3 border-t border-cream/20 px-5 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-              <LanguageToggle
-                locale={locale}
-                label={dict.languageToggle.label}
-                nlLabel={dict.languageToggle.nl}
-                enLabel={dict.languageToggle.en}
-                tone="light"
-              />
-              <SectionLink
-                href={ctaHref}
-                className="inline-flex w-full items-center justify-center rounded-full bg-terracotta px-4 py-3.5 text-sm font-semibold text-cream transition-colors hover:bg-terracotta-hover"
-                onClick={() => setOpen(false)}
-              >
-                {dict.nav.cta}
-              </SectionLink>
+                  <div className="hero-flip-face absolute inset-0 overflow-hidden rounded-[1.5rem] bg-cream-dark md:rounded-[2rem]" />
+                  <div className="hero-flip-face hero-flip-face--back absolute inset-0 overflow-hidden rounded-[1.5rem] md:rounded-[2rem]">
+                    <MobileMenuFace isHome={false} />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>,
-        document.body,
-      )
-    : null;
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
     <>
-      <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-[100]">
         <div
           className={`pointer-events-auto mx-auto max-w-6xl px-5 transition-[padding] duration-300 sm:px-5 md:px-8 ${
             solid ? "pt-[15px] md:pt-[19px]" : "pt-[25px] md:pt-[29px]"
@@ -290,7 +236,7 @@ export function Header() {
                 aria-expanded={open}
                 aria-controls="mobile-menu"
                 aria-label={open ? dict.nav.closeMenu : dict.nav.openMenu}
-                onClick={() => setOpen((v) => !v)}
+                onClick={() => toggle({ scrollHomeFirst: isHome })}
               >
                 <span className="sr-only">Menu</span>
                 <svg
@@ -321,7 +267,7 @@ export function Header() {
         />
       ) : null}
 
-      {menu}
+      {nonHomeMenu}
     </>
   );
 }

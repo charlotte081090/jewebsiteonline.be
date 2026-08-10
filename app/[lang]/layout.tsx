@@ -6,6 +6,7 @@ import { CookieBanner } from "@/components/cookie-banner";
 import { ContactWidget } from "@/components/contact-widget";
 import { JsonLd } from "@/components/json-ld";
 import { LocaleProvider } from "@/components/locale-provider";
+import { MobileNavProvider } from "@/components/mobile-nav-context";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
@@ -70,12 +71,14 @@ export default async function LocaleLayout({
 
   return (
     <LocaleProvider locale={locale} dict={dict}>
-      <JsonLd locale={locale} dict={dict} />
-      <Header />
-      <main className="flex-1">{children}</main>
-      <Footer />
-      <ContactWidget />
-      <CookieBanner />
+      <MobileNavProvider>
+        <JsonLd locale={locale} dict={dict} />
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+        <ContactWidget />
+        <CookieBanner />
+      </MobileNavProvider>
     </LocaleProvider>
   );
 }

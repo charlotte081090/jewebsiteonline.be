@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useId, useRef, useState, useTransition } from "react";
 import { createCheckoutSession } from "@/app/actions/checkout";
 import { useLocaleContext } from "@/components/locale-provider";
 import type { PricingPackageId } from "@/lib/stripe";
@@ -37,25 +37,60 @@ function FeatureTooltip({
   tip: string;
   featured: boolean;
 }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLSpanElement>(null);
+  const tipId = useId();
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onPointerDown(event: PointerEvent) {
+      if (!rootRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   return (
-    <span className="group/tip relative min-w-0">
+    <span ref={rootRef} className="relative min-w-0">
       {label}
       {"\u00A0"}
       <button
         type="button"
-        className={`relative -top-px inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border align-middle text-[0.65rem] font-semibold leading-none transition-colors ${
-          featured
-            ? "border-cream/35 text-cream/80 hover:border-cream hover:text-cream"
-            : "border-forest/25 text-forest-muted hover:border-terracotta hover:text-terracotta"
-        }`}
+        aria-expanded={open}
         aria-label={tip}
+        aria-describedby={open ? tipId : undefined}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          setOpen((value) => !value);
+        }}
+        className={`relative -top-px inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border align-middle text-[0.65rem] font-semibold leading-none transition-colors touch-manipulation before:absolute before:-inset-3 before:content-[''] ${
+          featured
+            ? "border-cream/35 text-cream/80"
+            : "border-forest/25 text-forest-muted"
+        }`}
       >
         ?
         <span
+          id={tipId}
           role="tooltip"
-          className={`pointer-events-none absolute bottom-[calc(100%+0.55rem)] left-1/2 z-20 w-56 -translate-x-1/2 rounded-lg px-3 py-2.5 text-left text-xs font-normal leading-relaxed opacity-0 shadow-lg transition-opacity duration-200 group-hover/tip:opacity-100 group-focus-within/tip:opacity-100 ${
-            featured ? "bg-cream text-forest" : "bg-forest text-cream"
-          }`}
+          className={`absolute bottom-[calc(100%+0.55rem)] left-1/2 z-30 w-[min(14rem,70vw)] -translate-x-1/2 rounded-lg px-3 py-2.5 text-left text-xs font-normal leading-relaxed shadow-lg transition-opacity duration-150 ${
+            open
+              ? "pointer-events-auto opacity-100"
+              : "pointer-events-none opacity-0"
+          } ${featured ? "bg-cream text-forest" : "bg-forest text-cream"}`}
         >
           {tip}
           <span
@@ -104,7 +139,7 @@ export function Pricing() {
           <p className="mt-4 text-lg text-muted">{dict.pricing.intro}</p>
         </div>
 
-        <div className="mt-12 grid items-stretch gap-4 md:grid-cols-3 md:gap-6 lg:gap-8">
+        <div className="mt-12 grid items-stretch gap-7 md:grid-cols-3 md:gap-6 lg:gap-8">
             {dict.pricing.packages.map((pkg) => {
               const featured = pkg.id === FEATURED_PACKAGE_ID;
               const busy = isPending && pendingId === pkg.id;
@@ -271,10 +306,9 @@ export function Pricing() {
             <div
               role="img"
               aria-label={why.imageAlt}
-              className="aspect-square select-none bg-cream-dark bg-cover bg-center [clip-path:polygon(0_0,100%_0,100%_88%,0_100%)] md:aspect-auto md:h-full md:min-h-[16rem] md:[clip-path:polygon(0_0,100%_0,84%_100%,0_100%)]"
+              className="aspect-[16/10] max-h-44 w-full select-none bg-cream-dark bg-cover bg-[center_72%] [clip-path:polygon(0_0,100%_0,100%_88%,0_100%)] md:aspect-auto md:max-h-none md:h-full md:min-h-[16rem] md:bg-[center_45%] md:[clip-path:polygon(0_0,100%_0,84%_100%,0_100%)]"
               style={{
                 backgroundImage: "url(/why-choose-team.webp)",
-                backgroundPosition: "center 45%",
               }}
             />
 

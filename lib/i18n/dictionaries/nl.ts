@@ -931,6 +931,7 @@ export const nl = {
   contactWidget: {
     openAria: "Contact openen",
     closeAria: "Contact sluiten",
+    hoverLabel: "Contacteer ons!",
     title: "Neem contact op",
     intro:
       "Stel uw vraag. Wij antwoorden zo snel mogelijk via e-mail.",

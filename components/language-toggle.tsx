@@ -10,6 +10,8 @@ type LanguageToggleProps = {
   nlLabel: string;
   enLabel: string;
   tone?: "dark" | "light";
+  /** Smaller control for tight layouts (e.g. mobile menu footer). */
+  compact?: boolean;
 };
 
 export function LanguageToggle({
@@ -18,15 +20,36 @@ export function LanguageToggle({
   nlLabel,
   enLabel,
   tone = "dark",
+  compact = false,
 }: LanguageToggleProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isLight = tone === "light";
+  const other: Locale = locale === "nl" ? "en" : "nl";
+  const otherLabel = other === "nl" ? "NL" : "EN";
+  const otherAria = other === "nl" ? nlLabel : enLabel;
 
   function switchTo(next: Locale) {
     if (next === locale) return;
     document.cookie = `jwo-locale=${next};path=/;max-age=31536000;samesite=lax`;
     router.push(swapLocale(pathname || `/${locale}`, next));
+  }
+
+  if (compact) {
+    return (
+      <button
+        type="button"
+        onClick={() => switchTo(other)}
+        aria-label={otherAria}
+        className={`inline-flex h-10 shrink-0 items-center justify-center rounded-full border px-3 text-xs font-semibold transition-colors ${
+          isLight
+            ? "border-cream/35 bg-cream/10 text-cream backdrop-blur-md hover:border-cream/55 hover:bg-cream/18"
+            : "border-border/80 bg-cream text-forest hover:border-border"
+        }`}
+      >
+        {otherLabel}
+      </button>
+    );
   }
 
   return (

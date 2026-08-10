@@ -214,10 +214,56 @@ h4,
   animation: celebrate-badge 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Mobile hero menu: card flips left to reveal nav on the reverse face */
+.hero-flip-scene {
+  perspective: 1800px;
+  -webkit-perspective: 1800px;
+}
+
+.hero-flip-card {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.hero-flip-face {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+}
+
+.hero-flip-face--back {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+}
+
+@media (max-width: 1023px) {
+  .hero-flip-card--open {
+    transform: rotateY(-180deg);
+    -webkit-transform: rotateY(-180deg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-flip-card {
+    transform: none !important;
+    -webkit-transform: none !important;
+  }
+
+  .hero-flip-face--back {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .step-panel-enter,
   .celebrate-particle,
   .celebrate-badge {
     animation: none;
+  }
+
+  .hero-flip-card {
+    transition: none;
   }
 }

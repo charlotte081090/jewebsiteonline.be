@@ -934,6 +934,7 @@ export const en: Dictionary = {
   contactWidget: {
     openAria: "Open contact",
     closeAria: "Close contact",
+    hoverLabel: "Contact us!",
     title: "Get in touch",
     intro: "Send your question. We’ll reply by email as soon as we can.",
     nameLabel: "Name",

@@ -531,6 +531,7 @@ export type LanguageToggleDictionary = {
 export type ContactWidgetDictionary = {
   openAria: string;
   closeAria: string;
+  hoverLabel: string;
   title: string;
   intro: string;
   nameLabel: string;

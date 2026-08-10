@@ -83,25 +83,32 @@ export function ContactWidget() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`fixed right-0 top-1/2 z-[45] h-12 w-12 -translate-y-1/2 items-center justify-center rounded-l-xl bg-terracotta text-cream shadow-[0_8px_24px_rgba(27,48,34,0.22)] transition-colors hover:bg-terracotta-hover md:flex ${
-          reachedGuide ? "flex" : "hidden"
+        className={`fixed right-0 top-1/2 z-[45] flex h-12 max-w-12 -translate-y-1/2 items-center justify-end overflow-hidden rounded-l-xl bg-terracotta text-cream shadow-[0_8px_24px_rgba(27,48,34,0.22)] transition-[max-width,background-color] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-terracotta-hover md:hover:max-w-none ${
+          reachedGuide ? "flex" : "hidden md:flex"
         }`}
         aria-label={t.openAria}
         aria-expanded={open}
       >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.75"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden
-        >
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
+        <span className="flex h-full shrink-0 items-center">
+          <span className="hidden whitespace-nowrap pl-3 text-sm font-semibold md:inline">
+            {t.hoverLabel}
+          </span>
+          <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </span>
+        </span>
       </button>
       {drawer}
     </>
