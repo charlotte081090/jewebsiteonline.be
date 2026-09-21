@@ -334,9 +334,9 @@ export const en: Dictionary = {
           "Short answers on pages, process and options after go-live.",
         faqs: [
           {
-            question: "What’s the difference with Light and Pro?",
+            question: "When is Medium the right choice?",
             answer:
-              "Light is one landing page. Medium gives three focused pages for services and story. Pro offers five pages for more content and separate landing pages.",
+              "When you need more than a single page: space for your services or products, your story, and a clear way to get in touch. Three focused pages keep everything easy to navigate. Ideal for SMEs with multiple services or a brand story.",
           },
           {
             question: "Which pages do I typically choose with Medium?",

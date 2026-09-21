@@ -333,9 +333,9 @@ export const nl = {
           "Korte antwoorden over pagina’s, proces en mogelijkheden na livegang.",
         faqs: [
           {
-            question: "Wat is het verschil met Light en Pro?",
+            question: "Wanneer is Medium de juiste keuze?",
             answer:
-              "Light is één landingspagina. Medium geeft drie gerichte pagina’s voor diensten en verhaal. Pro biedt vijf pagina’s voor meer content en aparte landingspagina’s.",
+              "Als u meer wilt vertellen dan op één pagina past: uw diensten of producten, uw verhaal, en hoe bezoekers contact opnemen. Drie gerichte pagina’s houden alles overzichtelijk. Ideaal voor KMO’s met meerdere diensten of een merkverhaal.",
           },
           {
             question: "Welke pagina’s kies ik typisch bij Medium?",
