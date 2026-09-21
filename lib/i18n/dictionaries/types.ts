@@ -374,9 +374,12 @@ export type FormDictionary = {
     phoneNumber: string;
     email: string;
     companyName: string;
+    vat: string;
+    optional: string;
     address: string;
     openingHours: string;
-    businessInfo: string;
+    aboutBusiness: string;
+    pageNotes: string;
     instagram: string;
     facebook: string;
     otherSocial: string;
@@ -393,6 +396,7 @@ export type FormDictionary = {
     rowPhone: string;
     rowEmail: string;
     rowCompany: string;
+    rowVat: string;
     rowAddress: string;
     rowOpeningHours: string;
     rowSocial: string;
@@ -400,6 +404,7 @@ export type FormDictionary = {
     rowAbout: string;
     rowPackage: string;
     rowPages: string;
+    rowPageNotes: string;
     rowLogo: string;
     rowBranding: string;
     rowImages: string;
@@ -409,14 +414,15 @@ export type FormDictionary = {
     phone: string;
     email: string;
     companyName: string;
+    vat: string;
     address: string;
     openingHours: string;
     instagram: string;
     facebook: string;
     otherSocial: string;
     sectorOther: string;
-    businessInfo: string;
-    businessInfoShort: string;
+    aboutBusiness: string;
+    pageNotes: string;
     customPage: string;
     brandNotesOptional: string;
     brandNotesNone: string;
@@ -439,11 +445,13 @@ export type FormDictionary = {
     q10title: string;
     q10hint: string;
     q11title: string;
-    /** Uses `{count}` and `{required}`. */
+    /** Uses `{package}`, `{count}` and `{required}`. */
     q11hint: string;
     q12title: string;
     q13title: string;
     q13hint: string;
+    q15title: string;
+    q15hint: string;
   };
   sectors: readonly string[];
   pages: readonly string[];
@@ -479,7 +487,8 @@ export type FormDictionary = {
     openingHours: string;
     sector: string;
     sectorOther: string;
-    businessInfo: string;
+    aboutBusiness: string;
+    pageNotes: string;
     packageChoice: string;
     /** Uses `{count}`. */
     pagesExactly3: string;

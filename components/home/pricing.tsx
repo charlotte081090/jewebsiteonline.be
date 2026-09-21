@@ -1,11 +1,21 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, useTransition } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
+import { createPortal } from "react-dom";
 import { createCheckoutSession } from "@/app/actions/checkout";
 import { useLocaleContext } from "@/components/locale-provider";
 import type { PricingPackageId } from "@/lib/stripe";
 
 const FEATURED_PACKAGE_ID = "three-page";
+const TIP_PAD = 12;
+const TIP_MAX_WIDTH = 224; // 14rem
 
 function CheckIcon({ className }: { className?: string }) {
   return (
@@ -38,16 +48,88 @@ function FeatureTooltip({
   featured: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [pos, setPos] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    arrowLeft: number;
+    place: "above" | "below";
+  } | null>(null);
   const rootRef = useRef<HTMLSpanElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const tipRef = useRef<HTMLSpanElement>(null);
   const tipId = useId();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!open || !buttonRef.current) {
+      setPos(null);
+      return;
+    }
+
+    function place() {
+      const btn = buttonRef.current;
+      const tipEl = tipRef.current;
+      if (!btn) return;
+
+      const rect = btn.getBoundingClientRect();
+      const width = Math.min(TIP_MAX_WIDTH, window.innerWidth - TIP_PAD * 2);
+      const height = tipEl?.offsetHeight || 96;
+
+      let left = rect.left + rect.width / 2 - width / 2;
+      left = Math.max(
+        TIP_PAD,
+        Math.min(left, window.innerWidth - TIP_PAD - width),
+      );
+
+      let placeAbove = true;
+      let top = rect.top - height - 10;
+      if (top < TIP_PAD) {
+        placeAbove = false;
+        top = rect.bottom + 10;
+      }
+
+      const arrowLeft = Math.min(
+        width - 14,
+        Math.max(14, rect.left + rect.width / 2 - left),
+      );
+
+      setPos({
+        top,
+        left,
+        width,
+        arrowLeft,
+        place: placeAbove ? "above" : "below",
+      });
+    }
+
+    place();
+    const raf = window.requestAnimationFrame(place);
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [open, tip]);
 
   useEffect(() => {
     if (!open) return;
 
     function onPointerDown(event: PointerEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+      const target = event.target as Node;
+      if (
+        rootRef.current?.contains(target) ||
+        tipRef.current?.contains(target)
+      ) {
+        return;
       }
+      setOpen(false);
     }
 
     function onKey(event: KeyboardEvent) {
@@ -62,11 +144,49 @@ function FeatureTooltip({
     };
   }, [open]);
 
+  const tooltip =
+    mounted && open
+      ? createPortal(
+          <span
+            id={tipId}
+            ref={tipRef}
+            role="tooltip"
+            style={{
+              position: "fixed",
+              top: pos?.top ?? 0,
+              left: pos?.left ?? TIP_PAD,
+              width:
+                pos?.width ??
+                Math.min(TIP_MAX_WIDTH, window.innerWidth - TIP_PAD * 2),
+              visibility: pos ? "visible" : "hidden",
+            }}
+            className={`z-[120] rounded-lg px-3 py-2.5 text-left text-xs font-normal leading-relaxed shadow-lg ${
+              featured ? "bg-cream text-forest" : "bg-forest text-cream"
+            }`}
+          >
+            {tip}
+            {pos ? (
+              <span
+                className={`absolute h-0 w-0 border-x-[6px] border-x-transparent ${
+                  pos.place === "above"
+                    ? `top-full border-t-[6px] ${featured ? "border-t-cream" : "border-t-forest"}`
+                    : `bottom-full border-b-[6px] ${featured ? "border-b-cream" : "border-b-forest"}`
+                }`}
+                style={{ left: pos.arrowLeft, transform: "translateX(-50%)" }}
+                aria-hidden
+              />
+            ) : null}
+          </span>,
+          document.body,
+        )
+      : null;
+
   return (
     <span ref={rootRef} className="relative min-w-0">
       {label}
       {"\u00A0"}
       <button
+        ref={buttonRef}
         type="button"
         aria-expanded={open}
         aria-label={tip}
@@ -83,24 +203,8 @@ function FeatureTooltip({
         }`}
       >
         ?
-        <span
-          id={tipId}
-          role="tooltip"
-          className={`absolute bottom-[calc(100%+0.55rem)] left-1/2 z-30 w-[min(14rem,70vw)] -translate-x-1/2 rounded-lg px-3 py-2.5 text-left text-xs font-normal leading-relaxed shadow-lg transition-opacity duration-150 ${
-            open
-              ? "pointer-events-auto opacity-100"
-              : "pointer-events-none opacity-0"
-          } ${featured ? "bg-cream text-forest" : "bg-forest text-cream"}`}
-        >
-          {tip}
-          <span
-            className={`absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-x-[6px] border-t-[6px] border-x-transparent ${
-              featured ? "border-t-cream" : "border-t-forest"
-            }`}
-            aria-hidden
-          />
-        </span>
       </button>
+      {tooltip}
     </span>
   );
 }
@@ -306,7 +410,7 @@ export function Pricing() {
             <div
               role="img"
               aria-label={why.imageAlt}
-              className="aspect-[16/10] max-h-44 w-full select-none bg-cream-dark bg-cover bg-[center_72%] [clip-path:polygon(0_0,100%_0,100%_88%,0_100%)] md:aspect-auto md:max-h-none md:h-full md:min-h-[16rem] md:bg-[center_45%] md:[clip-path:polygon(0_0,100%_0,84%_100%,0_100%)]"
+              className="aspect-[16/10] max-h-44 w-full select-none bg-cream-dark bg-cover bg-[center_78%] [clip-path:polygon(0_0,100%_0,100%_88%,0_100%)] md:aspect-auto md:max-h-none md:h-full md:min-h-[16rem] md:bg-[center_62%] md:[clip-path:polygon(0_0,100%_0,84%_100%,0_100%)]"
               style={{
                 backgroundImage: "url(/why-choose-team.webp)",
               }}

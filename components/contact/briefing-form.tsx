@@ -17,7 +17,6 @@ import type {
   FormDictionary,
 } from "@/lib/i18n/dictionaries/types";
 import type { PaidAccess } from "@/lib/paid-access";
-import type { OrderPackageId } from "@/lib/stripe";
 import { privacyHref, termsHref, thankYouHref } from "@/lib/i18n/path";
 
 /** Dial codes stay in code; the country names come from the dictionary. */
@@ -63,15 +62,13 @@ type Step = number;
 const MAX_IMAGES = 5;
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
 const MAX_CUSTOM_PAGE = 50;
+const MIN_ABOUT = 20;
+const MIN_PAGE_NOTE = 3;
 
 function pageLimitForPackage(packageChoice: PackageChoice) {
   if (packageChoice === "5-pagina") return 5;
   if (packageChoice === "3-pagina") return 3;
   return 1;
-}
-
-function isMultiPagePackage(packageChoice: PackageChoice) {
-  return packageChoice === "3-pagina" || packageChoice === "5-pagina";
 }
 
 function fill(template: string, values: Record<string, string | number>) {
@@ -84,7 +81,7 @@ function fill(template: string, values: Record<string, string | number>) {
 function sectionForStep(step: Step): SectionId | null {
   if (step >= 1 && step <= 3) return "contact";
   if (step >= 4 && step <= 9) return "company";
-  if (step >= 10 && step <= 13) return "website";
+  if (step === 11 || step === 15 || step === 12 || step === 13) return "website";
   if (step === 14) return "review";
   return null;
 }
@@ -94,6 +91,8 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
   const t = dict.form;
   const otherSector = t.sectors[t.sectors.length - 1] ?? "";
   const otherPage = t.pages[t.pages.length - 1] ?? "";
+  const homePage = t.pages[0] ?? "Home";
+  const emailLocked = Boolean(paidAccess.email);
 
   const router = useRouter();
   const [step, setStep] = useState<Step>(0);
@@ -110,16 +109,16 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
   const [showAddress, setShowAddress] = useState(true);
   const [openingHours, setOpeningHours] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [vatNumber, setVatNumber] = useState("");
   const [instagram, setInstagram] = useState("");
   const [facebook, setFacebook] = useState("");
   const [otherSocial, setOtherSocial] = useState("");
   const [sector, setSector] = useState("");
   const [sectorOther, setSectorOther] = useState("");
-  const [businessInfo, setBusinessInfo] = useState("");
-  const [packageChoice, setPackageChoice] = useState<PackageChoice>(
-    paidAccess.packageChoice,
-  );
-  const [selectedPages, setSelectedPages] = useState<string[]>([]);
+  const [aboutBusiness, setAboutBusiness] = useState("");
+  const [pageNotes, setPageNotes] = useState<Record<string, string>>({});
+  const packageChoice: PackageChoice = paidAccess.packageChoice;
+  const [selectedPages, setSelectedPages] = useState<string[]>([homePage]);
   const [customPage, setCustomPage] = useState("");
   const [hasLogo, setHasLogo] = useState<BrandChoice>("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -137,11 +136,8 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
   const section = sectionForStep(step);
 
   const activeSteps = useMemo(
-    () =>
-      packageChoice === "1-pagina"
-        ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14]
-        : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-    [packageChoice],
+    () => [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 15, 12, 13, 14],
+    [],
   );
 
   const pageLimit = pageLimitForPackage(packageChoice);
@@ -158,19 +154,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
   const resolvedPages = selectedPages.map((page) =>
     page === otherPage ? customPage.trim() || otherPage : page,
   );
-  const pagesLabel =
-    isMultiPagePackage(packageChoice)
-      ? resolvedPages.join(", ")
-      : t.summary.homeOnePage;
-
-  const packagePrices = {
-    onePage:
-      dict.pricing.packages.find((p) => p.id === "one-page")?.price ?? "€249",
-    threePage:
-      dict.pricing.packages.find((p) => p.id === "three-page")?.price ?? "€599",
-    fivePage:
-      dict.pricing.packages.find((p) => p.id === "five-page")?.price ?? "€949",
-  };
+  const pagesLabel = resolvedPages.join(", ") || homePage;
 
   const packageLabel =
     packageChoice === "1-pagina"
@@ -239,10 +223,6 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
       setError(t.errors.address);
       return;
     }
-    if (step === 6 && openingHours.trim().length < 5) {
-      setError(t.errors.openingHours);
-      return;
-    }
     if (step === 8) {
       if (!sector) {
         setError(t.errors.sector);
@@ -253,13 +233,11 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
         return;
       }
     }
-    if (step === 9 && businessInfo.trim().length < 20) {
-      setError(t.errors.businessInfo);
-      return;
-    }
-    if (step === 10 && !packageChoice) {
-      setError(t.errors.packageChoice);
-      return;
+    if (step === 9) {
+      if (aboutBusiness.trim().length < MIN_ABOUT) {
+        setError(t.errors.aboutBusiness);
+        return;
+      }
     }
     if (step === 11) {
       if (selectedPages.length !== pageLimit) {
@@ -270,6 +248,10 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
         setError(t.errors.customPage);
         return;
       }
+    }
+    if (step === 15 && !pageNotesComplete()) {
+      setError(t.errors.pageNotes);
+      return;
     }
     if (step === 12) {
       if (!hasLogo) {
@@ -296,12 +278,10 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
       return;
     }
 
-    if (step === 10 && packageChoice === "1-pagina") {
-      goTo(12, "forward");
-      return;
-    }
-
-    goTo(step + 1, "forward");
+    const idx = activeSteps.indexOf(step);
+    const following = idx >= 0 ? activeSteps[idx + 1] : activeSteps[0];
+    if (following == null) return;
+    goTo(following, "forward");
   }
 
   function openSummaryBlock(block: NonNullable<EditBlock>, message: string) {
@@ -344,9 +324,8 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
       if (
         !companyName.trim() ||
         !address.trim() ||
-        openingHours.trim().length < 5 ||
         !sectorLabel ||
-        businessInfo.trim().length < 20
+        aboutBusiness.trim().length < MIN_ABOUT
       ) {
         openSummaryBlock("company", t.errors.companyIncomplete);
         return false;
@@ -354,22 +333,24 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
       return true;
     }
 
-    if (!packageChoice || !hasLogo) {
+    if (!hasLogo) {
       openSummaryBlock("website", t.errors.websiteIncomplete);
       return false;
     }
-    if (isMultiPagePackage(packageChoice)) {
-      if (selectedPages.length !== pageLimit) {
-        openSummaryBlock(
-          "website",
-          fill(t.errors.pagesExactly3, { count: pageLimit }),
-        );
-        return false;
-      }
-      if (selectedPages.includes(otherPage) && !customPage.trim()) {
-        openSummaryBlock("website", t.errors.customPage);
-        return false;
-      }
+    if (selectedPages.length !== pageLimit) {
+      openSummaryBlock(
+        "website",
+        fill(t.errors.pagesExactly3, { count: pageLimit }),
+      );
+      return false;
+    }
+    if (selectedPages.includes(otherPage) && !customPage.trim()) {
+      openSummaryBlock("website", t.errors.customPage);
+      return false;
+    }
+    if (!pageNotesComplete()) {
+      openSummaryBlock("website", t.errors.pageNotes);
+      return false;
     }
     if (hasLogo === "ja" && !logoFile) {
       openSummaryBlock("website", t.errors.logoUpload);
@@ -391,11 +372,9 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
 
   function back() {
     if (step <= 0) return;
-    if (step === 12 && packageChoice === "1-pagina") {
-      goTo(10, "back");
-      return;
-    }
-    goTo(step - 1, "back");
+    const idx = activeSteps.indexOf(step);
+    const previous = idx > 0 ? activeSteps[idx - 1] : 0;
+    goTo(previous, "back");
   }
 
   function submit() {
@@ -406,6 +385,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
     formData.set("showPhone", showPhone ? "ja" : "nee");
     formData.set("email", email.trim());
     formData.set("companyName", companyName.trim());
+    formData.set("vatNumber", vatNumber.trim());
     formData.set("address", address.trim());
     formData.set("showAddress", showAddress ? "ja" : "nee");
     formData.set("openingHours", openingHours.trim());
@@ -413,9 +393,18 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
     formData.set("facebook", facebook.trim());
     formData.set("otherSocial", otherSocial.trim());
     formData.set("sector", sectorLabel);
-    formData.set("businessInfo", businessInfo.trim());
+    formData.set("aboutBusiness", aboutBusiness.trim());
     formData.set("packageChoice", paidAccess.packageChoice);
     formData.set("selectedPages", pagesLabel);
+    formData.set(
+      "pageNotes",
+      JSON.stringify(
+        selectedPages.map((page, index) => ({
+          page: resolvedPages[index],
+          note: (pageNotes[page] ?? "").trim(),
+        })),
+      ),
+    );
     formData.set("hasLogo", hasLogo);
     formData.set("brandNotes", brandNotes.trim());
     formData.set("privacyConsent", privacyConsent ? "ja" : "nee");
@@ -440,25 +429,45 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
     });
   }
 
-  function togglePage(page: string) {
-    setSelectedPages((current) => {
-      if (current.includes(page)) {
-        if (page === otherPage) setCustomPage("");
-        return current.filter((p) => p !== page);
+  function pageNotesComplete() {
+    return selectedPages.every(
+      (page) => (pageNotes[page] ?? "").trim().length >= MIN_PAGE_NOTE,
+    );
+  }
+
+  function updatePageNote(page: string, value: string) {
+    setPageNotes((current) => ({ ...current, [page]: value }));
+  }
+
+  function prunePageNotes(pages: string[]) {
+    setPageNotes((current) => {
+      const next: Record<string, string> = {};
+      for (const page of pages) {
+        if (current[page]) next[page] = current[page];
       }
-      if (current.length >= pageLimit) return current;
-      return [...current, page];
+      return next;
     });
   }
 
-  function selectPackage(value: PackageChoice) {
-    // Package is locked to the paid Stripe Checkout session.
-    if (value !== paidAccess.packageChoice) return;
-    setPackageChoice(value);
-    if (value === "1-pagina") {
-      setSelectedPages([]);
-      setCustomPage("");
-    }
+  function togglePage(page: string) {
+    setSelectedPages((current) => {
+      if (page === homePage) {
+        const next = current.includes(homePage) ? current : [homePage, ...current];
+        prunePageNotes(next);
+        return next;
+      }
+      if (current.includes(page)) {
+        if (page === otherPage) setCustomPage("");
+        const next = current.filter((p) => p !== page);
+        prunePageNotes(next);
+        return next;
+      }
+      const withHome = current.includes(homePage) ? current : [homePage, ...current];
+      if (withHome.length >= pageLimit) return withHome;
+      const next = [...withHome, page];
+      prunePageNotes(next);
+      return next;
+    });
   }
 
   function addImages(fileList: FileList | null) {
@@ -599,7 +608,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
               autoComplete="email"
               value={email}
               onChange={setEmail}
-              readOnly
+              readOnly={emailLocked}
               onEnter={next}
               placeholder={t.placeholders.email}
               autoFocus
@@ -618,6 +627,16 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
               placeholder={t.placeholders.companyName}
               autoFocus
             />
+            <div className="mt-6">
+              <TextInput
+                id="vatNumber"
+                label={`${t.labels.vat} (${t.labels.optional})`}
+                value={vatNumber}
+                onChange={setVatNumber}
+                onEnter={next}
+                placeholder={t.placeholders.vat}
+              />
+            </div>
           </Question>
         )}
 
@@ -643,7 +662,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
         {step === 6 && (
           <Question title={t.questions.q6title} hint={t.questions.q6hint}>
             <label className="sr-only" htmlFor="openingHours">
-              {t.labels.openingHours}
+              {t.labels.openingHours} ({t.labels.optional})
             </label>
             <textarea
               id="openingHours"
@@ -701,29 +720,15 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
 
         {step === 9 && (
           <Question title={t.questions.q9title} hint={t.questions.q9hint}>
-            <label className="sr-only" htmlFor="businessInfo">
-              {t.labels.businessInfo}
-            </label>
-            <textarea
-              id="businessInfo"
+            <AreaField
+              id="aboutBusiness"
+              label={t.labels.aboutBusiness}
+              hideLabel
+              value={aboutBusiness}
+              onChange={setAboutBusiness}
+              placeholder={t.placeholders.aboutBusiness}
               rows={6}
               autoFocus
-              value={businessInfo}
-              onChange={(e) => setBusinessInfo(e.target.value)}
-              className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream-dark/30 px-4 py-3.5 text-base leading-relaxed text-forest outline-none transition-colors placeholder:text-muted/70 focus:border-terracotta"
-              placeholder={t.placeholders.businessInfo}
-            />
-          </Question>
-        )}
-
-        {step === 10 && (
-          <Question title={t.questions.q10title} hint={t.questions.q10hint}>
-            <PackagePicker
-              t={t}
-              prices={packagePrices}
-              packageChoice={packageChoice}
-              lockedPackage={paidAccess.packageChoice}
-              onSelect={selectPackage}
             />
           </Question>
         )}
@@ -734,15 +739,30 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
             hint={fill(t.questions.q11hint, {
               count: selectedPages.length,
               required: pageLimit,
+              package: packageLabel,
             })}
           >
             <PagePicker
               t={t}
               maxPages={pageLimit}
+              lockedPage={homePage}
               selectedPages={selectedPages}
               customPage={customPage}
               setCustomPage={setCustomPage}
               onToggle={togglePage}
+            />
+          </Question>
+        )}
+
+        {step === 15 && (
+          <Question title={t.questions.q15title} hint={t.questions.q15hint}>
+            <PageNotesFields
+              t={t}
+              selectedPages={selectedPages}
+              resolvedPages={resolvedPages}
+              pageNotes={pageNotes}
+              onChange={updatePageNote}
+              autoFocus
             />
           </Question>
         )}
@@ -828,6 +848,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
                     type="email"
                     value={email}
                     onChange={setEmail}
+                    readOnly={emailLocked}
                   />
                 </div>
               </SummaryBlock>
@@ -848,6 +869,10 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
                 rows={[
                   { label: t.labels.rowCompany, value: companyName },
                   {
+                    label: t.labels.rowVat,
+                    value: vatNumber || t.summary.notFilled,
+                  },
+                  {
                     label: t.labels.rowAddress,
                     value: `${address}${showAddress ? "" : t.summary.notShow}`,
                   },
@@ -860,7 +885,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
                     label: t.labels.rowSector,
                     value: sectorLabel || t.summary.notFilled,
                   },
-                  { label: t.labels.rowAbout, value: businessInfo },
+                  { label: t.labels.rowAbout, value: aboutBusiness },
                 ]}
               >
                 <div className="space-y-5">
@@ -869,6 +894,13 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
                     label={t.labels.companyName}
                     value={companyName}
                     onChange={setCompanyName}
+                  />
+                  <TextInput
+                    id="edit-vatNumber"
+                    label={`${t.labels.vat} (${t.labels.optional})`}
+                    value={vatNumber}
+                    onChange={setVatNumber}
+                    placeholder={t.placeholders.vat}
                   />
                   <TextInput
                     id="edit-address"
@@ -886,7 +918,7 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
                       htmlFor="edit-openingHours"
                       className="block text-sm font-medium text-forest-muted"
                     >
-                      {t.labels.openingHours}
+                      {t.labels.openingHours} ({t.labels.optional})
                     </label>
                     <textarea
                       id="edit-openingHours"
@@ -922,22 +954,15 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
                     sectorOther={sectorOther}
                     setSectorOther={setSectorOther}
                   />
-                  <div>
-                    <label
-                      htmlFor="edit-businessInfo"
-                      className="block text-sm font-medium text-forest-muted"
-                    >
-                      {t.labels.rowAbout}
-                    </label>
-                    <textarea
-                      id="edit-businessInfo"
-                      rows={5}
-                      value={businessInfo}
-                      onChange={(e) => setBusinessInfo(e.target.value)}
-                      className="mt-2 w-full resize-y rounded-xl border border-border/80 bg-cream px-4 py-3.5 text-base leading-relaxed text-forest outline-none focus:border-terracotta"
-                      placeholder={t.placeholders.businessInfoShort}
-                    />
-                  </div>
+                  <AreaField
+                    id="edit-aboutBusiness"
+                    label={t.labels.aboutBusiness}
+                    value={aboutBusiness}
+                    onChange={setAboutBusiness}
+                    placeholder={t.placeholders.aboutBusiness}
+                    rows={5}
+                    compact
+                  />
                 </div>
               </SummaryBlock>
 
@@ -957,6 +982,11 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
                 rows={[
                   { label: t.labels.rowPackage, value: packageLabel },
                   { label: t.labels.rowPages, value: pagesLabel },
+                  ...selectedPages.map((page, index) => ({
+                    label: resolvedPages[index] ?? page,
+                    value:
+                      (pageNotes[page] ?? "").trim() || t.summary.notFilled,
+                  })),
                   { label: t.labels.rowLogo, value: logoSummary },
                   {
                     label: t.labels.rowBranding,
@@ -972,23 +1002,29 @@ export function BriefingForm({ paidAccess }: { paidAccess: PaidAccess }) {
                 ]}
               >
                 <div className="space-y-6">
-                  <PackagePicker
+                  <p className="text-sm text-forest-muted">
+                    <span className="font-semibold text-forest">
+                      {t.labels.rowPackage}:
+                    </span>{" "}
+                    {packageLabel}
+                  </p>
+                  <PagePicker
                     t={t}
-                    prices={packagePrices}
-                    packageChoice={packageChoice}
-                    lockedPackage={paidAccess.packageChoice}
-                    onSelect={selectPackage}
+                    maxPages={pageLimit}
+                    lockedPage={homePage}
+                    selectedPages={selectedPages}
+                    customPage={customPage}
+                    setCustomPage={setCustomPage}
+                    onToggle={togglePage}
                   />
-                  {isMultiPagePackage(packageChoice) && (
-                    <PagePicker
-                      t={t}
-                      maxPages={pageLimit}
-                      selectedPages={selectedPages}
-                      customPage={customPage}
-                      setCustomPage={setCustomPage}
-                      onToggle={togglePage}
-                    />
-                  )}
+                  <PageNotesFields
+                    t={t}
+                    selectedPages={selectedPages}
+                    resolvedPages={resolvedPages}
+                    pageNotes={pageNotes}
+                    onChange={updatePageNote}
+                    compact
+                  />
                   <BrandingFields
                     key={`logo-check-${hasLogo}-${logoFile?.name ?? "none"}-${logoFile?.lastModified ?? 0}`}
                     t={t}
@@ -1128,7 +1164,7 @@ function StepTimeline({
     [
       { id: "contact" as const, steps: [1, 2, 3] },
       { id: "company" as const, steps: [4, 5, 6, 7, 8, 9] },
-      { id: "website" as const, steps: [10, 11, 12, 13] },
+      { id: "website" as const, steps: [11, 15, 12, 13] },
       { id: "review" as const, steps: [14] },
     ] as const
   )
@@ -1261,6 +1297,107 @@ function Question({
   );
 }
 
+function AreaField({
+  id,
+  label,
+  optional,
+  hideLabel = false,
+  value,
+  onChange,
+  placeholder,
+  rows = 3,
+  autoFocus = false,
+  compact = false,
+}: {
+  id: string;
+  label: string;
+  optional?: string;
+  hideLabel?: boolean;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  rows?: number;
+  autoFocus?: boolean;
+  compact?: boolean;
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className={
+          hideLabel
+            ? "sr-only"
+            : "block text-sm font-medium text-forest-muted"
+        }
+      >
+        {label}
+        {optional ? ` (${optional})` : ""}
+      </label>
+      <textarea
+        id={id}
+        rows={rows}
+        autoFocus={autoFocus}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={`mt-2 w-full resize-y rounded-xl border border-border/80 px-4 py-3.5 text-base leading-relaxed text-forest outline-none transition-colors placeholder:text-muted/70 focus:border-terracotta ${
+          compact ? "bg-cream" : "bg-cream-dark/30"
+        }`}
+      />
+    </div>
+  );
+}
+
+function PageNotesFields({
+  t,
+  selectedPages,
+  resolvedPages,
+  pageNotes,
+  onChange,
+  autoFocus = false,
+  compact = false,
+}: {
+  t: FormDictionary;
+  selectedPages: string[];
+  resolvedPages: string[];
+  pageNotes: Record<string, string>;
+  onChange: (page: string, value: string) => void;
+  autoFocus?: boolean;
+  compact?: boolean;
+}) {
+  return (
+    <div className="space-y-4">
+      {selectedPages.map((page, index) => {
+        const title = resolvedPages[index] ?? page;
+        return (
+          <div
+            key={page}
+            className={`rounded-2xl border p-4 ${
+              compact
+                ? "border-border/80 bg-cream"
+                : "border-terracotta/35 bg-cream-dark/30"
+            }`}
+          >
+            <p className="mb-3 inline-flex rounded-full border border-terracotta bg-terracotta px-3.5 py-1 text-sm font-medium text-cream">
+              {title}
+            </p>
+            <AreaField
+              id={`pageNote-${compact ? "edit-" : ""}${page}`}
+              label={t.labels.pageNotes}
+              value={pageNotes[page] ?? ""}
+              onChange={(value) => onChange(page, value)}
+              placeholder={t.placeholders.pageNotes}
+              rows={compact ? 2 : 3}
+              autoFocus={autoFocus && index === 0}
+              compact={compact}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function PhoneFields({
   t,
   countryCode,
@@ -1383,77 +1520,10 @@ function SectorPicker({
   );
 }
 
-function PackagePicker({
-  t,
-  prices,
-  packageChoice,
-  lockedPackage,
-  onSelect,
-}: {
-  t: FormDictionary;
-  prices: { onePage: string; threePage: string; fivePage: string };
-  packageChoice: PackageChoice;
-  lockedPackage?: OrderPackageId;
-  onSelect: (value: PackageChoice) => void;
-}) {
-  const options = [
-    {
-      value: "1-pagina" as const,
-      title: t.packages.onePage.label,
-      price: prices.onePage,
-      desc: t.packages.onePage.description,
-    },
-    {
-      value: "3-pagina" as const,
-      title: t.packages.threePage.label,
-      price: prices.threePage,
-      desc: t.packages.threePage.description,
-    },
-    {
-      value: "5-pagina" as const,
-      title: t.packages.fivePage.label,
-      price: prices.fivePage,
-      desc: t.packages.fivePage.description,
-    },
-  ];
-
-  return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      {options.map((pkg) => {
-        const lockedOut = Boolean(lockedPackage && pkg.value !== lockedPackage);
-        return (
-        <button
-          key={pkg.value}
-          type="button"
-          disabled={lockedOut}
-          onClick={() => onSelect(pkg.value)}
-          className={`rounded-xl border p-5 text-left transition-all duration-300 ${
-            packageChoice === pkg.value
-              ? "border-terracotta bg-terracotta/[0.08] shadow-[4px_6px_0_0_rgba(27,48,34,0.1)] ring-1 ring-terracotta/30"
-              : lockedOut
-                ? "cursor-not-allowed border-border/50 bg-cream-dark/30 opacity-50"
-              : "border-border/80 bg-cream hover:border-terracotta/40"
-          }`}
-        >
-          <span className="font-display text-2xl font-bold text-forest">
-            {pkg.title}
-          </span>
-          <span className="mt-1 block text-sm font-semibold text-terracotta">
-            {pkg.price}
-          </span>
-          <span className="mt-2 block text-sm leading-relaxed text-muted">
-            {pkg.desc}
-          </span>
-        </button>
-        );
-      })}
-    </div>
-  );
-}
-
 function PagePicker({
   t,
   maxPages,
+  lockedPage,
   selectedPages,
   customPage,
   setCustomPage,
@@ -1461,6 +1531,7 @@ function PagePicker({
 }: {
   t: FormDictionary;
   maxPages: number;
+  lockedPage?: string;
   selectedPages: string[];
   customPage: string;
   setCustomPage: (value: string) => void;
@@ -1473,7 +1544,8 @@ function PagePicker({
       <div className="flex flex-wrap gap-2.5">
         {t.pages.map((page) => {
           const selected = selectedPages.includes(page);
-          const locked = !selected && selectedPages.length >= maxPages;
+          const homeLocked = Boolean(lockedPage && page === lockedPage);
+          const locked = homeLocked || (!selected && selectedPages.length >= maxPages);
           return (
             <button
               key={page}
@@ -1875,7 +1947,11 @@ function TextInput({
             onEnter();
           }
         }}
-        className="mt-2 w-full border-b-2 border-border bg-transparent py-3 text-lg text-forest outline-none transition-colors placeholder:text-muted/60 focus:border-terracotta"
+        className={`mt-2 w-full border-b-2 bg-transparent py-3 text-lg text-forest outline-none transition-colors placeholder:text-muted/60 focus:border-terracotta ${
+          readOnly
+            ? "cursor-default border-border/60 text-forest-muted"
+            : "border-border"
+        }`}
         placeholder={placeholder}
       />
     </div>

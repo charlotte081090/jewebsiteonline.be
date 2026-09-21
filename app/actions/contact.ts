@@ -110,6 +110,31 @@ function clip(value: string, max: number) {
   return value.slice(0, max);
 }
 
+const MIN_PAGE_NOTE = 3;
+
+function pageCountForPackage(packageChoice: string) {
+  if (packageChoice === "5-pagina") return 5;
+  if (packageChoice === "3-pagina") return 3;
+  return 1;
+}
+
+function parsePageNotes(raw: string): { page: string; note: string }[] {
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.flatMap((entry) => {
+      if (!entry || typeof entry !== "object") return [];
+      const record = entry as { page?: unknown; note?: unknown };
+      const page = clip(String(record.page ?? "").trim(), MAX_SHORT);
+      const note = clip(String(record.note ?? "").trim(), MAX_LONG);
+      if (!page || note.length < MIN_PAGE_NOTE) return [];
+      return [{ page, note }];
+    });
+  } catch {
+    return [];
+  }
+}
+
 function clientIp(headerList: Headers) {
   const forwarded = headerList.get("x-forwarded-for");
   if (forwarded) {
@@ -161,6 +186,10 @@ export async function submitBriefing(
     String(formData.get("openingHours") ?? "").trim(),
     MAX_MEDIUM,
   );
+  const vatNumber = clip(
+    String(formData.get("vatNumber") ?? "").trim(),
+    MAX_SHORT,
+  );
   const instagram = clip(
     String(formData.get("instagram") ?? "").trim(),
     MAX_MEDIUM,
@@ -174,15 +203,15 @@ export async function submitBriefing(
     MAX_MEDIUM,
   );
   const sector = clip(String(formData.get("sector") ?? "").trim(), MAX_SHORT);
-  const businessInfo = clip(
-    String(formData.get("businessInfo") ?? "").trim(),
+  const aboutBusiness = clip(
+    String(formData.get("aboutBusiness") ?? "").trim(),
     MAX_LONG,
   );
-  const packageChoice = String(formData.get("packageChoice") ?? "").trim();
   const selectedPages = clip(
     String(formData.get("selectedPages") ?? "").trim(),
     MAX_MEDIUM,
   );
+  const pageNotes = parsePageNotes(String(formData.get("pageNotes") ?? ""));
   const hasLogo = normalizeYesNo(String(formData.get("hasLogo") ?? ""));
   const brandNotes = clip(
     String(formData.get("brandNotes") ?? "").trim(),
@@ -219,9 +248,8 @@ export async function submitBriefing(
     !contactPerson ||
     !companyName ||
     !phone ||
-    !openingHours ||
     !sector ||
-    !businessInfo ||
+    !aboutBusiness ||
     !hasLogo
   ) {
     return { ok: false, error: messages.requiredFields };
@@ -237,6 +265,10 @@ export async function submitBriefing(
 
   if (!ALLOWED_PACKAGES.has(verifiedPackage)) {
     return { ok: false, error: messages.packageInvalid };
+  }
+
+  if (pageNotes.length !== pageCountForPackage(verifiedPackage)) {
+    return { ok: false, error: messages.requiredFields };
   }
 
   if (!ALLOWED_YES_NO.has(hasLogo)) {
@@ -339,14 +371,19 @@ export async function submitBriefing(
       question: "Adres tonen op website",
       answer: showAddress === "ja" ? "Ja" : "Nee",
     },
-    { question: "Openingsuren", answer: openingHours },
+    { question: "BTW-nummer", answer: vatNumber || "Niet opgegeven" },
+    { question: "Openingsuren", answer: openingHours || "Niet opgegeven" },
     { question: "Instagram", answer: instagram || "Niet opgegeven" },
     { question: "Facebook", answer: facebook || "Niet opgegeven" },
     { question: "Andere link", answer: otherSocial || "Niet opgegeven" },
     { question: "Sector", answer: sector },
-    { question: "Over de zaak", answer: businessInfo },
+    { question: "Over de zaak", answer: aboutBusiness },
     { question: "Pakket", answer: verifiedPackage },
     { question: "Pagina's", answer: selectedPages || "Niet opgegeven" },
+    ...pageNotes.map(({ page, note }) => ({
+      question: `Pagina: ${page}`,
+      answer: note,
+    })),
     { question: "Logo", answer: hasLogo === "ja" ? "Ja" : "Nee" },
     { question: "Brandingnotities", answer: brandNotes || "Niet opgegeven" },
     {
@@ -492,17 +529,24 @@ export async function submitBriefing(
       <p><strong>Telefoon tonen op website:</strong> ${escapeHtml(showPhone === "ja" ? "Ja" : "Nee")}</p>
       <h3>Bedrijfsgegevens</h3>
       <p><strong>Bedrijf:</strong> ${escapeHtml(companyName)}</p>
+      <p><strong>BTW-nummer:</strong> ${escapeHtml(vatNumber || "Niet opgegeven")}</p>
       <p><strong>Adres:</strong> ${escapeHtml(address || "Niet opgegeven")}</p>
       <p><strong>Adres tonen op website:</strong> ${escapeHtml(showAddress === "ja" ? "Ja" : "Nee")}</p>
-      <p><strong>Openingsuren:</strong><br/>${escapeHtml(openingHours).replace(/\n/g, "<br/>")}</p>
+      <p><strong>Openingsuren:</strong><br/>${escapeHtml(openingHours || "Niet opgegeven").replace(/\n/g, "<br/>")}</p>
       <p><strong>Instagram:</strong> ${escapeHtml(instagram || "Niet opgegeven")}</p>
       <p><strong>Facebook:</strong> ${escapeHtml(facebook || "Niet opgegeven")}</p>
       <p><strong>Andere link:</strong> ${escapeHtml(otherSocial || "Niet opgegeven")}</p>
       <p><strong>Sector:</strong> ${escapeHtml(sector)}</p>
-      <p><strong>Over de zaak:</strong><br/>${escapeHtml(businessInfo).replace(/\n/g, "<br/>")}</p>
+      <p><strong>Over de zaak:</strong><br/>${escapeHtml(aboutBusiness).replace(/\n/g, "<br/>")}</p>
       <h3>Website & branding</h3>
       <p><strong>Pakket:</strong> ${escapeHtml(verifiedPackage)}</p>
       <p><strong>Pagina's:</strong> ${escapeHtml(selectedPages || "Niet opgegeven")}</p>
+      ${pageNotes
+        .map(
+          ({ page, note }) =>
+            `<p><strong>${escapeHtml(page)}:</strong><br/>${escapeHtml(note).replace(/\n/g, "<br/>")}</p>`,
+        )
+        .join("\n")}
       <p><strong>Logo:</strong> ${escapeHtml(hasLogo === "ja" ? "Ja" : "Nee")}</p>
       <p><strong>Brandingnotities:</strong><br/>${escapeHtml(brandNotes || "Niet opgegeven").replace(/\n/g, "<br/>")}</p>
       <p><strong>Privacytoestemming:</strong> ${escapeHtml(privacyConsent === "ja" ? "Ja" : "Nee")}</p>
@@ -519,9 +563,11 @@ export async function submitBriefing(
       `E-mail: ${verifiedEmail}`,
       `Telefoon: ${phone}`,
       `Bedrijf: ${companyName}`,
+      `BTW-nummer: ${vatNumber || "Niet opgegeven"}`,
       `Sector: ${sector}`,
       `Pakket: ${verifiedPackage}`,
       `Pagina's: ${selectedPages || "Niet opgegeven"}`,
+      ...pageNotes.map(({ page, note }) => `${page}: ${note}`),
       `Betaalreferentie: ${verifiedReference}`,
     ].join("\n");
 

@@ -203,9 +203,9 @@ export const en: Dictionary = {
         pageLabel: "1-page website",
         pageTooltip:
           "Everything on one page: introduction, offer and contact. Ideal if you want to get online quickly without separate submenus.",
-        domainLabel: "Domain: we connect it or arrange it for you",
+        domainLabel: "Domain: we help you set it up",
         domainTooltip:
-          "Already have a domain? We’ll help you connect it. Don’t have one yet? You can buy one in your client portal. We take care of the rest.",
+          "Already have a domain? We’ll help you set it up correctly. Don’t have one yet? No worries — we’ll point you in the right direction and guide you through the setup.",
         highlights: [
           "Custom designed",
           "Optimised for smartphones",
@@ -223,9 +223,9 @@ export const en: Dictionary = {
         pageLabel: "3-page website",
         pageTooltip:
           "Three focused pages, for example home, services or about, and contact. More structure for visitors and stronger discoverability.",
-        domainLabel: "Domain: we connect it or arrange it for you",
+        domainLabel: "Domain: we help you set it up",
         domainTooltip:
-          "Already have a domain? We’ll help you connect it. Don’t have one yet? You can buy one in your client portal. We take care of the rest.",
+          "Already have a domain? We’ll help you set it up correctly. Don’t have one yet? No worries — we’ll point you in the right direction and guide you through the setup.",
         highlights: [
           "Custom designed",
           "Optimised for smartphones",
@@ -243,9 +243,9 @@ export const en: Dictionary = {
         pageLabel: "5-page website",
         pageTooltip:
           "Five pages for a fuller site, for example home, about, services, projects or blog, and contact. Extra pages for deeper content.",
-        domainLabel: "Domain: we connect it or arrange it for you",
+        domainLabel: "Domain: we help you set it up",
         domainTooltip:
-          "Already have a domain? We’ll help you connect it. Don’t have one yet? You can buy one in your client portal. We take care of the rest.",
+          "Already have a domain? We’ll help you set it up correctly. Don’t have one yet? No worries — we’ll point you in the right direction and guide you through the setup.",
         highlights: [
           "Custom designed",
           "Optimised for smartphones",
@@ -269,7 +269,7 @@ export const en: Dictionary = {
         "A personal approach, tailored to your business needs",
         "Need a blog, online shop, SEO or extra pages? Contact us!",
       ],
-      imageAlt: "Two colleagues collaborating at a desk in a warm workspace",
+      imageAlt: "Warm workspace with a wooden desk, laptop and hanging lights",
     },
   },
 
@@ -717,9 +717,12 @@ export const en: Dictionary = {
       phoneNumber: "Number",
       email: "Email",
       companyName: "Company name",
+      vat: "VAT number",
+      optional: "optional",
       address: "Address",
       openingHours: "Opening hours",
-      businessInfo: "Business information",
+      aboutBusiness: "About your business",
+      pageNotes: "Keywords / important info",
       instagram: "Instagram",
       facebook: "Facebook",
       otherSocial: "Other link (LinkedIn, TikTok, website)",
@@ -735,6 +738,7 @@ export const en: Dictionary = {
       rowPhone: "Phone",
       rowEmail: "Email",
       rowCompany: "Business",
+      rowVat: "VAT number",
       rowAddress: "Address",
       rowOpeningHours: "Opening hours",
       rowSocial: "Social media",
@@ -742,6 +746,7 @@ export const en: Dictionary = {
       rowAbout: "About the business",
       rowPackage: "Package",
       rowPages: "Pages",
+      rowPageNotes: "Page notes",
       rowLogo: "Logo",
       rowBranding: "Branding",
       rowImages: "Images",
@@ -751,16 +756,16 @@ export const en: Dictionary = {
       phone: "470 12 34 56",
       email: "name@company.com",
       companyName: "Your company name",
+      vat: "BE0123.456.789",
       address: "1 Main Street, 1000 Brussels",
       openingHours: "Mon–Fri 9:00–18:00, Sat 10:00–16:00, Sun closed",
       instagram: "instagram.com/yourbusiness",
       facebook: "facebook.com/yourbusiness",
       otherSocial: "https://",
       sectorOther: "E.g. interior design advice",
-      businessInfo:
-        "For example: I run a hair salon in Antwerp. We do cuts, colouring and beard care. Our customers are mainly locals from the neighbourhood. On the website I would like services, prices and atmospheric photos of the salon.",
-      businessInfoShort:
-        "For example: I run a hair salon in Antwerp. We do cuts, colouring and beard care. On the website I would like services, prices and atmospheric photos.",
+      aboutBusiness:
+        "Tell us about your business: services, background and any other important information we should know.",
+      pageNotes: "Keywords or short notes that must appear on this page",
       customPage: "E.g. Workshops",
       brandNotesOptional: "Fonts, colours, mood…",
       brandNotesNone:
@@ -778,22 +783,26 @@ export const en: Dictionary = {
         "Useful for Google Maps and local SEO, unless you prefer to keep it hidden.",
       q6title: "What are your opening hours?",
       q6hint:
-        "Note the days and hours exactly as you want them shown on the website. For example closed on Sundays, or by appointment only.",
+        "Optional. Note the days and hours exactly as you want them shown on the website. For example closed on Sundays, or by appointment only.",
       q7title: "Do you have social media or an existing site?",
       q7hint: "Optional: paste the links we are allowed to use.",
       q8title: "Which sector do you work in?",
       q9title: "Tell us about your business",
       q9hint:
-        "Briefly answer: what do you do, who for, and what absolutely needs to be on the website? The more context, the stronger the preview.",
+        "Services, background and any other important information we should know.",
       q10title: "Which package suits you?",
       q10hint:
         "You can still adjust this later. It helps us focus the preview.",
-      q11title: "Which 3 pages would you like?",
-      q11hint: "Choose exactly {required} pages. Selected: {count}/{required}",
+      q11title: "Which pages would you like?",
+      q11hint:
+        "Your {package} package includes {required} pages. Home is already selected. Selected: {count}/{required}",
       q12title: "Do you already have a logo?",
       q13title: "Do you have images for the website?",
       q13hint:
         "Upload up to 5 photos or visuals. You can add more images later, once the first version is ready.",
+      q15title: "What belongs on each page?",
+      q15hint:
+        "Your chosen pages are shown below. Add keywords or important info for each page.",
     },
     sectors: [
       "Beauty & wellness",
@@ -854,8 +863,8 @@ export const en: Dictionary = {
       openingHours: "Please enter your opening hours.",
       sector: "Please choose a sector.",
       sectorOther: "Please briefly describe your sector.",
-      businessInfo:
-        "Please tell us a little more about your business (min. 20 characters).",
+      aboutBusiness: "Please tell us a little more about your business (min. 20 characters).",
+      pageNotes: "Please add a short note for each selected page.",
       packageChoice: "Please choose Light, Medium or Pro.",
       pagesExactly3: "Please select exactly {count} pages.",
       customPage: "Please enter the name of the other page.",
@@ -918,10 +927,10 @@ export const en: Dictionary = {
     anchors: {
       top: "home",
       howItWorks: "how-it-works",
-      examples: "examples",
-      pricing: "pricing",
+      examples: "inspiration",
+      pricing: "solutions",
       reviews: "reviews",
-      faq: "faq",
+      faq: "guide",
     },
   },
 

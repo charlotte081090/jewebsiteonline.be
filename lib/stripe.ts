@@ -73,7 +73,7 @@ export function briefingSuccessPath(locale: Locale) {
 }
 
 export function pricingCancelPath(locale: Locale) {
-  return locale === "en" ? "/en/pricing" : "/nl/prijzen";
+  return locale === "en" ? "/en/solutions" : "/nl/oplossingen";
 }
 
 export function makeFormReferenceId() {

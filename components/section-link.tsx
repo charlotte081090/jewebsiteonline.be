@@ -48,6 +48,9 @@ export function SectionLink({ href, onClick, ...props }: SectionLinkProps) {
       return;
     }
 
+    // Real page links (forms, legal, etc.) — including query strings — use default navigation.
+    if (href.includes("?")) return;
+
     const target = href.split("#")[0]?.replace(/\/+$/, "") || "/";
     const parts = target.split("/").filter(Boolean);
     // Only intercept /{locale}/{section} home anchors

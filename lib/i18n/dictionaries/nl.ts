@@ -202,9 +202,9 @@ export const nl = {
         pageLabel: "1-pagina website",
         pageTooltip:
           "Alles op één pagina: introductie, aanbod en contact. Ideaal als u snel en helder online wilt staan zonder aparte submenu’s.",
-        domainLabel: "Domein: wij koppelen of regelen het voor u",
+        domainLabel: "Domein: wij helpen u bij de setup",
         domainTooltip:
-          "Heeft u al een domein? Dan helpen wij het te koppelen. Heeft u er nog geen? Dan kunt u er één kopen via uw klantportaal. Wij regelen de rest.",
+          "Heeft u al een domein? Dan helpen wij u het correct in te stellen. Nog geen domein? Geen zorgen: wij wijzen u de juiste richting en begeleiden u bij de setup.",
         highlights: [
           "Op maat ontworpen",
           "Geoptimaliseerd voor smartphone",
@@ -222,9 +222,9 @@ export const nl = {
         pageLabel: "3-pagina website",
         pageTooltip:
           "Drie gerichte pagina’s, bijvoorbeeld home, diensten of over ons, en contact. Meer structuur voor bezoekers én betere vindbaarheid.",
-        domainLabel: "Domein: wij koppelen of regelen het voor u",
+        domainLabel: "Domein: wij helpen u bij de setup",
         domainTooltip:
-          "Heeft u al een domein? Dan helpen wij het te koppelen. Heeft u er nog geen? Dan kunt u er één kopen via uw klantportaal. Wij regelen de rest.",
+          "Heeft u al een domein? Dan helpen wij u het correct in te stellen. Nog geen domein? Geen zorgen: wij wijzen u de juiste richting en begeleiden u bij de setup.",
         highlights: [
           "Op maat ontworpen",
           "Geoptimaliseerd voor smartphone",
@@ -242,9 +242,9 @@ export const nl = {
         pageLabel: "5-pagina website",
         pageTooltip:
           "Vijf pagina’s voor een vollediger aanbod: bijvoorbeeld home, over ons, diensten, projecten of blog, en contact. Extra pagina’s voor diepere content.",
-        domainLabel: "Domein: wij koppelen of regelen het voor u",
+        domainLabel: "Domein: wij helpen u bij de setup",
         domainTooltip:
-          "Heeft u al een domein? Dan helpen wij het te koppelen. Heeft u er nog geen? Dan kunt u er één kopen via uw klantportaal. Wij regelen de rest.",
+          "Heeft u al een domein? Dan helpen wij u het correct in te stellen. Nog geen domein? Geen zorgen: wij wijzen u de juiste richting en begeleiden u bij de setup.",
         highlights: [
           "Op maat ontworpen",
           "Geoptimaliseerd voor smartphone",
@@ -268,7 +268,7 @@ export const nl = {
         "Persoonlijke aanpak, afgestemd op de noden van uw bedrijf",
         "Blog, webshop, SEO of extra pagina’s nodig? Contacteer ons!",
       ],
-      imageAlt: "Twee collega’s overleggen aan een bureau in een warme workspace",
+      imageAlt: "Warme workspace met houten bureau, laptop en hanglampen",
     },
   },
 
@@ -715,9 +715,12 @@ export const nl = {
       phoneNumber: "Nummer",
       email: "E-mail",
       companyName: "Bedrijfsnaam",
+      vat: "BTW-nummer",
+      optional: "niet verplicht",
       address: "Adres",
       openingHours: "Openingsuren",
-      businessInfo: "Bedrijfsinfo",
+      aboutBusiness: "Over uw zaak",
+      pageNotes: "Trefwoorden / belangrijke info",
       instagram: "Instagram",
       facebook: "Facebook",
       otherSocial: "Andere link (LinkedIn, TikTok, website)",
@@ -733,6 +736,7 @@ export const nl = {
       rowPhone: "Telefoon",
       rowEmail: "E-mail",
       rowCompany: "Bedrijf",
+      rowVat: "BTW-nummer",
       rowAddress: "Adres",
       rowOpeningHours: "Openingsuren",
       rowSocial: "Sociale media",
@@ -740,6 +744,7 @@ export const nl = {
       rowAbout: "Over de zaak",
       rowPackage: "Pakket",
       rowPages: "Pagina’s",
+      rowPageNotes: "Pagina-info",
       rowLogo: "Logo",
       rowBranding: "Branding",
       rowImages: "Beelden",
@@ -749,16 +754,16 @@ export const nl = {
       phone: "470 12 34 56",
       email: "naam@bedrijf.be",
       companyName: "Uw bedrijfsnaam",
+      vat: "BE0123.456.789",
       address: "Straat 1, 1000 Brussel",
       openingHours: "Ma–vr 9:00–18:00, za 10:00–16:00, zo gesloten",
       instagram: "instagram.com/uwzaak",
       facebook: "facebook.com/uwzaak",
       otherSocial: "https://",
       sectorOther: "Bijv. interieuradvies",
-      businessInfo:
-        "Bijvoorbeeld: Ik heb een kapsalon in Antwerpen. We doen knippen, kleuren en baardverzorging. Onze klanten zijn vooral locals uit de buurt. Op de website wil ik diensten, prijzen en sfeerbeelden van de salon.",
-      businessInfoShort:
-        "Bijvoorbeeld: Ik heb een kapsalon in Antwerpen. We doen knippen, kleuren en baardverzorging. Op de website wil ik diensten, prijzen en sfeerbeelden.",
+      aboutBusiness:
+        "Vertel wat over uw zaak: diensten, achtergrond en andere belangrijke info die wij moeten weten.",
+      pageNotes: "Trefwoorden of korte info die zeker op deze pagina moet",
       customPage: "Bijv. Workshops",
       brandNotesOptional: "Lettertypes, kleuren, sfeer…",
       brandNotesNone:
@@ -776,21 +781,25 @@ export const nl = {
         "Handig voor Google Maps en lokale SEO, tenzij u dit liever verborgen houdt.",
       q6title: "Wat zijn uw openingsuren?",
       q6hint:
-        "Noteer de dagen en uren zoals u ze op de website wilt tonen. Bijvoorbeeld gesloten op zondag of enkel op afspraak.",
+        "Optioneel. Noteer de dagen en uren zoals u ze op de website wilt tonen. Bijvoorbeeld gesloten op zondag of enkel op afspraak.",
       q7title: "Heeft u social media of een bestaande site?",
       q7hint: "Optioneel: plak de links die we mogen gebruiken.",
       q8title: "In welke sector bent u actief?",
-      q9title: "Vertel iets over uw zaak",
+      q9title: "Vertel wat over uw zaak",
       q9hint:
-        "Beantwoord kort: wat doet u, voor wie, en wat moet zeker op de website staan? Hoe meer context, hoe sterker de preview.",
+        "Diensten, achtergrond en andere belangrijke info die wij moeten weten.",
       q10title: "Welk pakket past bij u?",
       q10hint: "U kunt later nog bijsturen. Dit helpt ons de preview te richten.",
-      q11title: "Welke 3 pagina’s wilt u?",
-      q11hint: "Kies precies {required} pagina’s. Geselecteerd: {count}/{required}",
+      q11title: "Welke pagina’s wilt u?",
+      q11hint:
+        "Uw {package}-pakket bevat {required} pagina’s. Home staat al geselecteerd. Geselecteerd: {count}/{required}",
       q12title: "Heeft u al een logo?",
       q13title: "Heeft u beelden voor de website?",
       q13hint:
         "Upload tot 5 foto’s of visuals. Meer beelden kunt u later toevoegen, nadat de eerste versie klaar is.",
+      q15title: "Wat moet er op elke pagina?",
+      q15hint:
+        "Uw gekozen pagina’s staan hieronder. Noteer per pagina trefwoorden of belangrijke info.",
     },
     sectors: [
       "Beauty & wellness",
@@ -852,7 +861,8 @@ export const nl = {
       openingHours: "Vul uw openingsuren in.",
       sector: "Kies een sector.",
       sectorOther: "Beschrijf kort uw sector.",
-      businessInfo: "Vertel iets meer over uw zaak (min. 20 tekens).",
+      aboutBusiness: "Vertel iets meer over uw zaak (min. 20 tekens).",
+      pageNotes: "Vul bij elke pagina kort in wat erop moet komen.",
       packageChoice: "Kies Light, Medium of Pro.",
       pagesExactly3: "Selecteer precies {count} pagina’s.",
       customPage: "Vul de naam van de andere pagina in.",
@@ -915,10 +925,10 @@ export const nl = {
     anchors: {
       top: "home",
       howItWorks: "hoe-het-werkt",
-      examples: "voorbeelden",
-      pricing: "prijzen",
+      examples: "inspiratie",
+      pricing: "oplossingen",
       reviews: "reviews",
-      faq: "faq",
+      faq: "gids",
     },
   },
 

@@ -49,6 +49,17 @@ const nextConfig: NextConfig = {
       { source: "/en/terms", destination: "/en/voorwaarden" },
     ];
   },
+  async redirects() {
+    return [
+      // Old section slugs → new nav-aligned names (how-it-works unchanged)
+      { source: "/nl/voorbeelden", destination: "/nl/inspiratie", permanent: true },
+      { source: "/nl/prijzen", destination: "/nl/oplossingen", permanent: true },
+      { source: "/nl/faq", destination: "/nl/gids", permanent: true },
+      { source: "/en/examples", destination: "/en/inspiration", permanent: true },
+      { source: "/en/pricing", destination: "/en/solutions", permanent: true },
+      { source: "/en/faq", destination: "/en/guide", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {
